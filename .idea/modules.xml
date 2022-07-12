@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/packages/beat/melos_beat.iml" filepath="$PROJECT_DIR$/packages/beat/melos_beat.iml" />
       <module fileurl="file://$PROJECT_DIR$/packages/beat_generator/melos_beat_generator.iml" filepath="$PROJECT_DIR$/packages/beat_generator/melos_beat_generator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/examples/beat_simple/melos_beat_simple.iml" filepath="$PROJECT_DIR$/examples/beat_simple/melos_beat_simple.iml" />
       <module fileurl="file://$PROJECT_DIR$/melos_beat.iml" filepath="$PROJECT_DIR$/melos_beat.iml" />
     </modules>
   </component>

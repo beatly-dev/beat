@@ -1,8 +1,8 @@
-/// Support for doing something awesome.
-///
-/// More dartdocs go here.
 library beat_generator;
 
-export 'src/beat_generator_base.dart';
+import 'package:beat_generator/src/station_generator.dart';
+import 'package:build/build.dart';
+import 'package:source_gen/source_gen.dart';
 
-// TODO: Export any libraries intended for clients of this package.
+Builder beatMaker(BuilderOptions options) =>
+    LibraryBuilder(StationGenerator(), generatedExtension: '.beat.dart');

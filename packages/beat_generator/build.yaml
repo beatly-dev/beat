@@ -1,0 +1,13 @@
+targets:
+  $default:
+    builders:
+      beat_generator:
+        enabled: true
+
+builders:
+  beat_generator:
+    import: "package:beat_generator/beat_generator.dart"
+    builder_factories: ["beatMaker"]
+    build_extensions: { ".dart": [".beat.dart"] }
+    auto_apply: dependents
+    build_to: source
