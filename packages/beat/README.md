@@ -16,7 +16,7 @@ Heavily inspired by [xstate.js](https://xstate.js.org).
 	- [ ]: Support async `assign`
 	- [ ]: Support actor model
 - [ ]: Support transition with an argument for `assign`
-	- This is an easy way of async `asign`
+	- This is an easy way of async `assign`
 - [ ]: Support delay
 - [ ]: Support actions (fire-and-forget)
 - [ ]: Support `entry` and `exit` event
