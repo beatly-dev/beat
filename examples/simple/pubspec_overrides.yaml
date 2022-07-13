@@ -1,0 +1,7 @@
+dependency_overrides:
+  beat:
+    path: ../../packages/beat
+  beat_generator:
+    path: ../../packages/beat_generator
+#   path: ^1.8.0
+

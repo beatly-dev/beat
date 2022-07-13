@@ -4,3 +4,6 @@
 
 # Conventional directory for build output.
 build/
+!pubspec_overrides.yaml
+*.beat.dart
+*.g.dart

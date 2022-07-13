@@ -1,6 +1,6 @@
-# Beat Station - State Management tools
+# Beat Station - State management with state machine
 
-Heavily inspired by [xstate.js](https://xstate.js.org).
+Heavily inspired by [xstate.js](https://xstate.js.org). 
 
 # Features compatible with xstate.js
 
@@ -48,7 +48,7 @@ Heavily inspired by [xstate.js](https://xstate.js.org).
 
 # Features not supported by this package but in xstate.js
 
-- final state is naturally defined which does not have any `Beat` annotation
+- Final state is naturally defined which does not have any `Beat` annotation
 - `state.toString()`: naturally supported
 - `state.can(event)` is not needed because we have typed system
 - wildcard transitions and forbidden transitions are not needed because there will be no typo

@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'states/bulb.state.beat.dart';
 import 'states/bulb.state.dart';
 
 void main(List<String> arguments) {

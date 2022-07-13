@@ -2,6 +2,8 @@ import 'package:beat/beat.dart';
 
 import 'bulb.action.dart';
 
+part 'bulb.state.beat.dart';
+
 @BeatStation()
 enum Bulb {
   @Beat(event: BulbAction.turnOn, to: Bulb.turnedOn)

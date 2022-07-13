@@ -1,1 +1,1 @@
-See `beat` package.
+See [`beat`](https://pub.dev/packages/beat) package.
