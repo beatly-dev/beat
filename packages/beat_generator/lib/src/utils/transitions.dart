@@ -28,11 +28,13 @@ _beat($stateType.$to);
       from,
       Class((builder) {
         builder
-          ..name = '_${toBeginningOfSentenceCase(from)}Beats'
+          ..name = '${toBeginningOfSentenceCase(from)}Beats'
           ..constructors.add(Constructor((builder) {
-            builder.requiredParameters.add(Parameter((builder) {
-              builder.name = 'this._beat';
-            }));
+            builder
+              ..requiredParameters.add(Parameter((builder) {
+                builder.name = 'this._beat';
+              }))
+              ..constant = true;
           }))
           ..fields.add(beatCallback)
           ..methods.addAll(methods);

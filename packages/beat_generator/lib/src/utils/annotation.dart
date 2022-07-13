@@ -6,7 +6,8 @@ import 'package:source_gen/source_gen.dart';
 
 import 'field.dart';
 
-Map<String, List<BeatConfig>> mapBeatAnnotations(List<FieldElement> fields) {
+Map<String, List<BeatConfig>> mapBeatAnnotations(
+    String stateName, List<FieldElement> fields) {
   return fields.fold(<String, List<BeatConfig>>{}, (beats, field) {
     final annotations = beatAnnotations(field);
 
@@ -14,10 +15,10 @@ Map<String, List<BeatConfig>> mapBeatAnnotations(List<FieldElement> fields) {
       final from = field.name;
       final actionField = annotation.read('event');
       final toField = annotation.read('to');
+
       String action = getFieldValueAsString(actionField);
       String to = getFieldValueAsString(toField);
 
-      if (toField.isLiteral) {}
       final config = BeatConfig(
         from: from,
         action: action,
