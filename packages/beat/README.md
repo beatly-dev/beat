@@ -20,3 +20,5 @@ Heavily inspired by [xstate.js](https://xstate.js.org).
 	- [ ]: `loader`
 	- [ ]: `action` (side effect)
 	- [ ]: `ErrorBoundary`/`CatchBoundary`
+
+# Usage
