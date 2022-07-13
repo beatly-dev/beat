@@ -4,7 +4,7 @@ Heavily inspired by [xstate.js](https://xstate.js.org).
 
 # Features
 
-- [ ]: Simple state transition without context
+- [x]: Simple state transition without context
 - [ ]: Simple state transition with context
 - [ ]: State transition with side effect
 - [ ]: Support scxml
