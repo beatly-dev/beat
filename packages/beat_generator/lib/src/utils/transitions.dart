@@ -3,23 +3,35 @@ import 'package:code_builder/code_builder.dart';
 
 import '../models/beat_config.dart';
 
-Map<String, Class> generateBeatTransitions(
-    String stateType, Map<String, List<BeatConfig>> configMap) {
+Map<String, Class> generateBeatTransitionClasses(
+  String stateType,
+  Map<String, List<BeatConfig>> configMap,
+  String contextType,
+) {
   final beatCallback = Field((builder) {
     builder
       ..name = '_beat'
       ..modifier = FieldModifier.final$
       ..type = refer('void Function($stateType nextState)');
   });
+  final setContext = Field((builder) {
+    builder
+      ..name = '_setContext'
+      ..modifier = FieldModifier.final$
+      ..type = refer('Function($contextType Function($contextType))');
+  });
   return configMap.map((from, configs) {
     final methods = configs.map(
       (config) => Method((builder) {
-        final action = config.action;
+        final action = config.event;
         final to = config.to;
+        final assign =
+            config.assign.isEmpty ? '' : '_setContext(${config.assign});';
         builder
           ..name = '\$$action'
-          ..returns = refer('void')
+          ..returns = refer('')
           ..body = Code('''
+$assign
 _beat($stateType.$to);
 ''');
       }),
@@ -34,9 +46,13 @@ _beat($stateType.$to);
               ..requiredParameters.add(Parameter((builder) {
                 builder.name = 'this._beat';
               }))
+              ..requiredParameters.add(Parameter((builder) {
+                builder.name = 'this._setContext';
+              }))
               ..constant = true;
           }))
           ..fields.add(beatCallback)
+          ..fields.add(setContext)
           ..methods.addAll(methods);
       }),
     );

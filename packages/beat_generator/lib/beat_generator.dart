@@ -5,4 +5,4 @@ import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
 Builder beatMaker(BuilderOptions options) =>
-    LibraryBuilder(StationGenerator(), generatedExtension: '.beat.dart');
+    PartBuilder([StationGenerator()], '.beat.dart');

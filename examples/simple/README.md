@@ -1,1 +1,2 @@
-A simple command-line application.
+1. run `dart run build_runner build`
+2. run `dart run`

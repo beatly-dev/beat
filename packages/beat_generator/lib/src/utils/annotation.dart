@@ -6,23 +6,30 @@ import 'package:source_gen/source_gen.dart';
 
 import 'field.dart';
 
-Map<String, List<BeatConfig>> mapBeatAnnotations(
+String getBeatStationGeneric(String type) {
+  return type.split('<').last.split('>').first;
+}
+
+Map<String, List<BeatConfig<C>>> mapBeatAnnotations<C>(
     String stateName, List<FieldElement> fields) {
-  return fields.fold(<String, List<BeatConfig>>{}, (beats, field) {
+  return fields.fold(<String, List<BeatConfig<C>>>{}, (beats, field) {
     final annotations = beatAnnotations(field);
 
     for (final annotation in annotations) {
       final from = field.name;
       final actionField = annotation.read('event');
       final toField = annotation.read('to');
+      final assignField = annotation.peek('assign');
 
       String action = getFieldValueAsString(actionField);
       String to = getFieldValueAsString(toField);
+      String assign = getFunctionName(assignField);
 
-      final config = BeatConfig(
+      final config = BeatConfig<C>(
         from: from,
-        action: action,
+        event: action,
         to: to,
+        assign: assign,
       );
       if (beats.containsKey(from)) {
         beats[from]!.add(config);

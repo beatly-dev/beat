@@ -1,7 +1,5 @@
 class BeatStation<T> {
-  const BeatStation([this.context]);
-  final T? context;
+  const BeatStation();
 }
 
 const station = BeatStation();
-const machine = station;

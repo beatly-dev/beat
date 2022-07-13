@@ -15,13 +15,16 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
     if (element is! ClassElement || !element.isEnum) {
       throw 'BeatStation can only be used on enums';
     }
+    final contextType =
+        getBeatStationGeneric(annotation.objectValue.type.toString());
     final stationName = '${element.name}Station';
     final states = element.fields
         .where((field) => field.isEnumConstant)
         .map((field) => field.name)
         .toList();
     final beats = mapBeatAnnotations(element.name, element.fields);
-    final transitionClasses = generateBeatTransitions(element.name, beats);
+    final transitionClasses =
+        generateBeatTransitionClasses(element.name, beats, contextType);
 
     final attachStates =
         createAttachMethods('attach', states, transitionClasses);
@@ -30,12 +33,19 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
     final whenStates = createWhenMethods('when', states, transitionClasses);
     final mapStates = createMapMethods('map', states, transitionClasses);
 
+    final initialStateField = Field(
+      (builder) {
+        builder
+          ..name = 'initialState'
+          ..type = refer(element.name)
+          ..modifier = FieldModifier.final$;
+      },
+    );
     final currentStateField = Field(
       (builder) {
         builder
           ..name = '_currentState'
-          ..type = refer(element.name)
-          ..late = true;
+          ..type = refer(element.name);
       },
     );
     final currentStateGetter = Method((builder) {
@@ -87,16 +97,68 @@ _notifyListeners();
       });
     });
 
+    final initialContextField = Field((builder) {
+      builder
+        ..name = 'initialContext'
+        ..modifier = FieldModifier.final$
+        ..type = refer(contextType);
+    });
+    final currentContextField = Field((builder) {
+      builder
+        ..name = '_currentContext'
+        ..type = refer(contextType);
+    });
+
+    final currentContextGetter = Method((builder) {
+      builder
+        ..name = 'currentContext'
+        ..returns = refer(contextType)
+        ..type = MethodType.getter
+        ..body = Code('return _currentContext;');
+    });
+
+    final contextModifier = Method((builder) {
+      builder
+        ..name = '_setContext'
+        ..requiredParameters.add(Parameter((builder) {
+          builder
+            ..name = 'modifier'
+            ..type = refer('$contextType Function($contextType)');
+        }))
+        ..body = Code('''
+_currentContext = modifier(_currentContext);
+''');
+    });
+
+    final resetMethod = Method((builder) {
+      builder
+        ..name = 'reset'
+        ..body = Code('''
+_currentState = initialState;
+_currentContext = initialContext;
+_notifyListeners();
+''');
+    });
     final stationClass = Class((builder) {
       builder
         ..name = stationName
         ..constructors.add(
-          createStationConstructor(element, transitionClasses.values.toList()),
+          createStationConstructor(
+            element,
+            transitionClasses.values.toList(),
+            contextType,
+          ),
         )
+        ..fields.add(initialStateField)
         ..fields.add(currentStateField)
         ..methods.add(currentStateGetter)
         ..methods.add(setStateMethod)
         ..fields.addAll(stateChangersField)
+        ..fields.add(initialContextField)
+        ..fields.add(currentContextField)
+        ..methods.add(currentContextGetter)
+        ..methods.add(contextModifier)
+        ..methods.add(resetMethod)
         ..fields.add(listenersField)
         ..methods.add(notifyListenersMethod)
         ..methods.addAll(attachStates)
@@ -107,12 +169,7 @@ _notifyListeners();
     final library = Library((builder) {
       builder
         ..body.add(stationClass)
-        ..body.addAll(transitionClasses.values)
-        ..directives.add(Directive((builder) {
-          builder
-            ..type = DirectiveType.import
-            ..url = element.source.shortName;
-        }));
+        ..body.addAll(transitionClasses.values);
     });
     return library.accept(DartEmitter()).toString();
   }
@@ -120,20 +177,34 @@ _notifyListeners();
   Constructor createStationConstructor(
     ClassElement element,
     List<Class> transitionClasses,
+    String contextType,
   ) {
+    final contextParamter = Parameter((builder) {
+      builder
+        ..name = 'this.initialContext'
+        ..named = true
+        ..required = !(contextType.contains('?') ||
+            contextType == 'void' ||
+            contextType == 'Null' ||
+            contextType == 'dynamic');
+    });
     return Constructor((builder) {
       builder
         ..requiredParameters.add(Parameter((builder) {
-          builder
-            ..name = 'initialState'
-            ..type = refer(element.name);
+          builder.name = 'this.initialState';
         }))
-        ..initializers.add(Code('''
+        ..optionalParameters.add(contextParamter)
+        ..initializers.addAll([
+          Code('''
   _currentState = initialState
-'''))
-        ..body = Code(transitionClasses.fold('', (code, elm) {
+'''),
+          Code('''
+  _currentContext = initialContext
+'''),
+        ])
+        ..body = Code(transitionClasses.fold('', (code, beatClass) {
           return '''
-$code _${toDartFieldCase(elm.name)} = ${elm.name}(_setState);
+$code _${toDartFieldCase(beatClass.name)} = ${beatClass.name}(_setState, _setContext);
 ''';
         }));
     });
@@ -358,8 +429,7 @@ List<Method> createDetachMethods(
         ..name = '${name}On${toBeginningOfSentenceCase(state)}'
         ..requiredParameters.add(callbackParam)
         ..body = Code('''
-_listeners['$state'] ??= {};
-_listeners['$state']!.remove(callback);
+_listeners['$state']?.remove(callback);
           ''');
     });
     methods.add(method);
