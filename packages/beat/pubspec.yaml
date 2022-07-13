@@ -1,6 +1,6 @@
 name: beat
 description: A set of annotations for beat state management. Heavily inspired by xstate.js.org
-version: 0.1.0
+version: 0.1.1
 # homepage: https://www.example.com
 
 environment:
