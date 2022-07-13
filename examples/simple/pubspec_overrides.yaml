@@ -1,6 +1,6 @@
 # melos_managed_dependency_overrides: beat,beat_generator
 dependency_overrides:
-  beat:
+  beat: 
     path: ../../packages/beat
   beat_generator:
     path: ../../packages/beat_generator
