@@ -6,10 +6,6 @@ import 'package:source_gen/source_gen.dart';
 
 import 'field.dart';
 
-String getBeatStationGeneric(String type) {
-  return type.split('<').last.split('>').first;
-}
-
 Map<String, List<BeatConfig<C>>> mapBeatAnnotations<C>(
     String stateName, List<FieldElement> fields) {
   return fields.fold(<String, List<BeatConfig<C>>>{}, (beats, field) {

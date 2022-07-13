@@ -15,8 +15,10 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
     if (element is! ClassElement || !element.isEnum) {
       throw 'BeatStation can only be used on enums';
     }
-    final contextType =
-        getBeatStationGeneric(annotation.objectValue.type.toString());
+    final contextType = annotation
+        .read('contextType')
+        .typeValue
+        .getDisplayString(withNullability: false);
     final stationName = '${element.name}Station';
     final states = element.fields
         .where((field) => field.isEnumConstant)

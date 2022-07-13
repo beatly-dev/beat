@@ -10,7 +10,7 @@ void main(List<String> arguments) {
   });
   while (true) {
     station.when(
-      turnedOff: (modifier) =>
+      turnedOff: (modifier) async =>
           Random().nextBool() ? modifier.$turnOn() : modifier.$destroy(),
       turnedOn: (modifier) =>
           Random().nextBool() ? modifier.$turnOff() : modifier.$destroy(),

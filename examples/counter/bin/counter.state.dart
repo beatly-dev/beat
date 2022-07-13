@@ -2,9 +2,9 @@ import 'package:beat/beat.dart';
 
 part 'counter.state.beat.dart';
 
-typedef Counting = int;
-
-@BeatStation<int>()
+@BeatStation(
+  contextType: int,
+)
 enum Counter {
   @Beat(event: 'add', to: Counter.added, assign: adder)
   @Beat(event: 'take', to: Counter.taken)
@@ -15,10 +15,10 @@ enum Counter {
   taken,
 }
 
-Counting adder(Counting prev) {
+int adder(int prev) {
   return prev + 1;
 }
 
-Counting taker(Counting prev) {
+int taker(int prev) {
   return prev - 1;
 }
