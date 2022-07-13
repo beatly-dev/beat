@@ -1,5 +1,5 @@
 name: flutter_beat
-description: A new Flutter package project.
+description: A flutter specific package for beat state management. Heavily inspired by xstate.js.org
 version: 0.0.2
 repository: https://github.com/wurikiji/beat
 
