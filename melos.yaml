@@ -2,7 +2,6 @@ name: beat
 
 packages:
   - packages/**
-  - examples/**
 
 command:
   bootstrap:
