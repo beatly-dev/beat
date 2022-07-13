@@ -35,14 +35,14 @@ packages:
       path: "../../packages/beat"
       relative: true
     source: path
-    version: "1.0.0"
+    version: "0.1.0"
   beat_generator:
     dependency: "direct dev"
     description:
       path: "../../packages/beat_generator"
       relative: true
     source: path
-    version: "1.0.0"
+    version: "0.1.0"
   boolean_selector:
     dependency: transitive
     description:
