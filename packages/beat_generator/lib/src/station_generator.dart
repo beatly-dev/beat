@@ -1,16 +1,17 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:beat/beat.dart';
 import 'package:beat_generator/src/constants/field_names.dart';
-import 'package:beat_generator/src/helpers/context.dart';
 import 'package:beat_generator/src/helpers/notifier.dart';
 import 'package:beat_generator/src/helpers/state.dart';
 import 'package:beat_generator/src/utils/annotation.dart';
+import 'package:beat_generator/src/utils/context.dart';
 import 'package:beat_generator/src/utils/transitions.dart';
 import 'package:build/build.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:source_gen/source_gen.dart';
 
 import 'helpers/attach.dart';
+import 'helpers/context.dart';
 import 'helpers/detach.dart';
 import 'helpers/mapper.dart';
 import 'helpers/station.dart';
@@ -34,7 +35,8 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
         .map((field) => field.name)
         .toList();
     final beats = mapBeatAnnotations(element.name, element.fields);
-    final transitionClasses =
+    final commonBeats = mapBeatAnnotations(element.name, [element]);
+    final Map<String, Class> transitionClasses =
         generateBeatTransitionClasses(element.name, beats, contextType);
 
     final attachStates = createAttachMethods(states, transitionClasses);
@@ -44,7 +46,7 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
 
     final transitionBeatFields = createTransitionBeatFields(transitionClasses);
 
-    final resetMethod = createResetMethod();
+    final resetMethod = createResetMethod(contextType);
 
     final stationClass = Class((builder) {
       builder
@@ -62,7 +64,9 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
         ..methods.addAll(detachStates)
         ..methods.addAll(mapStates)
         ..methods.addAll(whenStates);
-      BeatContextBuilder(contextType).build(builder);
+      if (isNotNullContextType(contextType)) {
+        BeatContextBuilder(contextType).build(builder);
+      }
       BeatStateBuilder(element).build(builder);
       BeatNotifierBuilder().build(builder);
     });
@@ -74,13 +78,13 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
     return library.accept(DartEmitter()).toString();
   }
 
-  Method createResetMethod() {
+  Method createResetMethod(String contextType) {
     return Method((builder) {
       builder
         ..name = 'reset'
         ..body = Code('''
 $privateCurrentStateFieldName = $initialStateFieldName;
-$privateCurrentContextFieldName = $initialContextFieldName;
+${isNotNullContextType(contextType) ? "$privateCurrentContextFieldName = $initialContextFieldName;" : ""}
 $notifyListenersMethodName();
 ''');
     });

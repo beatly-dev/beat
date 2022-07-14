@@ -7,12 +7,12 @@ import 'package:source_gen/source_gen.dart';
 import 'field.dart';
 
 Map<String, List<BeatConfig<C>>> mapBeatAnnotations<C>(
-    String stateName, List<FieldElement> fields) {
+    String stateName, List<Element> fields) {
   return fields.fold(<String, List<BeatConfig<C>>>{}, (beats, field) {
     final annotations = beatAnnotations(field);
 
     for (final annotation in annotations) {
-      final from = field.name;
+      final from = field.name!;
       final actionField = annotation.read('event');
       final toField = annotation.read('to');
       final assignField = annotation.peek('assign');
@@ -40,8 +40,8 @@ Map<String, List<BeatConfig<C>>> mapBeatAnnotations<C>(
 
 const _beatChecker = TypeChecker.fromRuntime(Beat);
 
-List<DartObject> _beatAnnotations(FieldElement element) =>
+List<DartObject> _beatAnnotations(Element element) =>
     _beatChecker.annotationsOf(element, throwOnUnresolved: false).toList();
 
-List<ConstantReader> beatAnnotations(FieldElement element) =>
+List<ConstantReader> beatAnnotations(Element element) =>
     _beatAnnotations(element).map((e) => ConstantReader(e)).toList();

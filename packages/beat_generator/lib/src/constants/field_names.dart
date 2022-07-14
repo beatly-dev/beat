@@ -8,3 +8,5 @@ const privateCurrentContextFieldName = '_$currentContextFieldName';
 
 const notifyListenersMethodName = '_notifyListeners';
 const listenersFieldName = '_listeners';
+
+const setContextMethodName = '_setContext';

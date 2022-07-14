@@ -16,7 +16,7 @@ class BeatContextBuilder {
   Method _createSetContextMethod() {
     return Method((builder) {
       builder
-        ..name = '_setContext'
+        ..name = setContextMethodName
         ..requiredParameters.add(Parameter((builder) {
           builder
             ..name = 'modifier'

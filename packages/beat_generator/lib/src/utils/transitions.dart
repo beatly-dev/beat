@@ -1,8 +1,10 @@
+import 'package:beat_generator/src/utils/context.dart';
 import 'package:beat_generator/src/utils/string.dart';
 import 'package:code_builder/code_builder.dart';
 
 import '../models/beat_config.dart';
 
+const _setContextMethodName = '_setContext';
 Map<String, Class> generateBeatTransitionClasses(
   String stateType,
   Map<String, List<BeatConfig>> configMap,
@@ -16,7 +18,7 @@ Map<String, Class> generateBeatTransitionClasses(
   });
   final setContext = Field((builder) {
     builder
-      ..name = '_setContext'
+      ..name = _setContextMethodName
       ..modifier = FieldModifier.final$
       ..type = refer('Function($contextType Function($contextType))');
   });
@@ -25,8 +27,9 @@ Map<String, Class> generateBeatTransitionClasses(
       (config) => Method((builder) {
         final action = config.event;
         final to = config.to;
-        final assign =
-            config.assign.isEmpty ? '' : '_setContext(${config.assign});';
+        final assign = config.assign.isEmpty
+            ? ''
+            : '$_setContextMethodName(${config.assign});';
         builder
           ..name = '\$$action'
           ..returns = refer('')
@@ -46,14 +49,18 @@ _beat($stateType.$to);
               ..requiredParameters.add(Parameter((builder) {
                 builder.name = 'this._beat';
               }))
-              ..requiredParameters.add(Parameter((builder) {
-                builder.name = 'this._setContext';
-              }))
               ..constant = true;
+            if (isNotNullContextType(contextType)) {
+              builder.requiredParameters.add(Parameter((builder) {
+                builder.name = 'this.$_setContextMethodName';
+              }));
+            }
           }))
           ..fields.add(beatCallback)
-          ..fields.add(setContext)
           ..methods.addAll(methods);
+        if (isNotNullContextType(contextType)) {
+          builder.fields.add(setContext);
+        }
       }),
     );
   });
