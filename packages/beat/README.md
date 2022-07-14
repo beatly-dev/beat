@@ -25,8 +25,8 @@ Heavily inspired by [xstate.js](https://xstate.js.org).
 	- [ ]: Support `in` state condition
 - [ ]: Support Transient State Nodes
 - [ ]: Support external transition
-- [ ]: Support any state transition
-	- [ ]: BeatStation with common `Beat` option
+- [x]: Support any state transition
+	- [x]: BeatStation with common `Beat` option
 - [ ]: Support invoking services
 - [ ]: Support actors
 - [ ]: Support `state.matches` as a `is{State}`

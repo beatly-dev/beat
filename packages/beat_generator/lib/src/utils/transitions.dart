@@ -7,8 +7,9 @@ import '../models/beat_config.dart';
 const _setContextMethodName = '_setContext';
 Map<String, Class> generateBeatTransitionClasses(
   String stateType,
-  Map<String, List<BeatConfig>> configMap,
+  Map<String, List<BeatConfig>> beatConfigs,
   String contextType,
+  List<BeatConfig> commonBeatConfigs,
 ) {
   final beatCallback = Field((builder) {
     builder
@@ -22,12 +23,12 @@ Map<String, Class> generateBeatTransitionClasses(
       ..modifier = FieldModifier.final$
       ..type = refer('Function($contextType Function($contextType))');
   });
-  return configMap.map((from, configs) {
-    final methods = configs.map(
+  return beatConfigs.map((from, configs) {
+    final methods = [...configs, ...commonBeatConfigs].map(
       (config) => Method((builder) {
         final action = config.event;
         final to = config.to;
-        final assign = config.assign.isEmpty
+        final assign = config.assign.isEmpty || isNullContextType(contextType)
             ? ''
             : '$_setContextMethodName(${config.assign});';
         builder

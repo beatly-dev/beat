@@ -35,9 +35,13 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
         .map((field) => field.name)
         .toList();
     final beats = mapBeatAnnotations(element.name, element.fields);
-    final commonBeats = mapBeatAnnotations(element.name, [element]);
-    final Map<String, Class> transitionClasses =
-        generateBeatTransitionClasses(element.name, beats, contextType);
+    final commonBeats = mapCommonBeatAnnotations(element.name, [element]);
+    final Map<String, Class> transitionClasses = generateBeatTransitionClasses(
+      element.name,
+      beats,
+      contextType,
+      commonBeats,
+    );
 
     final attachStates = createAttachMethods(states, transitionClasses);
     final detachStates = createDetachMethods(states, transitionClasses);
