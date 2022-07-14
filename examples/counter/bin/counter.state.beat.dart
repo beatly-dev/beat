@@ -14,47 +14,24 @@ class CounterStation {
     _takenBeats = TakenBeats(_setState, _setContext);
   }
 
-  final Counter initialState;
-
-  Counter _currentState;
-
   late final AddedBeats _addedBeats;
 
   late final TakenBeats _takenBeats;
 
-  final int initialContext;
-
   int _currentContext;
 
+  final int initialContext;
+
+  Counter _currentState;
+
+  final Counter initialState;
+
   final Map<String, Set<Function()>> _listeners = {};
-
-  Counter get currentState {
-    return _currentState;
-  }
-
-  void _setState(Counter nextState) {
-    _currentState = nextState;
-    _notifyListeners();
-  }
-
-  int get currentContext {
-    return _currentContext;
-  }
-
-  _setContext(int Function(int) modifier) {
-    _currentContext = modifier(_currentContext);
-  }
 
   reset() {
     _currentState = initialState;
     _currentContext = initialContext;
     _notifyListeners();
-  }
-
-  void _notifyListeners() {
-    for (final listener in _listeners[_currentState.name]?.toList() ?? []) {
-      listener();
-    }
   }
 
   attach(Function() callback) {
@@ -125,6 +102,29 @@ class CounterStation {
 
   whenTaken(Function(TakenBeats) callback) {
     callback(_takenBeats);
+  }
+
+  int get currentContext {
+    return _currentContext;
+  }
+
+  _setContext(int Function(int) modifier) {
+    _currentContext = modifier(_currentContext);
+  }
+
+  Counter get currentState {
+    return _currentState;
+  }
+
+  void _setState(Counter nextState) {
+    _currentState = nextState;
+    _notifyListeners();
+  }
+
+  void _notifyListeners() {
+    for (final listener in _listeners[_currentState.name]?.toList() ?? []) {
+      listener();
+    }
   }
 }
 
