@@ -2,6 +2,8 @@
 
 Heavily inspired by [xstate.js](https://xstate.js.org). 
 
+Go to the [Beatly Book](https://book.beatly.dev/) for more information.
+
 # Features compatible with xstate.js
 
 - [x]: Support simple state transition without context
