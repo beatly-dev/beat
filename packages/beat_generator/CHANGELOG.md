@@ -1,3 +1,9 @@
+## 0.1.3
+
+ - **REFACTOR**: separate builders.
+ - **FIX**: remove void/Null context field.
+ - **FEAT**: Support common state transition (`any`time).
+
 ## 0.1.2+1
 
  - **FIX**: **BREAKING CHANGES** remove generic from station and add contextType param.
