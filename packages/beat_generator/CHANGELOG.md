@@ -1,3 +1,8 @@
+## 0.1.4
+
+ - **REFACTOR**: change string name to enum.
+ - **FEAT**: common beats can be accessed directly.
+
 ## 0.1.3+1
 
  - **FIX**: add condition on when/map helpers.
