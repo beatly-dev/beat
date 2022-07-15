@@ -68,7 +68,9 @@ List<Method> createWhenMethods(
         ..name = '$name${toBeginningOfSentenceCase(state)}'
         ..requiredParameters.add(callbackParam)
         ..body = Code('''
-callback($beatModifier);
+if ($currentStateFieldName.name == '$state') {
+  callback($beatModifier);
+}
           ''');
     });
     methods.add(method);

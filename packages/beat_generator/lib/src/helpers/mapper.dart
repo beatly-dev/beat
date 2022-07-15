@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 
+import '../constants/field_names.dart';
 import '../utils/string.dart';
 
 List<Method> createMapMethods(
@@ -59,10 +60,13 @@ List<Method> createMapMethods(
     });
     final method = Method((builder) {
       builder
-        ..name = 'T map${toBeginningOfSentenceCase(state)}<T>'
+        ..name = 'T? map${toBeginningOfSentenceCase(state)}<T>'
         ..requiredParameters.add(callbackParam)
         ..body = Code('''
-return callback($beatModifier);
+if ($currentStateFieldName.name == '$state') {
+  return callback($beatModifier);
+}
+return null;
           ''');
     });
     methods.add(method);
