@@ -1,9 +1,11 @@
+import 'package:analyzer/dart/element/element.dart';
 import 'package:beat_generator/src/constants/field_names.dart';
 import 'package:code_builder/code_builder.dart';
 
 import '../utils/string.dart';
 
 List<Method> createWhenMethods(
+  ClassElement rootEnum,
   List<String> states,
   Map<String, Class> transitions,
 ) {
@@ -31,7 +33,7 @@ List<Method> createWhenMethods(
         if (beatClass != null) {
           beatModifier = '_${toDartFieldCase(beatClass.name)}';
         }
-        return '''${needElse ? "else" : ""} if ($currentStateFieldName.name == '${states[index]}'
+        return '''${needElse ? "else" : ""} if ($currentStateFieldName == ${rootEnum.name}.${states[index]}
         && ${states[index]} != null) {
           return ${states[index]}($beatModifier);
           }''';
@@ -68,7 +70,7 @@ List<Method> createWhenMethods(
         ..name = '$name${toBeginningOfSentenceCase(state)}'
         ..requiredParameters.add(callbackParam)
         ..body = Code('''
-if ($currentStateFieldName.name == '$state') {
+if ($currentStateFieldName == ${rootEnum.name}.$state) {
   callback($beatModifier);
 }
           ''');

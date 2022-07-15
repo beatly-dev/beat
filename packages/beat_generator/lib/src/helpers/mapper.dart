@@ -1,9 +1,11 @@
+import 'package:analyzer/dart/element/element.dart';
 import 'package:code_builder/code_builder.dart';
 
 import '../constants/field_names.dart';
 import '../utils/string.dart';
 
 List<Method> createMapMethods(
+  ClassElement rootEnum,
   List<String> states,
   Map<String, Class> transitions,
 ) {
@@ -26,7 +28,7 @@ List<Method> createMapMethods(
         if (beatClass != null) {
           beatModifier = '_${toDartFieldCase(beatClass.name)}';
         }
-        return '''${needElse ? "else" : ""} if (currentState.name == '${states[index]}' 
+        return '''${needElse ? "else" : ""} if (currentState == ${rootEnum.name}.${states[index]} 
         && ${states[index]} != null) {
           return ${states[index]}($beatModifier);
           }''';
@@ -63,7 +65,7 @@ List<Method> createMapMethods(
         ..name = 'T? map${toBeginningOfSentenceCase(state)}<T>'
         ..requiredParameters.add(callbackParam)
         ..body = Code('''
-if ($currentStateFieldName.name == '$state') {
+if ($currentStateFieldName == ${rootEnum.name}.$state) {
   return callback($beatModifier);
 }
 return null;

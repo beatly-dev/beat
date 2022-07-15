@@ -44,8 +44,8 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
 
     final attachStates = createAttachMethods(states, transitionClasses);
     final detachStates = createDetachMethods(states, transitionClasses);
-    final whenStates = createWhenMethods(states, transitionClasses);
-    final mapStates = createMapMethods(states, transitionClasses);
+    final whenStates = createWhenMethods(element, states, transitionClasses);
+    final mapStates = createMapMethods(element, states, transitionClasses);
 
     final transitionBeatFields = createTransitionBeatFields(transitionClasses);
 
