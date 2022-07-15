@@ -50,15 +50,10 @@ List<Method> createMapMethods(
     })
   ];
   for (final state in states) {
-    final beatClass = transitions[state];
-    String beatModifier = '';
-    if (beatClass != null) {
-      beatModifier = '_${toDartFieldCase(beatClass.name)}';
-    }
     final callbackParam = Parameter((builder) {
       builder
         ..name = 'callback'
-        ..type = refer('T Function(${beatClass?.name ?? ""})');
+        ..type = refer('T Function()');
     });
     final method = Method((builder) {
       builder
@@ -66,7 +61,7 @@ List<Method> createMapMethods(
         ..requiredParameters.add(callbackParam)
         ..body = Code('''
 if ($currentStateFieldName == ${rootEnum.name}.$state) {
-  return callback($beatModifier);
+  return callback();
 }
 return null;
           ''');
