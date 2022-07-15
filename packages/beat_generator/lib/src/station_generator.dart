@@ -40,7 +40,6 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
       element.name,
       beats,
       contextType,
-      commonBeats,
     );
 
     final attachStates = createAttachMethods(states, transitionClasses);
@@ -71,7 +70,7 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
       if (isNotNullContextType(contextType)) {
         BeatContextBuilder(contextType).build(builder);
       }
-      BeatStateBuilder(element).build(builder);
+      BeatStateBuilder(element, commonBeats: commonBeats).build(builder);
       BeatNotifierBuilder().build(builder);
     });
     final library = Library((builder) {

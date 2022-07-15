@@ -9,7 +9,6 @@ Map<String, Class> generateBeatTransitionClasses(
   String stateType,
   Map<String, List<BeatConfig>> beatConfigs,
   String contextType,
-  List<BeatConfig> commonBeatConfigs,
 ) {
   final beatCallback = Field((builder) {
     builder
@@ -24,7 +23,7 @@ Map<String, Class> generateBeatTransitionClasses(
       ..type = refer('Function($contextType Function($contextType))');
   });
   return beatConfigs.map((from, configs) {
-    final methods = [...configs, ...commonBeatConfigs].map(
+    final methods = configs.map(
       (config) => Method((builder) {
         final action = config.event;
         final to = config.to;

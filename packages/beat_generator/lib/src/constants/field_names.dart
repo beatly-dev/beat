@@ -1,6 +1,7 @@
 const initialStateFieldName = 'initialState';
 const currentStateFieldName = 'currentState';
 const privateCurrentStateFieldName = '_$currentStateFieldName';
+const setStateMethodName = '_setState';
 
 const initialContextFieldName = 'initialContext';
 const currentContextFieldName = 'currentContext';

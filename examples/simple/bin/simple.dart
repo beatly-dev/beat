@@ -11,9 +11,9 @@ void main(List<String> arguments) {
   while (true) {
     station.when(
       turnedOff: (modifier) async =>
-          Random().nextBool() ? modifier.$turnOn() : modifier.$destroy(),
+          Random().nextBool() ? modifier.$turnOn() : station.$destroy(),
       turnedOn: (modifier) =>
-          Random().nextBool() ? modifier.$turnOff() : modifier.$destroy(),
+          Random().nextBool() ? modifier.$turnOff() : station.$destroy(),
       broken: () => print("Broken"),
       or: () => print("Nothing"),
     );

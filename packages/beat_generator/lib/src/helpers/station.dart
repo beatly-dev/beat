@@ -22,7 +22,7 @@ Constructor createStationConstructor(
       ])
       ..body = Code(transitionClasses.fold('', (code, beatClass) {
         return '''
-$code _${toDartFieldCase(beatClass.name)} = ${beatClass.name}(_setState ${isNotNullContextType(contextType) ? ', $setContextMethodName' : ''});
+$code _${toDartFieldCase(beatClass.name)} = ${beatClass.name}($setStateMethodName ${isNotNullContextType(contextType) ? ', $setContextMethodName' : ''});
 ''';
       }));
     if (isNotNullContextType(contextType)) {
