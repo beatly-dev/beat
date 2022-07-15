@@ -1,3 +1,7 @@
+## 0.1.3+1
+
+ - **FIX**: add condition on when/map helpers.
+
 ## 0.1.3
 
  - **REFACTOR**: separate builders.
