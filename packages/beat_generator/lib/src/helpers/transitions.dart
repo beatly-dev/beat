@@ -23,7 +23,7 @@ Map<String, Class> generateBeatTransitionClasses(
       ..name = _setContextMethodName
       ..modifier = FieldModifier.final$
       ..type = refer(
-        'Future Function(FutureOr<$contextType> Function(${rootEnum.name} currentState, $contextType context, String event), String event)',
+        'FutureOr<$contextType> Function(FutureOr<$contextType> Function(${rootEnum.name} currentState, $contextType context, String event), String event)',
       );
   });
   return beatConfigs.map((from, configs) {
@@ -31,17 +31,24 @@ Map<String, Class> generateBeatTransitionClasses(
       (config) => Method((builder) {
         final action = config.event;
         final to = config.to;
-        final assign = config.assign.isEmpty || isNullContextType(contextType)
-            ? ''
-            : 'await $_setContextMethodName(${config.assign}, "$action");';
+        final body = config.assign.isEmpty || isNullContextType(contextType)
+            ? '_beat($stateType.$to);'
+            : '''
+final nextContext = $_setContextMethodName(${config.assign}, "$action");
+if (nextContext is Future<$contextType>) {
+    return nextContext.then((value) {
+      _beat($stateType.$to);
+      return value;
+    });
+} else {
+  _beat($stateType.$to);
+  return nextContext;
+}
+''';
         builder
           ..name = '\$$action'
-          ..modifier = MethodModifier.async
           ..returns = refer('')
-          ..body = Code('''
-$assign
-_beat($stateType.$to);
-''');
+          ..body = Code(body);
       }),
     );
     return MapEntry(

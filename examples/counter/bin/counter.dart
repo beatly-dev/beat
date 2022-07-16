@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'counter.state.dart';
 
 void main(List<String> arguments) async {
@@ -9,17 +11,25 @@ void main(List<String> arguments) async {
     counter.when(
       added: (p0) async {
         print("Take one");
-        await p0.$take();
+        final next = p0.$take();
+        if (next is Future) {
+          print("Next is future");
+        }
+        print("result $next");
       },
       taken: (p0) async {
         print("Add one");
-        await p0.$add();
+        final next = p0.$add();
+        if (next is Future) {
+          print("Next is future");
+        }
+        print("result $next");
       },
       or: () {},
     );
 
     // should have async gap to run assigner properly
-    await Future.delayed(Duration(milliseconds: 1000));
-    // sleep(Duration(milliseconds: 1000));
+    // await Future.delayed(Duration(milliseconds: 1000));
+    sleep(Duration(milliseconds: 500));
   }
 }

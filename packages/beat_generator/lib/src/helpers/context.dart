@@ -19,8 +19,7 @@ class BeatContextBuilder {
     return Method((builder) {
       builder
         ..name = setContextMethodName
-        ..modifier = MethodModifier.async
-        ..returns = refer('Future')
+        ..returns = refer('FutureOr<$contextType>')
         ..requiredParameters.add(Parameter((builder) {
           builder
             ..name = 'modifier'
@@ -33,7 +32,16 @@ class BeatContextBuilder {
             ..type = refer('String');
         }))
         ..body = Code('''
-$privateCurrentContextFieldName = await modifier($currentStateFieldName, $privateCurrentContextFieldName, event);
+final nextContext = modifier(currentState, _currentContext, event);
+if (nextContext is Future<$contextType>) {
+  return nextContext.then((value) {
+    _currentContext = value;
+    return value;
+  });
+} else {
+  _currentContext = nextContext;
+  return nextContext;
+}
 ''');
     });
   }
