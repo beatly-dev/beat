@@ -73,6 +73,8 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
       }
       BeatStateBuilder(element, commonBeats: commonBeats).build(builder);
       BeatNotifierBuilder().build(builder);
+      buildNextEventsField(builder, element, transitionClasses);
+      buildDoneField(builder);
     });
     final library = Library((builder) {
       builder

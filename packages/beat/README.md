@@ -33,8 +33,9 @@ Go to the [Beatly Book](https://book.beatly.dev/) for more information.
 - [ ] Support invoking services
 - [ ] Support actors
 - [ ] Support `state.matches` as a `is{State}`
-- [ ] Support `state.nextEvents` as a `enum` and `String`
-- [ ] Support `state.changed`, `state.done`
+- [x] Support `state.nextEvents`
+- [ ] Support `state.changed`
+- [x] Support `state.done`
 - [ ] Support `state.meta`, `state.tags`
 - [ ] Support state change history
 - [ ] Support history json to persist 

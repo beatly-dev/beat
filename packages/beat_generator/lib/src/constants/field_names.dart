@@ -11,3 +11,6 @@ const notifyListenersMethodName = '_notifyListeners';
 const listenersFieldName = '_listeners';
 
 const setContextMethodName = '_setContext';
+
+const nextEventsFieldName = 'nextEvents';
+const doneFieldName = 'done';

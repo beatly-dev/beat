@@ -9,6 +9,8 @@ void main(List<String> arguments) {
     print("${station.currentState}");
   });
   while (true) {
+    print('next events: ${station.nextEvents}');
+    print('done: ${station.done}');
     station.when(
       turnedOff: (modifier) async =>
           Random().nextBool() ? modifier.$turnOn() : station.$destroy(),

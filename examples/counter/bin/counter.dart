@@ -8,6 +8,7 @@ void main(List<String> arguments) async {
     print("Counter is ${counter.currentContext}");
   });
   while (true) {
+    print('next events: ${counter.nextEvents}');
     counter.when(
       added: (p0) async {
         print("Take one");

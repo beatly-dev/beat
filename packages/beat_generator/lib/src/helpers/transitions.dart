@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:beat_generator/src/constants/field_names.dart';
 import 'package:code_builder/code_builder.dart';
 
 import '../models/beat_config.dart';
@@ -51,6 +52,16 @@ if (nextContext is Future<$contextType>) {
           ..body = Code(body);
       }),
     );
+    final nextEvents = Field((builder) {
+      builder
+        ..name = nextEventsFieldName
+        ..modifier = FieldModifier.final$
+        ..type = refer('List<String>')
+        ..assignment = Code('const [${configs.map((config) {
+          return "'${config.event}'";
+        }).join(', ')}]');
+    });
+
     return MapEntry(
       from,
       Class((builder) {
@@ -69,6 +80,7 @@ if (nextContext is Future<$contextType>) {
             }
           }))
           ..fields.add(beatCallback)
+          ..fields.add(nextEvents)
           ..methods.addAll(methods);
         if (isNotNullContextType(contextType)) {
           builder.fields.add(setContext);
