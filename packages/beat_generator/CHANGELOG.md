@@ -1,3 +1,9 @@
+## 0.2.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: async assigner.
+
 ## 0.1.4
 
  - **REFACTOR**: change string name to enum.

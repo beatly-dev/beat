@@ -1,3 +1,9 @@
+## 0.2.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: async assigner.
+
 ## 0.1.3
 
  - **FEAT**: Support common state transition (`any`time).
