@@ -1,3 +1,9 @@
+## 0.3.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: `assign` can be both of sync and async.
+
 ## 0.2.0
 
 > Note: This release has breaking changes.
