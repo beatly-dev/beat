@@ -1,3 +1,7 @@
+## 0.3.1
+
+ - **FEAT**: support `nextEvents` and `done`.
+
 ## 0.3.0
 
 > Note: This release has breaking changes.
