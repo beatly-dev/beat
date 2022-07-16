@@ -3,9 +3,9 @@ import 'package:beat/beat.dart';
 import 'package:beat_generator/src/constants/field_names.dart';
 import 'package:beat_generator/src/helpers/notifier.dart';
 import 'package:beat_generator/src/helpers/state.dart';
+import 'package:beat_generator/src/helpers/transitions.dart';
 import 'package:beat_generator/src/utils/annotation.dart';
 import 'package:beat_generator/src/utils/context.dart';
-import 'package:beat_generator/src/utils/transitions.dart';
 import 'package:build/build.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:source_gen/source_gen.dart';
@@ -37,6 +37,7 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
     final beats = mapBeatAnnotations(element.name, element.fields);
     final commonBeats = mapCommonBeatAnnotations(element.name, [element]);
     final Map<String, Class> transitionClasses = generateBeatTransitionClasses(
+      element,
       element.name,
       beats,
       contextType,
@@ -68,7 +69,7 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
         ..methods.addAll(mapStates)
         ..methods.addAll(whenStates);
       if (isNotNullContextType(contextType)) {
-        BeatContextBuilder(contextType).build(builder);
+        BeatContextBuilder(element, contextType).build(builder);
       }
       BeatStateBuilder(element, commonBeats: commonBeats).build(builder);
       BeatNotifierBuilder().build(builder);

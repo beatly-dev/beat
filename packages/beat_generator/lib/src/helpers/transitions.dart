@@ -1,11 +1,13 @@
-import 'package:beat_generator/src/utils/context.dart';
-import 'package:beat_generator/src/utils/string.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:code_builder/code_builder.dart';
 
 import '../models/beat_config.dart';
+import '../utils/context.dart';
+import '../utils/string.dart';
 
 const _setContextMethodName = '_setContext';
 Map<String, Class> generateBeatTransitionClasses(
+  ClassElement rootEnum,
   String stateType,
   Map<String, List<BeatConfig>> beatConfigs,
   String contextType,
@@ -20,7 +22,9 @@ Map<String, Class> generateBeatTransitionClasses(
     builder
       ..name = _setContextMethodName
       ..modifier = FieldModifier.final$
-      ..type = refer('Function($contextType Function($contextType))');
+      ..type = refer(
+        'Future Function(FutureOr<$contextType> Function(${rootEnum.name} currentState, $contextType context, String event), String event)',
+      );
   });
   return beatConfigs.map((from, configs) {
     final methods = configs.map(
@@ -29,9 +33,10 @@ Map<String, Class> generateBeatTransitionClasses(
         final to = config.to;
         final assign = config.assign.isEmpty || isNullContextType(contextType)
             ? ''
-            : '$_setContextMethodName(${config.assign});';
+            : 'await $_setContextMethodName(${config.assign}, "$action");';
         builder
           ..name = '\$$action'
+          ..modifier = MethodModifier.async
           ..returns = refer('')
           ..body = Code('''
 $assign

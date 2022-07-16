@@ -1,10 +1,12 @@
+import 'package:analyzer/dart/element/element.dart';
 import 'package:beat_generator/src/constants/field_names.dart';
 import 'package:code_builder/code_builder.dart';
 
 class BeatContextBuilder {
+  const BeatContextBuilder(this.rootEnum, this.contextType);
   final String contextType;
+  final ClassElement rootEnum;
 
-  BeatContextBuilder(this.contextType);
   void build(ClassBuilder builder) {
     builder
       ..fields.add(_createCurrentContextField())
@@ -17,13 +19,21 @@ class BeatContextBuilder {
     return Method((builder) {
       builder
         ..name = setContextMethodName
+        ..modifier = MethodModifier.async
+        ..returns = refer('Future')
         ..requiredParameters.add(Parameter((builder) {
           builder
             ..name = 'modifier'
-            ..type = refer('$contextType Function($contextType)');
+            ..type = refer(
+                'FutureOr<$contextType> Function(${rootEnum.name} currentState, $contextType context, String event)');
+        }))
+        ..requiredParameters.add(Parameter((builder) {
+          builder
+            ..name = 'event'
+            ..type = refer('String');
         }))
         ..body = Code('''
-$privateCurrentContextFieldName = modifier($privateCurrentContextFieldName);
+$privateCurrentContextFieldName = await modifier($currentStateFieldName, $privateCurrentContextFieldName, event);
 ''');
     });
   }
