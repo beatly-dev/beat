@@ -1,27 +1,30 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:beat/beat.dart';
-import 'package:beat_generator/src/constants/field_names.dart';
-import 'package:beat_generator/src/helpers/notifier.dart';
-import 'package:beat_generator/src/helpers/state.dart';
-import 'package:beat_generator/src/helpers/transitions.dart';
-import 'package:beat_generator/src/utils/annotation.dart';
-import 'package:beat_generator/src/utils/context.dart';
 import 'package:build/build.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:source_gen/source_gen.dart';
 
+import 'constants/field_names.dart';
 import 'helpers/attach.dart';
 import 'helpers/context.dart';
 import 'helpers/detach.dart';
 import 'helpers/mapper.dart';
+import 'helpers/notifier.dart';
+import 'helpers/state.dart';
 import 'helpers/station.dart';
+import 'helpers/transitions.dart';
 import 'helpers/when.dart';
+import 'utils/annotation.dart';
+import 'utils/context.dart';
 import 'utils/string.dart';
 
 class StationGenerator extends GeneratorForAnnotation<BeatStation> {
   @override
   generateForAnnotatedElement(
-      Element element, ConstantReader annotation, BuildStep buildStep) {
+    Element element,
+    ConstantReader annotation,
+    BuildStep buildStep,
+  ) {
     if (element is! ClassElement || !element.isEnum) {
       throw 'BeatStation can only be used on enums';
     }
@@ -88,16 +91,19 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
     return Method((builder) {
       builder
         ..name = 'reset'
-        ..body = Code('''
+        ..body = Code(
+          '''
 $privateCurrentStateFieldName = $initialStateFieldName;
 ${isNotNullContextType(contextType) ? "$privateCurrentContextFieldName = $initialContextFieldName;" : ""}
 $notifyListenersMethodName();
-''');
+''',
+        );
     });
   }
 
   Iterable<Field> createTransitionBeatFields(
-      Map<String, Class> transitionClasses) {
+    Map<String, Class> transitionClasses,
+  ) {
     return transitionClasses.values.map((transitionClass) {
       return Field((builder) {
         builder
