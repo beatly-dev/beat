@@ -1,10 +1,7 @@
-import 'dart:async';
+class Beat<Event, State, Context> {
+  const Beat({required this.event, required this.to, this.actions = const []});
 
-class Beat<A, T, C> {
-  const Beat({required this.event, required this.to, this.assign});
-
-  final A event;
-  final T to;
-  final FutureOr<C> Function(T currentState, C prevContext, String event)?
-      assign;
+  final Event event;
+  final State to;
+  final List<dynamic> actions;
 }

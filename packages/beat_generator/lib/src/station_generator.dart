@@ -1,22 +1,12 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:beat/beat.dart';
 import 'package:build/build.dart';
-import 'package:code_builder/code_builder.dart';
 import 'package:source_gen/source_gen.dart';
 
-import 'constants/field_names.dart';
-import 'helpers/attach.dart';
-import 'helpers/context.dart';
-import 'helpers/detach.dart';
-import 'helpers/mapper.dart';
-import 'helpers/notifier.dart';
-import 'helpers/state.dart';
-import 'helpers/station.dart';
-import 'helpers/transitions.dart';
-import 'helpers/when.dart';
+import 'helpers/beat_state_class.dart';
+import 'helpers/beat_transition_class.dart';
+import 'helpers/station_class.dart';
 import 'utils/annotation.dart';
-import 'utils/context.dart';
-import 'utils/string.dart';
 
 class StationGenerator extends GeneratorForAnnotation<BeatStation> {
   @override
@@ -24,7 +14,7 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
     Element element,
     ConstantReader annotation,
     BuildStep buildStep,
-  ) {
+  ) async {
     if (element is! ClassElement || !element.isEnum) {
       throw 'BeatStation can only be used on enums';
     }
@@ -32,86 +22,21 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
         .read('contextType')
         .typeValue
         .getDisplayString(withNullability: false);
-    final stationName = '${element.name}Station';
-    final states = element.fields
-        .where((field) => field.isEnumConstant)
-        .map((field) => field.name)
-        .toList();
-    final beats = mapBeatAnnotations(element.name, element.fields);
-    final commonBeats = mapCommonBeatAnnotations(element.name, [element]);
-    final Map<String, Class> transitionClasses = generateBeatTransitionClasses(
-      element,
+    final beats = await mapBeatAnnotations(element.name, element.fields);
+    final commonBeats = await mapCommonBeatAnnotations(
       element.name,
-      beats,
-      contextType,
+      element,
     );
-
-    final attachStates = createAttachMethods(states, transitionClasses);
-    final detachStates = createDetachMethods(states, transitionClasses);
-    final whenStates = createWhenMethods(element, states, transitionClasses);
-    final mapStates = createMapMethods(element, states, transitionClasses);
-
-    final transitionBeatFields = createTransitionBeatFields(transitionClasses);
-
-    final resetMethod = createResetMethod(contextType);
-
-    final stationClass = Class((builder) {
-      builder
-        ..name = stationName
-        ..constructors.add(
-          createStationConstructor(
-            element,
-            transitionClasses.values.toList(),
-            contextType,
-          ),
-        )
-        ..fields.addAll(transitionBeatFields)
-        ..methods.add(resetMethod)
-        ..methods.addAll(attachStates)
-        ..methods.addAll(detachStates)
-        ..methods.addAll(mapStates)
-        ..methods.addAll(whenStates);
-      if (isNotNullContextType(contextType)) {
-        BeatContextBuilder(element, contextType).build(builder);
-      }
-      BeatStateBuilder(element, commonBeats: commonBeats).build(builder);
-      BeatNotifierBuilder().build(builder);
-      buildNextEventsField(builder, element, transitionClasses);
-      buildDoneField(builder);
-    });
-    final library = Library((builder) {
-      builder
-        ..body.add(stationClass)
-        ..body.addAll(transitionClasses.values);
-    });
-    return library.accept(DartEmitter()).toString();
-  }
-
-  Method createResetMethod(String contextType) {
-    return Method((builder) {
-      builder
-        ..name = 'reset'
-        ..body = Code(
-          '''
-$privateCurrentStateFieldName = $initialStateFieldName;
-${isNotNullContextType(contextType) ? "$privateCurrentContextFieldName = $initialContextFieldName;" : ""}
-$notifyListenersMethodName();
-''',
-        );
-    });
-  }
-
-  Iterable<Field> createTransitionBeatFields(
-    Map<String, Class> transitionClasses,
-  ) {
-    return transitionClasses.values.map((transitionClass) {
-      return Field((builder) {
-        builder
-          ..name = '_${toDartFieldCase(transitionClass.name)}'
-          ..type = refer(transitionClass.name)
-          ..late = true
-          ..modifier = FieldModifier.final$;
-      });
-    });
+    return [
+      '// ignore_for_file: avoid_function_literals_in_foreach_calls',
+      BeatStationBuilder(baseEnum: element, contextType: contextType).build(),
+      BeatTransitionClassBuilder(
+        beats: beats,
+        commonBeats: commonBeats,
+        baseEnum: element,
+        contextType: contextType,
+      ).build(),
+      BeatStateBuilder(contextType: contextType, baseEnum: element).build(),
+    ];
   }
 }

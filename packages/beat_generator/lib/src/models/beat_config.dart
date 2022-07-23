@@ -1,18 +1,18 @@
-class BeatConfig<C> {
+class BeatConfig {
   final String event;
   final String from;
   final String to;
-  final String assign;
+  final String source;
 
   BeatConfig({
     required this.event,
     required this.to,
     required this.from,
-    this.assign = '',
+    required this.source,
   });
 
   @override
   String toString() {
-    return 'from `$from` to `$to` by `$event`';
+    return 'from `$from` to `$to` by `$event` source $source';
   }
 }
