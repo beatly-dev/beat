@@ -33,6 +33,9 @@ class $beatStateClassName {
   });
   final $baseName state;
   final $contextType context;
+
+  @override
+  String toString() => '$beatStateClassName(state: \$state, context: \$context)';
 }
 ''',
     );
