@@ -14,36 +14,46 @@ Go to the [Beatly Book](https://book.beatly.dev/) for more information.
 - [ ] Support context
 	- [x] Initialize with context
 	- [x] Get current context
-	- [ ] Support sync `assign`
-	- [ ] Support async `assign`
-	- [ ] Get current context
-	- [ ] Get immutable current context
-	- [ ] Support actor model
-- [ ] Support transition with an argument for `assign`
+- [ ] Support transition with an argument
 - [ ] Support delay
 - [ ] Support actions (fire-and-forget)
+	- [ ] callback action
+	- [ ] assign action
+	- [ ] choose action
+	- [ ] forwardTo action
+	- [ ] log action
+	- [ ] pure action
+	- [ ] raise action
+	- [ ] respond action
+	- [ ] send action
+- [ ] Support invoking services
+	- [ ] promises
+	- [ ] callback
+	- [ ] observables
+	- [ ] other beat station
+	- [ ] multiple services
 - [ ] Support `entry` and `exit` event
-- [ ] Support conditional (guraded) transition
+- [ ] Support conditional (guarded) transition
 	- [ ] Support custom functions
 	- [ ] Support `in` state condition
-- [ ] Support Transient State Nodes
+- [ ] Support eventless transition
+- [ ] Support internal transition
 - [ ] Support external transition
+- [ ] Support multiple targets
 - [x] Support any state transition
 	- [x] BeatStation with common `Beat` option
-- [ ] Support invoking services
 - [ ] Support actors
 - [x] Support `state.matches` as a `is{State}`
 - [ ] Support `state.nextEvents`
 - [ ] Support `state.changed`
 - [ ] Support `state.done`
 - [ ] Support `state.meta`, `state.tags`
-- [ ] Support state change history
+- [x] Support state change history
 - [ ] Support history json to persist 
 - [ ] Support nested state
 - [ ] Support parallel state
 	- [ ] Define parallel state
 	- [ ] Support multiple targets event
-- [ ] State transition with side effect
 - [ ] Support scxml
 - [ ] Support stately.ai
 - [ ] Support bootstraping

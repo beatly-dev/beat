@@ -10,19 +10,16 @@ void main(List<String> arguments) {
   });
   final rand = Random();
   while (true) {
-    switch (station.currentState.state) {
-      case Bulb.turnedOff:
-        station.turnedOff.$turnOn();
-        break;
-      case Bulb.turnedOn:
-        station.turnedOn.$turnOff();
-        break;
-      case Bulb.broken:
-        break;
-    }
     if (rand.nextInt(100000) < 10000) {
       station.$destroy();
+      break;
+    }
+    if (station.isTurnedOff) {
+      station.turnedOff.$turnOn();
+    } else if (station.isTurnedOn) {
+      station.turnedOn.$turnOff();
     }
     sleep(Duration(milliseconds: 500));
   }
+  print("History ${station.history}");
 }
