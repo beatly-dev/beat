@@ -10,13 +10,13 @@ Go to the [Beatly Book](https://book.beatly.dev/) for more information.
 - [x] Listen on transition
 - [x] Map states
 - [x] Execute callback on state change
-- [x] Support reset
+- [ ] Support reset
 - [ ] Support context
 	- [x] Initialize with context
 	- [x] Get current context
-	- [x] Support sync `assign`
-	- [x] Support async `assign`
-	- [x] Get current context
+	- [ ] Support sync `assign`
+	- [ ] Support async `assign`
+	- [ ] Get current context
 	- [ ] Get immutable current context
 	- [ ] Support actor model
 - [ ] Support transition with an argument for `assign`
@@ -32,10 +32,10 @@ Go to the [Beatly Book](https://book.beatly.dev/) for more information.
 	- [x] BeatStation with common `Beat` option
 - [ ] Support invoking services
 - [ ] Support actors
-- [ ] Support `state.matches` as a `is{State}`
-- [x] Support `state.nextEvents`
+- [x] Support `state.matches` as a `is{State}`
+- [ ] Support `state.nextEvents`
 - [ ] Support `state.changed`
-- [x] Support `state.done`
+- [ ] Support `state.done`
 - [ ] Support `state.meta`, `state.tags`
 - [ ] Support state change history
 - [ ] Support history json to persist 
