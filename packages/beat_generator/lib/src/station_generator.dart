@@ -29,7 +29,11 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
     );
     return [
       '// ignore_for_file: avoid_function_literals_in_foreach_calls',
-      BeatStationBuilder(baseEnum: element, contextType: contextType).build(),
+      BeatStationBuilder(
+        baseEnum: element,
+        contextType: contextType,
+        commonBeats: commonBeats,
+      ).build(),
       BeatTransitionClassBuilder(
         beats: beats,
         commonBeats: commonBeats,

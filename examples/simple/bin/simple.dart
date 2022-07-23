@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'states/bulb.state.dart';
 
@@ -7,6 +8,7 @@ void main(List<String> arguments) {
   station.addListener(() {
     print("${station.currentState}");
   });
+  final rand = Random();
   while (true) {
     switch (station.currentState.state) {
       case Bulb.turnedOff:
@@ -17,6 +19,9 @@ void main(List<String> arguments) {
         break;
       case Bulb.broken:
         break;
+    }
+    if (rand.nextInt(100000) < 10000) {
+      station.$destroy();
     }
     sleep(Duration(milliseconds: 500));
   }

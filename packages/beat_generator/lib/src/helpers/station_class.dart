@@ -1,5 +1,6 @@
 import 'package:analyzer/dart/element/element.dart';
 
+import '../models/beat_config.dart';
 import '../utils/context.dart';
 import '../utils/string.dart';
 
@@ -20,6 +21,7 @@ import '../utils/string.dart';
 class BeatStationBuilder {
   final ClassElement baseEnum;
   final String contextType;
+  final List<BeatConfig> commonBeats;
   late final String baseName;
   late final String beatStationClassName;
   late final List<String> enumFields;
@@ -27,7 +29,11 @@ class BeatStationBuilder {
 
   final buffer = StringBuffer();
 
-  BeatStationBuilder({required this.baseEnum, required this.contextType}) {
+  BeatStationBuilder({
+    required this.baseEnum,
+    required this.contextType,
+    required this.commonBeats,
+  }) {
     baseName = baseEnum.name;
     beatStationClassName = toBeatStationClassName(baseName);
     beatStateClassName = toBeatStateClassName(baseName);
@@ -47,10 +53,23 @@ class BeatStationBuilder {
     _createCurrentStateCheckerGetter();
     _createSetState();
     _createSetContext();
+    _createCommonBeatTransitions();
     _createListenersMethods();
     _createNotifyListenersMethod();
     buffer.writeln('}');
     return buffer.toString();
+  }
+
+  void _createCommonBeatTransitions() {
+    for (final config in commonBeats) {
+      buffer.writeln(
+        '''
+void \$${config.event}() {
+  _setState($baseName.${config.to});
+}
+''',
+      );
+    }
   }
 
   void _createStateFields() {
