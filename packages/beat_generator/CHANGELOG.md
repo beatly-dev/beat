@@ -1,3 +1,11 @@
+## 0.4.0
+
+> Note: This release has breaking changes.
+
+ - **FIX**: add removeListener.
+ - **FEAT**: add toString() method on BeatState.
+ - **BREAKING** **REFACTOR**: remove code_builder, remove assigner.
+
 ## 0.3.1
 
  - **FEAT**: support `nextEvents` and `done`.

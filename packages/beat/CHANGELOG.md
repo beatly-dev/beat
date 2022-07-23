@@ -1,3 +1,10 @@
+## 0.4.0
+
+> Note: This release has breaking changes.
+
+ - **FEAT**: add action types.
+ - **BREAKING** **REFACTOR**: remove code_builder, remove assigner.
+
 ## 0.3.1
 
  - **FEAT**: support `nextEvents` and `done`.
