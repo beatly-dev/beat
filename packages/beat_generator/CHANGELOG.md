@@ -1,3 +1,7 @@
+## 0.4.1
+
+ - **FEAT**: support common (anytime) transition.
+
 ## 0.4.0
 
 > Note: This release has breaking changes.
