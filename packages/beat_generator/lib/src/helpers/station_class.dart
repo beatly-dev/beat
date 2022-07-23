@@ -159,6 +159,13 @@ void addListener(Function() callback) {
 }
 ''',
     );
+    buffer.writeln(
+      '''
+void removeListener(Function() callback) {
+  _listeners.remove(callback);
+}
+''',
+    );
     for (final name in enumFields) {
       buffer.writeln(
         '''
