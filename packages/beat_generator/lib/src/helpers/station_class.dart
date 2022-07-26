@@ -76,6 +76,8 @@ void _exec${toBeginningOfSentenceCase(config.event)}Actions() {
       _setContext(exec());
     } else if (action is DefaultAction) {
       exec();
+    } else if (action is Function(Counter, int, String)) {
+      action(currentState.state, currentState.context, 'add');
     }
   }
 }

@@ -5,9 +5,9 @@ part 'counter.state.beat.dart';
 @BeatStation(
   contextType: int,
 )
-@Beat(event: 'add', to: Counter.added, actions: [AssignAction(adder)])
-@Beat(event: 'take', to: Counter.taken, actions: [AssignAction(taker)])
-@Beat(event: 'reset', to: Counter.added, actions: [AssignAction(reset)])
+@Beat(event: 'add', to: Counter.added, actions: [AssignAction(adder), save])
+@Beat(event: 'take', to: Counter.taken, actions: [AssignAction(taker), save])
+@Beat(event: 'reset', to: Counter.added, actions: [AssignAction(reset), save])
 enum Counter {
   added,
 
@@ -24,4 +24,8 @@ int taker(Counter currentState, int prevContext, String eventName) {
 
 int reset(Counter currentState, int prevContext, String eventName) {
   return 0;
+}
+
+save(state, int context, event) async {
+  print("Saving...");
 }

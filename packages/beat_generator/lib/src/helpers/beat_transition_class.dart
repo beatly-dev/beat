@@ -83,6 +83,8 @@ void _exec${toBeginningOfSentenceCase(config.event)}Actions() {
       _beatStation._setContext(exec());
     } else if (action is DefaultAction) {
       exec();
+    } else if (action is Function(Counter, int, String)) {
+      action(_beatStation.currentState.state, _beatStation.currentState.context, 'add');
     }
   }
 }
