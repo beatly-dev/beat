@@ -1,3 +1,7 @@
+## 0.5.2
+
+ - **FEAT**: support callback style AssignAction.
+
 ## 0.5.1
 
  - **FEAT**: common transitions actions.

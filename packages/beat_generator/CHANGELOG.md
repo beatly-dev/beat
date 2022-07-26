@@ -1,3 +1,7 @@
+## 0.5.3
+
+ - **FEAT**: support callback style AssignAction.
+
 ## 0.5.2
 
  - **REFACTOR**: scoping.
