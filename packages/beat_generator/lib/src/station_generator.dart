@@ -32,6 +32,7 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
       BeatStationBuilder(
         baseEnum: element,
         contextType: contextType,
+        beats: beats,
         commonBeats: commonBeats,
       ).build(),
       BeatTransitionClassBuilder(

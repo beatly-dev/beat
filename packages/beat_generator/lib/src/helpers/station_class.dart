@@ -27,6 +27,7 @@ class BeatStationBuilder {
   late final String beatStationClassName;
   late final List<String> enumFields;
   late final String beatStateClassName;
+  final Map<String, List<BeatConfig>> beats;
 
   final buffer = StringBuffer();
 
@@ -34,6 +35,7 @@ class BeatStationBuilder {
     required this.baseEnum,
     required this.contextType,
     required this.commonBeats,
+    required this.beats,
   }) {
     baseName = baseEnum.name;
     beatStationClassName = toBeatStationClassName(baseName);
@@ -76,10 +78,11 @@ void \$${config.event}() {
 
   void _createTransitionFields() {
     for (final state in enumFields) {
+      final beatConfigs = beats[state] ?? [];
       buffer.writeln(
         '''${toBeatTransitionBaseClassName(state)} get ${toDartFieldCase(state)} {
           if (currentState.state == $baseName.$state) {
-            return ${toBeatTransitionRealClassName(state)}(this);
+            return ${toBeatTransitionRealClassName(state)}(${beatConfigs.isEmpty ? '' : 'this'});
           }
           return ${toBeatTransitionDummyClassName(state)}();
         }''',

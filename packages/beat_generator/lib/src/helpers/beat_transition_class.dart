@@ -61,15 +61,16 @@ void \$${config.event}();
     for (final state in enumFields) {
       final className = toBeatTransitionRealClassName(state);
       final baseClassName = toBeatTransitionBaseClassName(state);
+      final beatConfigs = beats[state] ?? [];
       final body = StringBuffer();
-      body.writeln(
-        '''
+      if (beatConfigs.isNotEmpty) {
+        body.writeln(
+          '''
   $className(this._beatStation);
   final $beatStationClassName _beatStation;
   ''',
-      );
-
-      final beatConfigs = beats[state] ?? [];
+        );
+      }
 
       for (final config in beatConfigs) {
         body.writeln(
