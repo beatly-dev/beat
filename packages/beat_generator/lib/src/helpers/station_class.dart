@@ -47,7 +47,7 @@ class BeatStationBuilder {
   String build() {
     _createConstructor();
     _createFields();
-    _createStateFields();
+    _createTransitionFields();
     _createExecMethods();
     _createMapMethods();
     _createCurrentStateCheckerGetter();
@@ -74,10 +74,15 @@ void \$${config.event}() {
     }
   }
 
-  void _createStateFields() {
+  void _createTransitionFields() {
     for (final state in enumFields) {
       buffer.writeln(
-        '''late final ${toBeatTransitionClassName(state)} ${toDartFieldCase(state)};''',
+        '''${toBeatTransitionBaseClassName(state)} get ${toDartFieldCase(state)} {
+          if (currentState.state == $baseName.$state) {
+            return ${toBeatTransitionRealClassName(state)}(this);
+          }
+          return ${toBeatTransitionDummyClassName(state)}();
+        }''',
       );
     }
   }
@@ -113,11 +118,6 @@ void _setContext($contextType context) {
       '  $beatStationClassName(this._initialState) {',
     );
     buffer.writeln('    history.add(_initialState);');
-    for (final state in enumFields) {
-      buffer.writeln(
-        '''${toDartFieldCase(state)} = ${toBeatTransitionClassName(state)}(this);''',
-      );
-    }
     buffer.writeln('  }');
   }
 

@@ -10,8 +10,12 @@ String toDartFieldCase(String str) {
 
 String toBaseBeatStateClassName(String name) =>
     '${toBeginningOfSentenceCase(name)}BeatState';
-String toBeatTransitionClassName(String baseName) =>
-    'On${toBeginningOfSentenceCase(baseName)}BeatState';
+String toBeatTransitionBaseClassName(String baseName) =>
+    'On${toBeginningOfSentenceCase(baseName)}TransitionsInterface';
+String toBeatTransitionRealClassName(String baseName) =>
+    'On${toBeginningOfSentenceCase(baseName)}Transitions';
+String toBeatTransitionDummyClassName(String baseName) =>
+    'On${toBeginningOfSentenceCase(baseName)}TransitionsDummy';
 String toExecMethodName(String baseName) =>
     'execWhen${toBeginningOfSentenceCase(baseName)}';
 String toMapMethodName(String baseName) =>

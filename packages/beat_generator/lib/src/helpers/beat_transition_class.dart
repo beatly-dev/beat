@@ -33,8 +33,34 @@ class BeatTransitionClassBuilder {
   final buffer = StringBuffer();
 
   String build() {
+    _createBaseClass();
+    _createRealClass();
+    _createDummyClass();
+    return buffer.toString();
+  }
+
+  void _createBaseClass() {
     for (final state in enumFields) {
-      final className = toBeatTransitionClassName(state);
+      final className = toBeatTransitionBaseClassName(state);
+      final body = StringBuffer();
+
+      final beatConfigs = beats[state] ?? [];
+
+      for (final config in beatConfigs) {
+        body.writeln(
+          '''
+void \$${config.event}();
+''',
+        );
+      }
+      buffer.writeln(createClass(className, body.toString(), isAbstract: true));
+    }
+  }
+
+  void _createRealClass() {
+    for (final state in enumFields) {
+      final className = toBeatTransitionRealClassName(state);
+      final baseClassName = toBeatTransitionBaseClassName(state);
       final body = StringBuffer();
       body.writeln(
         '''
@@ -48,14 +74,38 @@ class BeatTransitionClassBuilder {
       for (final config in beatConfigs) {
         body.writeln(
           '''
+@override
 void \$${config.event}() {
   _beatStation._setState($baseName.${config.to});
 }
 ''',
         );
       }
-      buffer.writeln(createClass(className, body.toString()));
+      buffer.writeln(
+        createClass('$className extends $baseClassName', body.toString()),
+      );
     }
-    return buffer.toString();
+  }
+
+  void _createDummyClass() {
+    for (final state in enumFields) {
+      final className = toBeatTransitionDummyClassName(state);
+      final baseClassName = toBeatTransitionBaseClassName(state);
+      final body = StringBuffer();
+
+      final beatConfigs = beats[state] ?? [];
+
+      for (final config in beatConfigs) {
+        body.writeln(
+          '''
+@override
+void \$${config.event}() {}
+''',
+        );
+      }
+      buffer.writeln(
+        createClass('$className extends $baseClassName', body.toString()),
+      );
+    }
   }
 }
