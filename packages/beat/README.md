@@ -18,7 +18,7 @@ Go to the [Beatly Book](https://book.beatly.dev/) for more information.
 - [ ] Support transition with an argument
 - [ ] Support delay
 - [ ] Support actions (fire-and-forget)
-	- [ ] callback action
+	- [x] callback action
 	- [ ] assign action
 	- [ ] choose action
 	- [ ] forwardTo action

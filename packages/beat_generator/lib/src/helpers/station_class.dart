@@ -68,7 +68,19 @@ class BeatStationBuilder {
     for (final config in commonBeats) {
       buffer.writeln(
         '''
+void _exec${toBeginningOfSentenceCase(config.event)}Actions() {
+  for (final action in ${toBeatActionVariableName(config.from, config.event, config.to)}.actions) {
+    if (action is DefaultAction) {
+      action.execute(currentState.state, currentState.context, '${config.event}');
+    }
+  }
+}
+''',
+      );
+      buffer.writeln(
+        '''
 void \$${config.event}() {
+  _exec${toBeginningOfSentenceCase(config.event)}Actions();
   _setState($baseName.${config.to});
 }
 ''',
