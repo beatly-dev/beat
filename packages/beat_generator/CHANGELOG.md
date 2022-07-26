@@ -1,3 +1,12 @@
+## 0.5.0
+
+> Note: This release has breaking changes.
+
+ - **REFACTOR**: remove unnecessary fields.
+ - **REFACTOR**: add createClass helper function.
+ - **FEAT**: prevent state changes when its not appropriate.
+ - **BREAKING** **FEAT**: refactor beat annotation declaration.
+
 ## 0.4.1
 
  - **FEAT**: support common (anytime) transition.

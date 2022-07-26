@@ -1,3 +1,10 @@
+## 0.5.0
+
+> Note: This release has breaking changes.
+
+ - **REFACTOR**: add createClass helper function.
+ - **BREAKING** **FEAT**: refactor beat annotation declaration.
+
 ## 0.4.0
 
 > Note: This release has breaking changes.
