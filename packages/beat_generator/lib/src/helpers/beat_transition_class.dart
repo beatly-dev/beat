@@ -77,8 +77,12 @@ void \$${config.event}();
           '''
 void _exec${toBeginningOfSentenceCase(config.event)}Actions() {
   for (final action in ${toBeatActionVariableName(config.from, config.event, config.to)}.actions) {
-    if (action is DefaultAction) {
+    final exec = () => 
       action.execute(_beatStation.currentState.state, _beatStation.currentState.context, '${config.event}');
+    if (action is AssignAction) {
+      _beatStation._setContext(exec());
+    } else if (action is DefaultAction) {
+      exec();
     }
   }
 }

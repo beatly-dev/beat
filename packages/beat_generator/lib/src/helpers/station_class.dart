@@ -70,8 +70,12 @@ class BeatStationBuilder {
         '''
 void _exec${toBeginningOfSentenceCase(config.event)}Actions() {
   for (final action in ${toBeatActionVariableName(config.from, config.event, config.to)}.actions) {
-    if (action is DefaultAction) {
+    final exec = () => 
       action.execute(currentState.state, currentState.context, '${config.event}');
+    if (action is AssignAction) {
+      _setContext(exec());
+    } else if (action is DefaultAction) {
+      exec();
     }
   }
 }
