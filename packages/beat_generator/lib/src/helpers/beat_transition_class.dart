@@ -75,8 +75,20 @@ void \$${config.event}();
       for (final config in beatConfigs) {
         body.writeln(
           '''
+void exec${toBeginningOfSentenceCase(config.event)}Actions() {
+  for (final action in ${toBeatActionVariableName(config.from, config.event, config.to)}.actions) {
+    if (action is DefaultAction) {
+      action.execute(_beatStation.currentState.state, _beatStation.currentState.context, '${config.event}');
+    }
+  }
+}
+''',
+        );
+        body.writeln(
+          '''
 @override
 void \$${config.event}() {
+  exec${toBeginningOfSentenceCase(config.event)}Actions();
   _beatStation._setState($baseName.${config.to});
 }
 ''',
