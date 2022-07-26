@@ -1,3 +1,7 @@
+## 0.5.4
+
+ - **FEAT**: support function action.
+
 ## 0.5.3
 
  - **FEAT**: support callback style AssignAction.
