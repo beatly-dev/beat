@@ -1,3 +1,8 @@
+## 0.5.2
+
+ - **REFACTOR**: scoping.
+ - **FEAT**: common transitions actions.
+
 ## 0.5.1
 
  - **FEAT**: support default action.
