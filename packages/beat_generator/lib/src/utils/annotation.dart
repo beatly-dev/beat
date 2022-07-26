@@ -33,7 +33,7 @@ Future<List<BeatConfig>> mapCommonBeatAnnotations<C>(
     if (!_beatChecker.isAssignableFromType(type)) {
       continue;
     }
-    final source = annotationElm.toSource();
+    final source = annotationElm.toSource().substring(1);
 
     final annotation = ConstantReader(annotationObj);
     final eventField = annotation.read('event');
@@ -70,4 +70,4 @@ String toBeatVariableDeclaration(
   String to,
   String source,
 ) =>
-    'const ${toBeatVariableName(from, event, to)} = ${source.substring(1)};';
+    'const ${toBeatVariableName(from, event, to)} = $source;';

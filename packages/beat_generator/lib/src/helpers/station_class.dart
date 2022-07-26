@@ -2,6 +2,7 @@ import 'package:analyzer/dart/element/element.dart';
 
 import '../models/beat_config.dart';
 import '../utils/context.dart';
+import '../utils/create_class.dart';
 import '../utils/string.dart';
 
 /// Top-level class
@@ -44,7 +45,6 @@ class BeatStationBuilder {
   }
 
   String build() {
-    buffer.writeln('class $beatStationClassName {');
     _createConstructor();
     _createFields();
     _createStateFields();
@@ -56,8 +56,10 @@ class BeatStationBuilder {
     _createCommonBeatTransitions();
     _createListenersMethods();
     _createNotifyListenersMethod();
-    buffer.writeln('}');
-    return buffer.toString();
+    return createClass(
+      beatStationClassName,
+      buffer.toString(),
+    );
   }
 
   void _createCommonBeatTransitions() {

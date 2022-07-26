@@ -4,7 +4,7 @@ Heavily inspired by [xstate.js](https://xstate.js.org).
 
 Go to the [Beatly Book](https://book.beatly.dev/) for more information.
 
-# Features compatible with xstate.js
+# Roadmap - Features compatible with xstate.js
 
 - [x] Support simple state transition without context
 - [x] Listen on transition
@@ -14,6 +14,7 @@ Go to the [Beatly Book](https://book.beatly.dev/) for more information.
 - [ ] Support context
 	- [x] Initialize with context
 	- [x] Get current context
+	- [ ] assign new context
 - [ ] Support transition with an argument
 - [ ] Support delay
 - [ ] Support actions (fire-and-forget)
@@ -66,7 +67,6 @@ Go to the [Beatly Book](https://book.beatly.dev/) for more information.
 - `state.toString()`: naturally supported
 - `state.can(event)` is not needed because we have typed system
 - wildcard transitions and forbidden transitions are not needed because there will be no typo
-
 
 # Additionals for flutter
 

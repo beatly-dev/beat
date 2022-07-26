@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
 
 import '../utils/context.dart';
+import '../utils/create_class.dart';
 import '../utils/string.dart';
 
 class BeatStateBuilder {
@@ -24,9 +25,9 @@ class BeatStateBuilder {
     final contextType =
         isNullContextType(this.contextType) ? 'dynamic' : this.contextType;
 
-    buffer.writeln(
+    return createClass(
+      beatStateClassName,
       '''
-class $beatStateClassName {
   $beatStateClassName({
     required this.state,
     ${isNullableContextType(contextType) ? '' : 'required'} this.context,
@@ -36,9 +37,7 @@ class $beatStateClassName {
 
   @override
   String toString() => '$beatStateClassName(state: \$state, context: \$context)';
-}
 ''',
     );
-    return buffer.toString();
   }
 }

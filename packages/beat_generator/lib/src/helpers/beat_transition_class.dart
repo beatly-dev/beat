@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
 
 import '../models/beat_config.dart';
+import '../utils/create_class.dart';
 import '../utils/string.dart';
 
 class BeatTransitionClassBuilder {
@@ -34,9 +35,9 @@ class BeatTransitionClassBuilder {
   String build() {
     for (final state in enumFields) {
       final className = toBeatTransitionClassName(state);
-      buffer.writeln(
+      final body = StringBuffer();
+      body.writeln(
         '''
-class $className {
   $className(this._beatStation);
   final $beatStationClassName _beatStation;
   ''',
@@ -45,7 +46,7 @@ class $className {
       final beatConfigs = beats[state] ?? [];
 
       for (final config in beatConfigs) {
-        buffer.writeln(
+        body.writeln(
           '''
 void \$${config.event}() {
   _beatStation._setState($baseName.${config.to});
@@ -53,12 +54,7 @@ void \$${config.event}() {
 ''',
         );
       }
-
-      buffer.writeln(
-        '''
-}
-''',
-      );
+      buffer.writeln(createClass(className, body.toString()));
     }
     return buffer.toString();
   }
