@@ -11,24 +11,24 @@ void main(List<String> arguments) async {
     print("Counter is ${counter.currentState}");
   });
 
-  counter.added.$add();
+  counter.$add();
   sleep(Duration(milliseconds: 1000));
-  counter.added.$add();
+  counter.$add();
   sleep(Duration(milliseconds: 1000));
-  counter.added.$add();
+  counter.$add();
   sleep(Duration(milliseconds: 1000));
-  counter.added.$take();
+  counter.$take();
   sleep(Duration(milliseconds: 1000));
-  counter.added.$take();
+  counter.$take();
   sleep(Duration(milliseconds: 1000));
-  counter.added.$take();
+  counter.$take();
   sleep(Duration(milliseconds: 1000));
-  counter.taken.$take();
+  counter.$take();
   sleep(Duration(milliseconds: 1000));
-  counter.taken.$take();
+  counter.$take();
   sleep(Duration(milliseconds: 1000));
-  counter.taken.$take();
+  counter.$take();
   sleep(Duration(milliseconds: 1000));
-  counter.taken.$add();
+  counter.$add();
   sleep(Duration(milliseconds: 1000));
 }
