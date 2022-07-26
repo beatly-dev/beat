@@ -34,3 +34,14 @@ String toBeatStationClassName(String baseName) =>
 
 String toBeatStateClassName(String baseName) =>
     '${toBeginningOfSentenceCase(baseName)}BeatState';
+
+String toBeatActionVariableName(String from, String event, String to) =>
+    '_${toDartFieldCase(event)}From${toBeginningOfSentenceCase(from)}To${toBeginningOfSentenceCase(to)}';
+
+String toBeatActionVariableDeclaration(
+  String from,
+  String event,
+  String to,
+  String source,
+) =>
+    'const ${toBeatActionVariableName(from, event, to)} = $source;';

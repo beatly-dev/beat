@@ -5,7 +5,6 @@ import 'package:source_gen/source_gen.dart';
 
 import '../models/beat_config.dart';
 import 'field.dart';
-import 'string.dart';
 
 Future<Map<String, List<BeatConfig>>> mapBeatAnnotations<C>(
   String stateName,
@@ -60,14 +59,3 @@ List<DartObject> _beatAnnotations(Element element) =>
 
 List<ConstantReader> beatAnnotations(Element element) =>
     _beatAnnotations(element).map((e) => ConstantReader(e)).toList();
-
-String toBeatVariableName(String from, String event, String to) =>
-    '_${toDartFieldCase(event)}From${toBeginningOfSentenceCase(from)}To${toBeginningOfSentenceCase(to)}';
-
-String toBeatVariableDeclaration(
-  String from,
-  String event,
-  String to,
-  String source,
-) =>
-    'const ${toBeatVariableName(from, event, to)} = $source;';

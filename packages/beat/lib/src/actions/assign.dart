@@ -1,6 +1,6 @@
-import 'interface.dart';
+import 'default.dart';
 
 class AssignAction<State, Context, Event>
-    extends ActionInterface<State, Context, Event, Context> {
+    extends DefaultAction<State, Context, Event, Context> {
   const AssignAction(super.action);
 }

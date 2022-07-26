@@ -8,6 +8,7 @@ void main(List<String> arguments) async {
   counter.addListener(() {
     print("Counter is ${counter.currentState}");
   });
+  counter.added.$add();
 
   while (true) {}
 }
