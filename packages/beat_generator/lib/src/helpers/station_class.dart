@@ -74,6 +74,7 @@ class BeatStationBuilder {
 
   void clearState() {
     _history.clear();
+    resetState();
   }
 ''',
     );
