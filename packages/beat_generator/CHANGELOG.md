@@ -1,3 +1,7 @@
+## 0.6.2+1
+
+ - **FIX**: fix a clear history bug.
+
 ## 0.6.2
 
  - **FEAT**: add `map`/`exec`.
