@@ -1,3 +1,7 @@
+## 0.6.2
+
+ - **FEAT**: add `map`/`exec`.
+
 ## 0.6.1+2
 
  - **FIX**: fix dynamic transition argument error.
