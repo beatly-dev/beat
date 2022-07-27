@@ -2,11 +2,15 @@ import 'package:beat/beat.dart';
 
 part 'counter.state.beat.dart';
 
+const addBeat = Beat(
+  event: 'add',
+  to: 'added',
+  actions: [AssignAction(adder), save, done],
+);
+
 @BeatStation(
   contextType: int,
 )
-@Beat(
-    event: 'add', to: Counter.added, actions: [AssignAction(adder), save, done])
 @Beat(
     event: 'take',
     to: Counter.taken,
@@ -15,6 +19,7 @@ part 'counter.state.beat.dart';
     event: 'reset',
     to: Counter.added,
     actions: [AssignAction(reset), save, done])
+@addBeat
 enum Counter {
   @Beat(event: 'test', to: Counter.added)
   @Invokes([InvokeFuture(save)])

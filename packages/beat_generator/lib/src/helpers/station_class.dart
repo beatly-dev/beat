@@ -248,6 +248,34 @@ void removeListener(Function() callback) {
   }
 
   void _createExecMethods() {
+    final arguments = [
+      ...enumFields.map(
+        (name) => '''
+Function()? on${toBeginningOfSentenceCase(name)}
+''',
+      ),
+      'required Function() orElse',
+    ].join(', ');
+
+    final body = [
+      ...enumFields.map(
+        (name) => '''
+if (currentState.state == $baseName.$name) {
+  return on${toBeginningOfSentenceCase(name)}?.call() ?? orElse();
+}
+''',
+      )
+    ].join('else ');
+    buffer.writeln(
+      '''
+exec({
+  $arguments,
+}) {
+  $body
+  return orElse();
+}
+''',
+    );
     for (final name in enumFields) {
       buffer.writeln(
         '''
@@ -262,6 +290,35 @@ void removeListener(Function() callback) {
   }
 
   void _createMapMethods() {
+    final arguments = [
+      ...enumFields.map(
+        (name) => '''
+T Function()? on${toBeginningOfSentenceCase(name)}
+''',
+      ),
+      'required T Function() orElse',
+    ].join(', ');
+
+    final body = [
+      ...enumFields.map(
+        (name) => '''
+if (currentState.state == $baseName.$name) {
+  return on${toBeginningOfSentenceCase(name)}?.call() ?? orElse();
+}
+''',
+      )
+    ].join('else ');
+    buffer.writeln(
+      '''
+T map<T>({
+  $arguments,
+}) {
+  $body
+  return orElse();
+}
+''',
+    );
+
     for (final name in enumFields) {
       buffer.writeln(
         '''
