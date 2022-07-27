@@ -1,3 +1,9 @@
+## 0.6.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: action with argument, variable length args of action.
+
 ## 0.5.4
 
  - **FEAT**: support function action.

@@ -1,3 +1,10 @@
+## 0.6.0
+
+> Note: This release has breaking changes.
+
+ - **REFACTOR**: rename default action file.
+ - **BREAKING** **FEAT**: action with argument, variable length args of action.
+
 ## 0.5.2
 
  - **FEAT**: support callback style AssignAction.
