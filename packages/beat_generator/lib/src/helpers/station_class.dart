@@ -58,9 +58,24 @@ class BeatStationBuilder {
     _createCommonBeatTransitions();
     _createListenersMethods();
     _createNotifyListenersMethod();
+    _createReset();
     return createClass(
       beatStationClassName,
       buffer.toString(),
+    );
+  }
+
+  void _createReset() {
+    buffer.writeln(
+      '''
+  void resetState() {
+    _history.add(_initialState);
+  }
+
+  void clearState() {
+    _history.clear();
+  }
+''',
     );
   }
 
@@ -122,7 +137,7 @@ void \$${config.event}<Data>([Data? data]) {
       '''
 void _setState($baseName state) {
   final nextState = $beatStateClassName(state: state, context: currentState.context);
-  history.add(nextState);
+  _history.add(nextState);
   _notifyListeners();
 }
 ''',
@@ -136,7 +151,7 @@ void _setState($baseName state) {
       '''
 void _setContext($contextType context) {
   final nextState = $beatStateClassName(state: currentState.state, context: context);
-  history.add(nextState);
+  _history.add(nextState);
   _notifyListeners();
 }
 ''',
@@ -147,14 +162,15 @@ void _setContext($contextType context) {
     buffer.writeln(
       '  $beatStationClassName(this._initialState) {',
     );
-    buffer.writeln('    history.add(_initialState);');
+    buffer.writeln('    _history.add(_initialState);');
     buffer.writeln('  }');
   }
 
   void _createFields() {
     buffer.writeln(
       '''
-  final List<$beatStateClassName> history = [];
+  final List<$beatStateClassName> _history = [];
+  List<$beatStateClassName> get history => [..._history];
   late final $beatStateClassName _initialState;
   $beatStateClassName get currentState => history.isEmpty
       ? _initialState

@@ -6,11 +6,13 @@ Go to the [Beatly Book](https://book.beatly.dev/) for more information.
 
 # Roadmap - Features compatible with xstate.js
 
+A roadmap is as follows, but not in the exact order. 
+
 - [x] Support simple state transition without context
 - [x] Listen on transition
 - [x] Map states
 - [x] Execute callback on state change
-- [ ] Support reset
+- [x] Support reset
 - [x] Support context
 	- [x] Initialize with context
 	- [x] Get current context
@@ -38,7 +40,7 @@ Go to the [Beatly Book](https://book.beatly.dev/) for more information.
 - [ ] Support conditional (guarded) transition
 	- [ ] Support custom functions
 	- [ ] Support `in` state condition
-- [ ] Support eventless transition
+- [ ] Support eventless(always) transition
 - [ ] Support internal transition
 - [ ] Support external transition
 - [ ] Support multiple targets
