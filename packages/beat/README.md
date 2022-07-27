@@ -15,11 +15,12 @@ Go to the [Beatly Book](https://book.beatly.dev/) for more information.
 	- [x] Initialize with context
 	- [x] Get current context
 	- [x] assign new context
-- [ ] Support transition with an argument
+- [x] Support transition with an argument
 - [ ] Support delay
 - [ ] Support actions (fire-and-forget)
 	- [x] callback action
 	- [x] assign action
+	- [x] callback action with variable length of arguments
 	- [ ] choose action
 	- [ ] forwardTo action
 	- [ ] log action
