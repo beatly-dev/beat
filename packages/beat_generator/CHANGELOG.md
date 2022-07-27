@@ -1,3 +1,7 @@
+## 0.6.1+2
+
+ - **FIX**: fix dynamic transition argument error.
+
 ## 0.6.1+1
 
  - **FIX**: fix to dynamic code generation.
