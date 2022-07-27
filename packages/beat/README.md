@@ -31,7 +31,7 @@ A roadmap is as follows, but not in the exact order.
 	- [ ] respond action
 	- [ ] send action
 - [ ] Support invoking services
-	- [ ] promises
+	- [x] async function (or Future)
 	- [ ] callback
 	- [ ] observables
 	- [ ] other beat station
@@ -54,12 +54,12 @@ A roadmap is as follows, but not in the exact order.
 - [ ] Support `state.meta`, `state.tags`
 - [x] Support state change history
 - [ ] Support history json to persist 
+	- `toString()` is supported
 - [ ] Support nested state
 - [ ] Support parallel state
 	- [ ] Define parallel state
 	- [ ] Support multiple targets event
 - [ ] Support scxml
-- [ ] Support stately.ai
 - [ ] Support bootstraping
 - [ ] Support CLI/GUI tools
 - [ ] xstate.js compatible beat station

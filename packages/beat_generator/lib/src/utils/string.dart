@@ -1,3 +1,5 @@
+import '../models/invoke_config.dart';
+
 String toBeginningOfSentenceCase(String str) {
   if (str.isEmpty) return str;
   return '${str[0].toUpperCase()}${str.substring(1)}';
@@ -45,3 +47,8 @@ String toBeatActionVariableDeclaration(
   String source,
 ) =>
     'const ${toBeatActionVariableName(from, event, to)} = $source;';
+
+String toInvokeVariableName(InvokeConfig config) =>
+    '_invokeOn${toBeginningOfSentenceCase('${config.stateName}\$${config.on}')}';
+String toInvokeVariableDeclaration(InvokeConfig config) =>
+    'const ${toInvokeVariableName(config)} = ${config.source};';

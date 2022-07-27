@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'counter.state.dart';
 
 void main(List<String> arguments) async {
@@ -12,23 +10,27 @@ void main(List<String> arguments) async {
   });
 
   counter.$add('hi');
-  sleep(Duration(milliseconds: 1000));
+  // to invoke services, use `Future.delay` rather than `sleep`.
+  await Future.delayed(Duration(milliseconds: 1000));
   counter.$add('hi');
-  sleep(Duration(milliseconds: 1000));
+  await Future.delayed(Duration(milliseconds: 1000));
   counter.$add('hi');
-  sleep(Duration(milliseconds: 1000));
+  await Future.delayed(Duration(milliseconds: 1000));
+
   counter.$take('hi');
-  sleep(Duration(milliseconds: 1000));
+  await Future.delayed(Duration(milliseconds: 1000));
+
   counter.$take('hi');
-  sleep(Duration(milliseconds: 1000));
+  await Future.delayed(Duration(milliseconds: 1000));
   counter.$take('hi');
-  sleep(Duration(milliseconds: 1000));
+  await Future.delayed(Duration(milliseconds: 1000));
+
   counter.$take('hi');
-  sleep(Duration(milliseconds: 1000));
+  await Future.delayed(Duration(milliseconds: 1000));
   counter.$take('hi');
-  sleep(Duration(milliseconds: 1000));
+  await Future.delayed(Duration(milliseconds: 1000));
   counter.$take('hi');
-  sleep(Duration(milliseconds: 1000));
+  await Future.delayed(Duration(milliseconds: 1000));
   counter.$add('hi');
-  sleep(Duration(milliseconds: 1000));
+  await Future.delayed(Duration(milliseconds: 1000));
 }

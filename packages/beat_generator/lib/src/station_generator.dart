@@ -6,8 +6,10 @@ import 'package:source_gen/source_gen.dart';
 import 'helpers/beat_annotation_variables.dart';
 import 'helpers/beat_state_class.dart';
 import 'helpers/beat_transition_class.dart';
+import 'helpers/invoke_services.dart';
 import 'helpers/station_class.dart';
-import 'utils/annotation.dart';
+import 'utils/beat_annotation.dart';
+import 'utils/invoke_annotation.dart';
 
 class StationGenerator extends GeneratorForAnnotation<BeatStation> {
   @override
@@ -28,6 +30,7 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
       element.name,
       element,
     );
+    final invokes = await mapInvokeAnnotations(element.name, element.fields);
     return [
       '// ignore_for_file: avoid_function_literals_in_foreach_calls',
       BeatStationBuilder(
@@ -35,6 +38,7 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
         contextType: contextType,
         beats: beats,
         commonBeats: commonBeats,
+        invokes: invokes,
       ).build(),
       BeatTransitionClassBuilder(
         beats: beats,
@@ -47,6 +51,11 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
         ...beats.values.reduce((value, element) => [...value, ...element]),
         ...commonBeats
       ]).build(),
+      InvokeServicesBuilder(
+        invokes: invokes,
+        contextType: contextType,
+        baseEnum: element,
+      ).build(),
     ];
   }
 }

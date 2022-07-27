@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
 
 import '../models/beat_config.dart';
+import '../models/invoke_config.dart';
 import '../utils/context.dart';
 import '../utils/create_class.dart';
 import '../utils/string.dart';
@@ -28,6 +29,7 @@ class BeatStationBuilder {
   late final List<String> enumFields;
   late final String beatStateClassName;
   final Map<String, List<BeatConfig>> beats;
+  final Map<String, List<InvokeConfig>> invokes;
 
   final buffer = StringBuffer();
 
@@ -36,6 +38,7 @@ class BeatStationBuilder {
     required this.contextType,
     required this.commonBeats,
     required this.beats,
+    required this.invokes,
   }) {
     baseName = baseEnum.name;
     beatStationClassName = toBeatStationClassName(baseName);
@@ -54,6 +57,7 @@ class BeatStationBuilder {
     _createMapMethods();
     _createCurrentStateCheckerGetter();
     _createSetState();
+    _createInvokeServices();
     _createSetContext();
     _createCommonBeatTransitions();
     _createListenersMethods();
@@ -62,6 +66,38 @@ class BeatStationBuilder {
     return createClass(
       beatStationClassName,
       buffer.toString(),
+    );
+  }
+
+  void _createInvokeServices() {
+    final body = invokes.keys.map((state) {
+      final configs = invokes[state]!;
+      return configs.map((config) {
+        final varName = toInvokeVariableName(config);
+        return '''
+if (currentState.state == ${config.stateName}.${config.on}) {
+  for (final invoke in $varName.invokes) {
+    if (invoke is InvokeFuture) {
+      final onDone = invoke.onDone;
+      final onError = invoke.onError;
+      try {
+        await invoke.invokeWith(currentState.state, currentState.context, '');
+      } catch (_) {
+        
+      }
+    }
+  }
+}
+''';
+      }).join('else ');
+    }).join(' ');
+
+    buffer.writeln(
+      '''
+_invokeServices() async {
+  $body
+}
+''',
     );
   }
 
@@ -140,6 +176,7 @@ void _setState($baseName state) {
   final nextState = $beatStateClassName(state: state, context: currentState.context);
   _history.add(nextState);
   _notifyListeners();
+  _invokeServices();
 }
 ''',
     );
