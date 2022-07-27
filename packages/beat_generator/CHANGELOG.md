@@ -1,3 +1,7 @@
+## 0.6.3
+
+ - **FEAT**: invoking async.
+
 ## 0.6.2+1
 
  - **FIX**: fix a clear history bug.

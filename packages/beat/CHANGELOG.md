@@ -1,3 +1,7 @@
+## 0.6.2
+
+ - **FEAT**: invoking async.
+
 ## 0.6.1+1
 
  - **FIX**: fix to dynamic code generation.
