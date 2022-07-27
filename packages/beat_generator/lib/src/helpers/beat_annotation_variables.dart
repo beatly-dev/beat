@@ -15,7 +15,6 @@ class BeatAnnotationVariablesBuilder {
         beat.to,
         beat.source,
       );
-      print(decl);
       buffer.writeln(decl);
     }
     return buffer.toString();

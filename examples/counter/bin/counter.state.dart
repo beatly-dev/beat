@@ -16,9 +16,11 @@ part 'counter.state.beat.dart';
     to: Counter.added,
     actions: [AssignAction(reset), save, done])
 enum Counter {
+  @Beat(event: 'test', to: Counter.added)
   @Invokes([InvokeFuture(save)])
   added,
 
+  @Beat(event: 'test', to: Counter.added)
   @Invokes([InvokeFuture(save)])
   taken,
 }

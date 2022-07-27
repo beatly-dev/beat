@@ -49,7 +49,7 @@ class BeatTransitionClassBuilder {
       for (final config in beatConfigs) {
         body.writeln(
           '''
-void \$${config.event}([Data? data]);
+void \$${config.event}<Data>([Data? data]);
 ''',
         );
       }
@@ -100,10 +100,10 @@ void _exec${toBeginningOfSentenceCase(config.event)}Actions(EventData eventData)
           '''
 @override
 void \$${config.event}<Data>([Data? data]) {
-  _exec${toBeginningOfSentenceCase(config.event)}Actions(EventData{
+  _exec${toBeginningOfSentenceCase(config.event)}Actions(EventData(
     event: '${config.event}',
     data: data,
-  });
+  ));
   _beatStation._setState($baseName.${config.to});
 }
 ''',
@@ -127,7 +127,7 @@ void \$${config.event}<Data>([Data? data]) {
         body.writeln(
           '''
 @override
-void \$${config.event}([Data? data]) {}
+void \$${config.event}<Data>([Data? data]) {}
 ''',
         );
       }
