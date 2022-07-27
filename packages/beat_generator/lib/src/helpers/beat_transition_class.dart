@@ -49,7 +49,7 @@ class BeatTransitionClassBuilder {
       for (final config in beatConfigs) {
         body.writeln(
           '''
-void \$${config.event}();
+void \$${config.event}([Data? data]);
 ''',
         );
       }
@@ -83,11 +83,11 @@ void _exec${toBeginningOfSentenceCase(config.event)}Actions(EventData eventData)
       _beatStation._setContext(exec());
     } else if (action is DefaultAction) {
       exec();
-    } else if (action is Function(Counter, int, EventData)) {
+    } else if (action is Function($baseName, $contextType, EventData)) {
       action(_beatStation.currentState.state, _beatStation.currentState.context, eventData);
-    } else if (action is Function(Counter, int)) {
+    } else if (action is Function($baseName, $contextType)) {
       action(_beatStation.currentState.state, _beatStation.currentState.context);
-    } else if (action is Function(Counter)) {
+    } else if (action is Function($baseName)) {
       action(_beatStation.currentState.state);
     } else if (action is Function()) {
       action();
@@ -127,7 +127,7 @@ void \$${config.event}<Data>([Data? data]) {
         body.writeln(
           '''
 @override
-void \$${config.event}() {}
+void \$${config.event}([Data? data]) {}
 ''',
         );
       }

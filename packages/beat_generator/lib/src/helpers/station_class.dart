@@ -91,11 +91,11 @@ void _exec${toBeginningOfSentenceCase(config.event)}Actions(EventData eventData)
       _setContext(exec());
     } else if (action is DefaultAction) {
       exec();
-    } else if (action is Function(Counter, int, EventData)) {
+    } else if (action is Function($baseName, $contextType, EventData)) {
       action(currentState.state, currentState.context, eventData);
-    } else if (action is Function(Counter, int)) {
+    } else if (action is Function($baseName, $contextType)) {
       action(currentState.state, currentState.context);
-    } else if (action is Function(Counter)) {
+    } else if (action is Function($baseName)) {
       action(currentState.state);
     } else if (action is Function()) {
       action();

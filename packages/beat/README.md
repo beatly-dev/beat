@@ -9,7 +9,7 @@ Go to the [Beatly Book](https://book.beatly.dev/) for more information.
 A roadmap is as follows, but not in the exact order. 
 
 - [x] Support simple state transition without context
-- [x] Listen on transition
+- [x] Listen on state and context changes
 - [x] Map states
 - [x] Execute callback on state change
 - [x] Support reset
