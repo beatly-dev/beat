@@ -75,16 +75,22 @@ void \$${config.event}();
       for (final config in beatConfigs) {
         body.writeln(
           '''
-void _exec${toBeginningOfSentenceCase(config.event)}Actions() {
+void _exec${toBeginningOfSentenceCase(config.event)}Actions(EventData eventData) {
   for (final action in ${toBeatActionVariableName(config.from, config.event, config.to)}.actions) {
     exec() => 
-      action.execute(_beatStation.currentState.state, _beatStation.currentState.context, '${config.event}');
+      action.execute(_beatStation.currentState.state, _beatStation.currentState.context, eventData);
     if (action is AssignAction) {
       _beatStation._setContext(exec());
     } else if (action is DefaultAction) {
       exec();
-    } else if (action is Function(Counter, int, String)) {
-      action(_beatStation.currentState.state, _beatStation.currentState.context, 'add');
+    } else if (action is Function(Counter, int, EventData)) {
+      action(_beatStation.currentState.state, _beatStation.currentState.context, eventData);
+    } else if (action is Function(Counter, int)) {
+      action(_beatStation.currentState.state, _beatStation.currentState.context);
+    } else if (action is Function(Counter)) {
+      action(_beatStation.currentState.state);
+    } else if (action is Function()) {
+      action();
     }
   }
 }
@@ -93,8 +99,11 @@ void _exec${toBeginningOfSentenceCase(config.event)}Actions() {
         body.writeln(
           '''
 @override
-void \$${config.event}() {
-  _exec${toBeginningOfSentenceCase(config.event)}Actions();
+void \$${config.event}<Data>([Data? data]) {
+  _exec${toBeginningOfSentenceCase(config.event)}Actions(EventData{
+    event: '${config.event}',
+    data: data,
+  });
   _beatStation._setState($baseName.${config.to});
 }
 ''',
