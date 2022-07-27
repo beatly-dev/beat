@@ -1,3 +1,7 @@
+## 0.6.1+1
+
+ - **FIX**: fix to dynamic code generation.
+
 ## 0.6.1
 
  - **FEAT**: support resetState, clearState.
