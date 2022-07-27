@@ -1,3 +1,7 @@
+## 0.6.1
+
+ - **FEAT**: support resetState, clearState.
+
 ## 0.6.0
 
 > Note: This release has breaking changes.
