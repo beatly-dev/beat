@@ -1,3 +1,7 @@
+## 0.6.5
+
+ - **FEAT**: transition onDone/onError.
+
 ## 0.6.4
 
  - **REFACTOR**: action executor.
