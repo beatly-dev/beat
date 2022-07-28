@@ -7,6 +7,7 @@ import 'helpers/beat_annotation_variables.dart';
 import 'helpers/beat_state_class.dart';
 import 'helpers/beat_transition_class.dart';
 import 'helpers/invoke_services.dart';
+import 'helpers/sender_class.dart';
 import 'helpers/station_class.dart';
 import 'utils/beat_annotation.dart';
 import 'utils/invoke_annotation.dart';
@@ -47,14 +48,18 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
         contextType: contextType,
       ).build(),
       BeatStateBuilder(contextType: contextType, baseEnum: element).build(),
-      BeatAnnotationVariablesBuilder([
-        ...beats.values.reduce((value, element) => [...value, ...element]),
-        ...commonBeats
-      ]).build(),
+      BeatAnnotationVariablesBuilder(
+        [...beats.values.expand((element) => element), ...commonBeats],
+      ).build(),
       InvokeServicesBuilder(
         invokes: invokes,
         contextType: contextType,
         baseEnum: element,
+      ).build(),
+      SenderClassBuilder(
+        beats: beats,
+        commonBeats: commonBeats,
+        baseName: element.name,
       ).build(),
     ];
   }

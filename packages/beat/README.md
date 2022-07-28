@@ -66,7 +66,8 @@ A roadmap is as follows, but the order does not matter.
 - [ ] Support parallel state
 	- [ ] Define parallel state
 	- [ ] Support multiple targets event
-- [ ] Support `send()` or `transition()` styled transition
+- [x] Support `send()` or `transition()` styled transition
+	- `station.send` is supported
 - [ ] Support scxml
 - [ ] Support bootstrapping
 - [ ] Support CLI/GUI tools

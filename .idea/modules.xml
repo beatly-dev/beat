@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/packages/flutter_beat/melos_flutter_beat.iml" filepath="$PROJECT_DIR$/packages/flutter_beat/melos_flutter_beat.iml" />
       <module fileurl="file://$PROJECT_DIR$/examples/login/melos_login.iml" filepath="$PROJECT_DIR$/examples/login/melos_login.iml" />
       <module fileurl="file://$PROJECT_DIR$/examples/simple/melos_simple.iml" filepath="$PROJECT_DIR$/examples/simple/melos_simple.iml" />
+      <module fileurl="file://$PROJECT_DIR$/examples/use_sender/melos_use_sender.iml" filepath="$PROJECT_DIR$/examples/use_sender/melos_use_sender.iml" />
       <module fileurl="file://$PROJECT_DIR$/melos_beat.iml" filepath="$PROJECT_DIR$/melos_beat.iml" />
     </modules>
   </component>

@@ -52,3 +52,6 @@ String toInvokeVariableName(InvokeConfig config) =>
     '_invokeOn${toBeginningOfSentenceCase('${config.stateName}\$${config.on}')}';
 String toInvokeVariableDeclaration(InvokeConfig config) =>
     'const ${toInvokeVariableName(config)} = ${config.source};';
+
+String toBeatSenderClassName(String base) =>
+    '${toBeginningOfSentenceCase(base)}BeatSender';

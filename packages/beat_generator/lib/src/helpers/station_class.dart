@@ -53,6 +53,7 @@ class BeatStationBuilder {
   String build() {
     _createConstructor();
     _createFields();
+    _createBeatSender();
     _createTransitionFields();
     _createExecMethods();
     _createMapMethods();
@@ -67,6 +68,14 @@ class BeatStationBuilder {
     return createClass(
       beatStationClassName,
       buffer.toString(),
+    );
+  }
+
+  void _createBeatSender() {
+    buffer.writeln(
+      '''
+${toBeatSenderClassName(baseName)} get send => ${toBeatSenderClassName(baseName)}(this);
+''',
     );
   }
 
