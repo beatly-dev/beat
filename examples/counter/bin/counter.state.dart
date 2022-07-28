@@ -13,14 +13,13 @@ enum Counter {
   @Beat(event: 'reset', to: Counter.added, actions: [AssignAction(reset)])
   @Invokes([
     InvokeFuture(save,
-        onDone: AfterInvokeFuture(to: 'added', actions: [AssignAction(adder)]))
+        onDone: AfterInvoke(to: 'added', actions: [AssignAction(adder)]))
   ])
   added,
 
   @Beat(event: 'test', to: Counter.added)
   @Invokes([
-    InvokeFuture(saveError,
-        onError: AfterInvokeFuture(to: '', actions: [logError]))
+    InvokeFuture(saveError, onError: AfterInvoke(to: '', actions: [logError]))
   ])
   taken,
 }
