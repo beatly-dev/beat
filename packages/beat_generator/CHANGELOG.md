@@ -1,3 +1,8 @@
+## 0.6.4
+
+ - **REFACTOR**: action executor.
+ - **FEAT**: support onDone/onError on invoke async.
+
 ## 0.6.3
 
  - **FEAT**: invoking async.

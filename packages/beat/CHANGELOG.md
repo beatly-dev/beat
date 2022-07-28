@@ -1,3 +1,9 @@
+## 0.7.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **REFACTOR**: rename files and classes.
+
 ## 0.6.2
 
  - **FEAT**: invoking async.
