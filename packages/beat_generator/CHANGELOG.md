@@ -1,3 +1,9 @@
+## 0.7.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: Compound State arrived!
+
 ## 0.6.6
 
  - **FEAT**: adding sender styled event trigger.
