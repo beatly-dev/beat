@@ -11,12 +11,26 @@ const addBeat = Beat(event: 'add', to: 'added', actions: [AssignAction(adder)]);
 enum Counter {
   @Beat(event: 'test', to: Counter.added)
   @Beat(event: 'reset', to: Counter.added, actions: [AssignAction(reset)])
-  @Invokes([InvokeFuture(save)])
+  @Invokes([
+    InvokeFuture(save,
+        onDone: AfterInvokeFuture(to: 'added', actions: [AssignAction(adder)]))
+  ])
   added,
 
   @Beat(event: 'test', to: Counter.added)
-  @Invokes([InvokeFuture(save)])
+  @Invokes([
+    InvokeFuture(saveError,
+        onError: AfterInvokeFuture(to: '', actions: [logError]))
+  ])
   taken,
+}
+
+saveError(_, __, ___) async {
+  throw UnimplementedError();
+}
+
+logError() {
+  print("Error on Save!");
 }
 
 int adder(Counter currentState, int prevContext, EventData event) {

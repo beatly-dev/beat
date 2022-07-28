@@ -75,6 +75,8 @@ class BeatStationBuilder {
       final configs = invokes[state]!;
       return configs.map((config) {
         final varName = toInvokeVariableName(config);
+
+        /// TODO: transition on done/error
         return '''
 if (currentState.state == ${config.stateName}.${config.on}) {
   for (final invoke in $varName.invokes) {
@@ -84,8 +86,25 @@ if (currentState.state == ${config.stateName}.${config.on}) {
         final onError = invoke.onError;
         try {
           await invoke.invokeWith(currentState.state, currentState.context, '');
+          for (final action in onDone.actions) {
+            ${ActionExecutorBuilder(
+          actionName: 'action',
+          baseName: baseName,
+          contextType: contextType,
+          eventData: "EventData(event: 'invoke', data: null)",
+          isStation: true,
+        ).build()}
+          }
         } catch (_) {
-          
+          for (final action in onError.actions) {
+            ${ActionExecutorBuilder(
+          actionName: 'action',
+          baseName: baseName,
+          contextType: contextType,
+          eventData: "EventData(event: 'invoke', data: null)",
+          isStation: true,
+        ).build()}
+          }
         }
       })();
     }
