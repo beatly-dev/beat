@@ -1,6 +1,10 @@
+> It is not product-ready. You should carefully consider using this package
+> in your production environment.
+
 # Beat Station - State management with state machine
 
-Heavily inspired by [xstate.js](https://xstate.js.org). 
+This project is my toy project to simplify the state management flows in `Flutter` and `dart`. Whole functionalities are heavily inspired by [xstate.js](https://xstate.js.org).
+I highly recommend reading the docs of [xstate.js](https://xstate.js.org).
 
 Go to the [Beatly Book](https://book.beatly.dev/) for more information.
 

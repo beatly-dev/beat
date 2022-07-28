@@ -10,10 +10,10 @@ class InvokeFuture<State, Context, Event, Result>
     this.onError = const AfterInvoke(to: '', actions: []),
   });
 
-  /// Actions to execute when the async operation is completed.
+  /// Transition to execute when the async operation is completed.
   final AfterInvoke onDone;
 
-  /// Actions to execute when the async operation is cancelled or thrown.
+  /// Transition to execute when the async operation is cancelled or thrown.
   final AfterInvoke onError;
 }
 
