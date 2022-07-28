@@ -19,7 +19,7 @@ class AfterInvoke<State> {
   final State to;
   final List<dynamic> actions;
 
-  const AfterInvoke({required this.to, required this.actions});
+  const AfterInvoke({required this.to, this.actions = const []});
 
   @override
   String toString() => 'AfterInvokeFuture(to: $to, actions: $actions)';
