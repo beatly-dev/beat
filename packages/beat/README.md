@@ -18,40 +18,40 @@ A roadmap is as follows, but the order does not matter.
 - [x] Execute callback on state change
 - [x] Support reset
 - [x] Support context
-	- [x] Initialize with context
-	- [x] Get current context
-	- [x] assign new context
+  - [x] Initialize with context
+  - [x] Get current context
+  - [x] assign new context
 - [x] Support transition with an argument
 - [ ] Support delay
 - [ ] Support actions (fire-and-forget)
-	- [x] callback action
-	- [x] assign action
-	- [x] callback action with variable length of arguments
-	- [ ] choose action
-	- [ ] forwardTo action
-	- [ ] log action
-	- [ ] pure action
-	- [ ] raise action
-	- [ ] respond action
-	- [ ] send action
+  - [x] callback action
+  - [x] assign action
+  - [x] callback action with variable length of arguments
+  - [ ] choose action
+  - [ ] forwardTo action
+  - [ ] log action
+  - [ ] pure action
+  - [ ] raise action
+  - [ ] respond action
+  - [ ] send action
 - [ ] Support invoking services
-	- [x] async function (or Future)
-	- [x] onDone/onError actions
-	- [x] onDone/onError transitions
-	- [ ] callback
-	- [ ] observables
-	- [ ] other beat station
-	- [ ] multiple services
+  - [x] async function (or Future)
+  - [x] onDone/onError actions
+  - [x] onDone/onError transitions
+  - [ ] callback
+  - [ ] observables
+  - [ ] other beat station
+  - [ ] multiple services
 - [ ] Support `entry` and `exit` actions
 - [ ] Support conditional (guarded) transition
-	- [ ] Support custom functions
-	- [ ] Support `in` state condition
+  - [ ] Support custom functions
+  - [ ] Support `in` state condition
 - [ ] Support eventless(always) transition
 - [ ] Support internal transition
 - [ ] Support external transition
 - [ ] Support multiple targets
 - [x] Support any state transition
-	- [x] BeatStation with common `Beat` option
+  - [x] BeatStation with common `Beat` option
 - [ ] Support actors
 - [x] Support `state.matches` as a `is{State}`
 - [ ] Support `state.nextEvents`
@@ -60,14 +60,14 @@ A roadmap is as follows, but the order does not matter.
 - [ ] Support `state.meta`, `state.tags`
 - [ ] Support `state.can`
 - [x] Support state change history
-- [ ] Support history JSON to persist 
-	- `toString()` is currently supported
+- [ ] Support history JSON to persist
+  - `toString()` is currently supported
 - [ ] Support nested state
 - [ ] Support parallel state
-	- [ ] Define parallel state
-	- [ ] Support multiple targets event
+  - [ ] Define parallel state
+  - [ ] Support multiple targets event
 - [x] Support `send()` or `transition()` styled transition
-	- `station.send` is supported
+  - `station.send` is supported
 - [ ] Support scxml
 - [ ] Support bootstrapping
 - [ ] Support CLI/GUI tools
@@ -83,9 +83,9 @@ A roadmap is as follows, but the order does not matter.
 
 - [ ] Support beat-station-friendly flutter widgets
 - [ ] Support [`remix.run`](https://remix.run)'s concept
-	- [ ] `loader`
-	- [ ] `action` (side effect)
-	- [ ] `ErrorBoundary`/`CatchBoundary`
+  - [ ] `loader`
+  - [ ] `action` (side effect)
+  - [ ] `ErrorBoundary`/`CatchBoundary`
 - [ ] Support navigation
 
 # Usage
