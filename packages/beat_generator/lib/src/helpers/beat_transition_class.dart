@@ -3,6 +3,7 @@ import 'package:analyzer/dart/element/element.dart';
 import '../models/beat_config.dart';
 import '../utils/create_class.dart';
 import '../utils/string.dart';
+import 'execute_actions.dart';
 
 class BeatTransitionClassBuilder {
   BeatTransitionClassBuilder({
@@ -77,21 +78,13 @@ void \$${config.event}<Data>([Data? data]);
           '''
 void _exec${toBeginningOfSentenceCase(config.event)}Actions(EventData eventData) {
   for (final action in ${toBeatActionVariableName(config.from, config.event, config.to)}.actions) {
-    exec() => 
-      action.execute(_beatStation.currentState.state, _beatStation.currentState.context, eventData);
-    if (action is AssignAction) {
-      _beatStation._setContext(exec());
-    } else if (action is DefaultAction) {
-      exec();
-    } else if (action is Function($baseName, $contextType, EventData)) {
-      action(_beatStation.currentState.state, _beatStation.currentState.context, eventData);
-    } else if (action is Function($baseName, $contextType)) {
-      action(_beatStation.currentState.state, _beatStation.currentState.context);
-    } else if (action is Function($baseName)) {
-      action(_beatStation.currentState.state);
-    } else if (action is Function()) {
-      action();
-    }
+    ${ActionExecutorBuilder(
+            actionName: 'action',
+            baseName: baseName,
+            contextType: contextType,
+            eventData: 'eventData',
+            isStation: false,
+          ).build()}
   }
 }
 ''',

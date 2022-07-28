@@ -10,6 +10,7 @@ const addBeat = Beat(event: 'add', to: 'added', actions: [AssignAction(adder)]);
 @addBeat
 enum Counter {
   @Beat(event: 'test', to: Counter.added)
+  @Beat(event: 'reset', to: Counter.added, actions: [AssignAction(reset)])
   @Invokes([InvokeFuture(save)])
   added,
 

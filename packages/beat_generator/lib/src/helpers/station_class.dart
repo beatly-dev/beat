@@ -5,6 +5,7 @@ import '../models/invoke_config.dart';
 import '../utils/context.dart';
 import '../utils/create_class.dart';
 import '../utils/string.dart';
+import 'execute_actions.dart';
 
 /// Top-level class
 ///
@@ -78,13 +79,15 @@ class BeatStationBuilder {
 if (currentState.state == ${config.stateName}.${config.on}) {
   for (final invoke in $varName.invokes) {
     if (invoke is InvokeFuture) {
-      final onDone = invoke.onDone;
-      final onError = invoke.onError;
-      try {
-        await invoke.invokeWith(currentState.state, currentState.context, '');
-      } catch (_) {
-        
-      }
+      (() async {
+        final onDone = invoke.onDone;
+        final onError = invoke.onError;
+        try {
+          await invoke.invokeWith(currentState.state, currentState.context, '');
+        } catch (_) {
+          
+        }
+      })();
     }
   }
 }
@@ -122,21 +125,13 @@ _invokeServices() async {
         '''
 void _exec${toBeginningOfSentenceCase(config.event)}Actions(EventData eventData) {
   for (final action in ${toBeatActionVariableName(config.from, config.event, config.to)}.actions) {
-    exec() => 
-      action.execute(currentState.state, currentState.context, eventData);
-    if (action is AssignAction) {
-      _setContext(exec());
-    } else if (action is DefaultAction) {
-      exec();
-    } else if (action is Function($baseName, $contextType, EventData)) {
-      action(currentState.state, currentState.context, eventData);
-    } else if (action is Function($baseName, $contextType)) {
-      action(currentState.state, currentState.context);
-    } else if (action is Function($baseName)) {
-      action(currentState.state);
-    } else if (action is Function()) {
-      action();
-    }
+    ${ActionExecutorBuilder(
+          actionName: 'action',
+          baseName: baseName,
+          contextType: contextType,
+          eventData: 'eventData',
+          isStation: true,
+        ).build()}
   }
 }
 ''',
