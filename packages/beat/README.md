@@ -22,6 +22,7 @@ A roadmap is as follows, but the order does not matter.
   - [x] Get current context
   - [x] assign new context
 - [x] Support transition with an argument
+- [ ] Support instance options
 - [ ] Support delay
 - [ ] Support actions (fire-and-forget)
   - [x] callback action
@@ -49,7 +50,9 @@ A roadmap is as follows, but the order does not matter.
 - [ ] Support eventless(always) transition
 - [ ] Support internal transition
 - [ ] Support external transition
+- [ ] Support Forbidden transition
 - [ ] Support multiple targets
+- [ ] Support multiple events
 - [x] Support any state transition
   - [x] BeatStation with common `Beat` option
 - [ ] Support actors
@@ -66,8 +69,13 @@ A roadmap is as follows, but the order does not matter.
 - [ ] Support parallel state
   - [ ] Define parallel state
   - [ ] Support multiple targets event
-- [x] Support `send()` or `transition()` styled transition
+- [x] Support `send()` styled transition
   - `station.send` is supported
+- [ ] Separate `interpreter` and `station`
+  - [ ] Support pure `transition()`
+- [ ] Event history with event sourcing
+- [ ] Manually execute actions, `execute(state)` [reference](https://xstate.js.org/docs/guides/interpretation.html#executing-actions)
+- [ ] `waitFor(state, timeout)` method [reference](https://xstate.js.org/docs/guides/interpretation.html#waitfor)
 - [ ] Support scxml
 - [ ] Support bootstrapping
 - [ ] Support CLI/GUI tools
@@ -82,6 +90,7 @@ A roadmap is as follows, but the order does not matter.
 # Additionals for flutter
 
 - [ ] Support beat-station-friendly flutter widgets
+- [ ] Inspect state, history, event history, next events, etc., from devtools widget inspector
 - [ ] Support [`remix.run`](https://remix.run)'s concept
   - [ ] `loader`
   - [ ] `action` (side effect)
