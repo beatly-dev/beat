@@ -71,13 +71,13 @@ class BeatStationBuilder {
   }
 
   void _createInvokeServices() {
-    final body = invokes.keys.map((state) {
-      final configs = invokes[state]!;
-      return configs.map((config) {
-        final varName = toInvokeVariableName(config);
+    final body =
+        invokes.keys.where((state) => invokes[state]!.isNotEmpty).map((state) {
+      final config = invokes[state]![0];
+      final varName = toInvokeVariableName(config);
 
-        /// TODO: transition on done/error
-        return '''
+      /// TODO: transition on done/error
+      return '''
 if (currentState.state == ${config.stateName}.${config.on}) {
   for (final invoke in $varName.invokes) {
     if (invoke is InvokeFuture) {
@@ -88,22 +88,28 @@ if (currentState.state == ${config.stateName}.${config.on}) {
           await invoke.invokeWith(currentState.state, currentState.context, '');
           for (final action in onDone.actions) {
             ${ActionExecutorBuilder(
-          actionName: 'action',
-          baseName: baseName,
-          contextType: contextType,
-          eventData: "EventData(event: 'invoke', data: null)",
-          isStation: true,
-        ).build()}
+        actionName: 'action',
+        baseName: baseName,
+        contextType: contextType,
+        eventData: "EventData(event: 'invoke', data: null)",
+        isStation: true,
+      ).build()}
+          }
+          if (onDone.to is $baseName) {
+            _setState(onDone.to);
           }
         } catch (_) {
           for (final action in onError.actions) {
             ${ActionExecutorBuilder(
-          actionName: 'action',
-          baseName: baseName,
-          contextType: contextType,
-          eventData: "EventData(event: 'invoke', data: null)",
-          isStation: true,
-        ).build()}
+        actionName: 'action',
+        baseName: baseName,
+        contextType: contextType,
+        eventData: "EventData(event: 'invoke', data: null)",
+        isStation: true,
+      ).build()}
+          }
+          if (onError.to is $baseName) {
+            _setState(onError.to);
           }
         }
       })();
@@ -111,8 +117,7 @@ if (currentState.state == ${config.stateName}.${config.on}) {
   }
 }
 ''';
-      }).join('else ');
-    }).join(' ');
+    }).join('else ');
 
     buffer.writeln(
       '''

@@ -32,7 +32,8 @@ A roadmap is as follows, but not in the exact order.
 	- [ ] send action
 - [ ] Support invoking services
 	- [x] async function (or Future)
-	- [x] onDone/onError
+	- [x] onDone/onError actions
+	- [x] onDone/onError transitions
 	- [ ] callback
 	- [ ] observables
 	- [ ] other beat station

@@ -13,15 +13,17 @@ enum Counter {
   @Beat(event: 'reset', to: Counter.added, actions: [AssignAction(reset)])
   @Invokes([
     InvokeFuture(save,
-        onDone: AfterInvoke(to: 'added', actions: [AssignAction(adder)]))
+        onDone: AfterInvoke(to: Counter.added, actions: [AssignAction(adder)]))
   ])
   added,
 
   @Beat(event: 'test', to: Counter.added)
   @Invokes([
-    InvokeFuture(saveError, onError: AfterInvoke(to: '', actions: [logError]))
+    InvokeFuture(saveError,
+        onError: AfterInvoke(to: Counter.error, actions: [logError]))
   ])
   taken,
+  error,
 }
 
 saveError(_, __, ___) async {
@@ -33,7 +35,6 @@ logError() {
 }
 
 int adder(Counter currentState, int prevContext, EventData event) {
-  print("EventData: ${event.event}, ${event.data}");
   return prevContext + 1;
 }
 
