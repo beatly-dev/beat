@@ -1,3 +1,5 @@
+/// A data passed to action and service.
+/// `event` holds an event name and `data` holds a custom user data.
 class EventData<Data> {
   const EventData({
     required this.event,

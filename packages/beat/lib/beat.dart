@@ -1,3 +1,4 @@
+/// Beatly.dev's state management library.
 library beat;
 
 export 'src/actions/actions.dart';

@@ -1,3 +1,4 @@
+/// Actions to execute before transition.
 export 'assign.dart';
 export 'callback_type.dart';
 export 'choose.dart';

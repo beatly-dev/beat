@@ -1,3 +1,5 @@
+/// Default action implementation
+/// All the other actions ahould extend this class
 class DefaultAction<State, Context, Event, ActionResult> {
   final ActionResult Function(
     State currentState,
