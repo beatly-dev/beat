@@ -1,3 +1,8 @@
+## 0.8.1
+
+ - **FEAT**: adding sender styled event trigger.
+ - **DOCS**: add docs.
+
 ## 0.8.0
 
 > Note: This release has breaking changes.

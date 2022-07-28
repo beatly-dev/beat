@@ -1,3 +1,7 @@
+## 0.6.6
+
+ - **FEAT**: adding sender styled event trigger.
+
 ## 0.6.5+1
 
  - Update a dependency to the latest release.
