@@ -1,3 +1,9 @@
+## 0.8.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **REFACTOR**: `AfterInvoke` does not necessarily need actions.
+
 ## 0.7.1
 
  - **FEAT**: transition onDone/onError.
