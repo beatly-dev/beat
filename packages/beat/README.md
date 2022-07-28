@@ -6,10 +6,10 @@ Go to the [Beatly Book](https://book.beatly.dev/) for more information.
 
 # Roadmap - Features compatible with xstate.js
 
-A roadmap is as follows, but not in the exact order. 
+A roadmap is as follows, but the order does not matter.
 
 - [x] Support simple state transition without context
-- [x] Listen on state and context changes
+- [x] Listen to state and context changes
 - [x] Map states
 - [x] Execute callback on state change
 - [x] Support reset
@@ -38,7 +38,7 @@ A roadmap is as follows, but not in the exact order.
 	- [ ] observables
 	- [ ] other beat station
 	- [ ] multiple services
-- [ ] Support `entry` and `exit` event
+- [ ] Support `entry` and `exit` actions
 - [ ] Support conditional (guarded) transition
 	- [ ] Support custom functions
 	- [ ] Support `in` state condition
@@ -54,31 +54,33 @@ A roadmap is as follows, but not in the exact order.
 - [ ] Support `state.changed`
 - [ ] Support `state.done`
 - [ ] Support `state.meta`, `state.tags`
+- [ ] Support `state.can`
 - [x] Support state change history
-- [ ] Support history json to persist 
-	- `toString()` is supported
+- [ ] Support history JSON to persist 
+	- `toString()` is currently supported
 - [ ] Support nested state
 - [ ] Support parallel state
 	- [ ] Define parallel state
 	- [ ] Support multiple targets event
+- [ ] Support `send()` or `transition()` styled transition
 - [ ] Support scxml
-- [ ] Support bootstraping
+- [ ] Support bootstrapping
 - [ ] Support CLI/GUI tools
 - [ ] xstate.js compatible beat station
 
 # Features not supported by this package but in xstate.js
 
-- Final state is naturally defined which does not have any `Beat` annotation
+- The `final` state is naturally defined which does not have any `Beat` annotation
 - `state.toString()`: naturally supported
-- `state.can(event)` is not needed because we have typed system
 - wildcard transitions and forbidden transitions are not needed because there will be no typo
 
 # Additionals for flutter
 
-- [ ] Support beat-statation-friendly flutter widgets
+- [ ] Support beat-station-friendly flutter widgets
 - [ ] Support [`remix.run`](https://remix.run)'s concept
 	- [ ] `loader`
 	- [ ] `action` (side effect)
 	- [ ] `ErrorBoundary`/`CatchBoundary`
+- [ ] Support navigation
 
 # Usage
