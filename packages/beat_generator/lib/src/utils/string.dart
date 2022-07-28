@@ -12,12 +12,15 @@ String toDartFieldCase(String str) {
 
 String toBaseBeatStateClassName(String name) =>
     '${toBeginningOfSentenceCase(name)}BeatState';
-String toBeatTransitionBaseClassName(String baseName) =>
-    'On${toBeginningOfSentenceCase(baseName)}TransitionsInterface';
-String toBeatTransitionRealClassName(String baseName) =>
-    'On${toBeginningOfSentenceCase(baseName)}Transitions';
-String toBeatTransitionDummyClassName(String baseName) =>
-    'On${toBeginningOfSentenceCase(baseName)}TransitionsDummy';
+
+/// Beat transition related
+String toBeatTransitionBaseClassName(String base, String state) =>
+    'On$base${toBeginningOfSentenceCase(state)}TransitionsInterface';
+String toBeatTransitionRealClassName(String base, String state) =>
+    'On$base${toBeginningOfSentenceCase(state)}Transitions';
+String toBeatTransitionDummyClassName(String base, String state) =>
+    'On$base${toBeginningOfSentenceCase(state)}TransitionsDummy';
+
 String toExecMethodName(String baseName) =>
     'execWhen${toBeginningOfSentenceCase(baseName)}';
 String toMapMethodName(String baseName) =>
@@ -55,3 +58,14 @@ String toInvokeVariableDeclaration(InvokeConfig config) =>
 
 String toBeatSenderClassName(String base) =>
     '${toBeginningOfSentenceCase(base)}BeatSender';
+
+String toBeatSenderBeatStationFieldName(String base) =>
+    '_${toDartFieldCase(base)}beatStation';
+
+String toBeatSenderInitializerMethodName(String base) =>
+    '_initialize${toBeatSenderClassName(base)}';
+
+String toBeatSenderInitializerArgumentName(String base) =>
+    '${toDartFieldCase(base)}beatStation';
+
+String toCompoundFieldName(String base) => '${toDartFieldCase(base)}Compound';

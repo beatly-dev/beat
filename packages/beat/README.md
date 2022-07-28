@@ -22,8 +22,21 @@ A roadmap is as follows, but the order does not matter.
   - [x] Get current context
   - [x] assign new context
 - [x] Support transition with an argument
-- [ ] Support instance options
-- [ ] Support delay
+- [ ] Support nested(compound, hierarchical) state
+  - [x] Define compound state
+  - [x] Using `send()`
+  - [x] Using verbose styled transition via `{compoundStateName}Compound` field
+  - [ ] Custom initialization on parent state creation
+  - [ ] Get current state of compound state using `currentState`
+    - Currently `{compundStateName}Compound.currentState` is supported
+  - [ ] Reset on parent state enter/exit
+  - [ ] Reset on parent state reset
+- [x] Support state change history
+- [x] Support any state transition
+  - [x] BeatStation with common `Beat` option
+- [x] Support `state.matches` as a `is{State}`
+- [x] Support `send()` styled transition
+  - `station.send` is supported
 - [ ] Support actions (fire-and-forget)
   - [x] callback action
   - [x] assign action
@@ -43,34 +56,32 @@ A roadmap is as follows, but the order does not matter.
   - [ ] observables
   - [ ] other beat station
   - [ ] multiple services
+- [ ] Support instance options
+- [ ] Support eventless(always) transition
+- [ ] Support delayed transition
+  - [ ] Delay on eventless transition
+  - [ ] Delay on `send()` or `$event()`
+- [ ] Support
 - [ ] Support `entry` and `exit` actions
 - [ ] Support conditional (guarded) transition
   - [ ] Support custom functions
   - [ ] Support `in` state condition
-- [ ] Support eventless(always) transition
 - [ ] Support internal transition
 - [ ] Support external transition
 - [ ] Support Forbidden transition
 - [ ] Support multiple targets
 - [ ] Support multiple events
-- [x] Support any state transition
-  - [x] BeatStation with common `Beat` option
 - [ ] Support actors
-- [x] Support `state.matches` as a `is{State}`
 - [ ] Support `state.nextEvents`
 - [ ] Support `state.changed`
 - [ ] Support `state.done`
 - [ ] Support `state.meta`, `state.tags`
 - [ ] Support `state.can`
-- [x] Support state change history
 - [ ] Support history JSON to persist
   - `toString()` is currently supported
-- [ ] Support nested state
 - [ ] Support parallel state
   - [ ] Define parallel state
   - [ ] Support multiple targets event
-- [x] Support `send()` styled transition
-  - `station.send` is supported
 - [ ] Separate `interpreter` and `station`
   - [ ] Support pure `transition()`
 - [ ] Event history with event sourcing

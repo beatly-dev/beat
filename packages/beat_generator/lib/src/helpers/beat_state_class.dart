@@ -28,7 +28,7 @@ class BeatStateBuilder {
     return createClass(
       beatStateClassName,
       '''
-  $beatStateClassName({
+  const $beatStateClassName({
     required this.state,
     ${isNullableContextType(contextType) ? '' : 'required'} this.context,
   });

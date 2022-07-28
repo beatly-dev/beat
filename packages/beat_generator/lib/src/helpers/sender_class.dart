@@ -1,26 +1,65 @@
 import '../models/beat_config.dart';
+import '../models/compound_config.dart';
 import '../utils/string.dart';
 
 class SenderClassBuilder {
   final Map<String, List<BeatConfig>> beats;
   final List<BeatConfig> commonBeats;
+  final List<CompoundConfig> compounds;
   final String baseName;
+
+  late final String beatStationFieldName;
 
   SenderClassBuilder({
     required this.beats,
     required this.commonBeats,
     required this.baseName,
-  });
+    required this.compounds,
+  }) {
+    beatStationFieldName = toBeatSenderBeatStationFieldName(baseName);
+  }
 
   String build() {
     final buffer = StringBuffer();
     final allEvents = _collectEvents();
     final eventsToBeats = _eventsToBeats();
-    buffer.writeln('class ${toBeatSenderClassName(baseName)} {');
+    final mixins = compounds.map((compound) {
+      return toBeatSenderClassName(compound.childBase);
+    }).join(', ');
+    final withMixins = mixins.isEmpty ? '' : 'with $mixins';
+
+    buffer.writeln('class ${toBeatSenderClassName(baseName)} $withMixins {');
     buffer.writeln(
       '''
-    final ${toBeatStationClassName(baseName)} _beatStation;
-    const ${toBeatSenderClassName(baseName)}(${toBeatStationClassName(baseName)} beatStation) : _beatStation = beatStation;
+    late final ${toBeatStationClassName(baseName)} $beatStationFieldName;
+    ''',
+    );
+
+    final initializeArguments = [
+      baseName,
+      ...compounds.map((compound) {
+        return compound.childBase;
+      }),
+    ]
+        .map(
+          (name) =>
+              '${toBeatStationClassName(name)} ${toBeatSenderInitializerArgumentName(name)}',
+        )
+        .join(',');
+    final initializerBody = [
+      baseName,
+      ...compounds.map((compound) {
+        return compound.childBase;
+      }),
+    ].map((name) {
+      return '${toBeatSenderBeatStationFieldName(name)} = ${toBeatSenderInitializerArgumentName(name)};';
+    }).join(' ');
+
+    buffer.writeln(
+      '''
+    ${toBeatSenderInitializerMethodName(baseName)}($initializeArguments) {
+      $initializerBody
+    }
   ''',
     );
 
@@ -41,11 +80,11 @@ class SenderClassBuilder {
       final from = config.from;
       final fieldName = toDartFieldCase(from);
       if (from == baseName) {
-        return ' _beatStation.\$$event(data); ';
+        return ' $beatStationFieldName.\$$event(data); ';
       }
       return '''
-if (_beatStation.currentState.state == $baseName.$from) {
-  _beatStation.$fieldName.\$$event(data);
+if ($beatStationFieldName.currentState.state == $baseName.$from) {
+  $beatStationFieldName.$fieldName.\$$event(data);
 }
 ''';
     }).join('else ');

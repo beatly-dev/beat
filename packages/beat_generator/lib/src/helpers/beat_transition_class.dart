@@ -42,11 +42,12 @@ class BeatTransitionClassBuilder {
 
   void _createBaseClass() {
     for (final state in enumFields) {
-      final className = toBeatTransitionBaseClassName(state);
+      final className = toBeatTransitionBaseClassName(baseName, state);
       final body = StringBuffer();
 
       final beatConfigs = beats[state] ?? [];
 
+      body.writeln('const $className();');
       for (final config in beatConfigs) {
         body.writeln(
           '''
@@ -60,14 +61,14 @@ void \$${config.event}<Data>([Data? data]);
 
   void _createRealClass() {
     for (final state in enumFields) {
-      final className = toBeatTransitionRealClassName(state);
-      final baseClassName = toBeatTransitionBaseClassName(state);
+      final className = toBeatTransitionRealClassName(baseName, state);
+      final baseClassName = toBeatTransitionBaseClassName(baseName, state);
       final beatConfigs = beats[state] ?? [];
       final body = StringBuffer();
       if (beatConfigs.isNotEmpty) {
         body.writeln(
           '''
-  $className(this._beatStation);
+  const $className(this._beatStation);
   final $beatStationClassName _beatStation;
   ''',
         );
@@ -110,12 +111,13 @@ void \$${config.event}<Data>([Data? data]) {
 
   void _createDummyClass() {
     for (final state in enumFields) {
-      final className = toBeatTransitionDummyClassName(state);
-      final baseClassName = toBeatTransitionBaseClassName(state);
+      final className = toBeatTransitionDummyClassName(baseName, state);
+      final baseClassName = toBeatTransitionBaseClassName(baseName, state);
       final body = StringBuffer();
 
       final beatConfigs = beats[state] ?? [];
 
+      body.writeln('const $className();');
       for (final config in beatConfigs) {
         body.writeln(
           '''

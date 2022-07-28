@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
 
 import '../models/beat_config.dart';
+import '../models/compound_config.dart';
 import '../models/invoke_config.dart';
 import '../utils/context.dart';
 import '../utils/create_class.dart';
@@ -31,6 +32,7 @@ class BeatStationBuilder {
   late final String beatStateClassName;
   final Map<String, List<BeatConfig>> beats;
   final Map<String, List<InvokeConfig>> invokes;
+  final List<CompoundConfig> compounds;
 
   final buffer = StringBuffer();
 
@@ -40,6 +42,7 @@ class BeatStationBuilder {
     required this.commonBeats,
     required this.beats,
     required this.invokes,
+    required this.compounds,
   }) {
     baseName = baseEnum.name;
     beatStationClassName = toBeatStationClassName(baseName);
@@ -55,6 +58,7 @@ class BeatStationBuilder {
     _createFields();
     _createBeatSender();
     _createTransitionFields();
+    _createCompoundGetter();
     _createExecMethods();
     _createMapMethods();
     _createCurrentStateCheckerGetter();
@@ -66,15 +70,31 @@ class BeatStationBuilder {
     _createNotifyListenersMethod();
     _createReset();
     return createClass(
-      beatStationClassName,
+      '$beatStationClassName extends BaseBeatStation',
       buffer.toString(),
     );
   }
 
+  void _createCompoundGetter() {
+    for (final compound in compounds) {
+      final className = toBeatStationClassName(compound.childBase);
+      final fieldName = toCompoundFieldName(compound.childBase);
+      buffer.writeln(
+        '''
+late final $className $fieldName;
+''',
+      );
+    }
+  }
+
   void _createBeatSender() {
+    final arguments = [
+      'this',
+      ...compounds.map((compound) => toCompoundFieldName(compound.childBase)),
+    ].join(', ');
     buffer.writeln(
       '''
-${toBeatSenderClassName(baseName)} get send => ${toBeatSenderClassName(baseName)}(this);
+${toBeatSenderClassName(baseName)} get send => ${toBeatSenderClassName(baseName)}()..${toBeatSenderInitializerMethodName(baseName)}($arguments);
 ''',
     );
   }
@@ -187,11 +207,11 @@ void \$${config.event}<Data>([Data? data]) {
     for (final state in enumFields) {
       final beatConfigs = beats[state] ?? [];
       buffer.writeln(
-        '''${toBeatTransitionBaseClassName(state)} get ${toDartFieldCase(state)} {
+        '''${toBeatTransitionBaseClassName(baseName, state)} get ${toDartFieldCase(state)} {
           if (currentState.state == $baseName.$state) {
-            return ${toBeatTransitionRealClassName(state)}(${beatConfigs.isEmpty ? '' : 'this'});
+            return ${toBeatTransitionRealClassName(baseName, state)}(${beatConfigs.isEmpty ? '' : 'this'});
           }
-          return ${toBeatTransitionDummyClassName(state)}();
+          return const ${toBeatTransitionDummyClassName(baseName, state)}();
         }''',
       );
     }
@@ -225,9 +245,25 @@ void _setContext($contextType context) {
   }
 
   void _createConstructor() {
-    buffer.writeln(
-      '  $beatStationClassName(this._initialState) {',
+    final enumField = baseEnum.fields.where(
+      (field) => field.isEnumConstant,
     );
+    final firstFieldName = enumField.isNotEmpty ? enumField.first.name : '';
+
+    final beatStateName = toBeatStateClassName(baseName);
+    buffer.writeln(
+      '  $beatStationClassName([this._initialState = const $beatStateName(state: $baseName.$firstFieldName)]) {',
+    );
+    for (final compound in compounds) {
+      final enumName = compound.childBase;
+      final className = toBeatStationClassName(enumName);
+      final fieldName = toCompoundFieldName(enumName);
+      buffer.writeln(
+        '''
+$fieldName = $className();
+''',
+      );
+    }
     buffer.writeln('    _history.add(_initialState);');
     buffer.writeln('  }');
   }

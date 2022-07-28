@@ -10,6 +10,7 @@ import 'helpers/invoke_services.dart';
 import 'helpers/sender_class.dart';
 import 'helpers/station_class.dart';
 import 'utils/beat_annotation.dart';
+import 'utils/compound_annotation.dart';
 import 'utils/invoke_annotation.dart';
 
 class StationGenerator extends GeneratorForAnnotation<BeatStation> {
@@ -32,6 +33,12 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
       element,
     );
     final invokes = await mapInvokeAnnotations(element.name, element.fields);
+    final compounds =
+        (await mapCompoundAnnotations(element.name, element.fields))
+            .values
+            .expand((element) => element)
+            .toList();
+
     return [
       '// ignore_for_file: avoid_function_literals_in_foreach_calls',
       BeatStationBuilder(
@@ -40,6 +47,7 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
         beats: beats,
         commonBeats: commonBeats,
         invokes: invokes,
+        compounds: compounds,
       ).build(),
       BeatTransitionClassBuilder(
         beats: beats,
@@ -60,6 +68,7 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
         beats: beats,
         commonBeats: commonBeats,
         baseName: element.name,
+        compounds: compounds,
       ).build(),
     ];
   }

@@ -45,5 +45,5 @@ const _invokeChecker = TypeChecker.fromRuntime(Invokes);
 List<DartObject> _invokeAnnotations(Element element) =>
     _invokeChecker.annotationsOf(element, throwOnUnresolved: false).toList();
 
-List<ConstantReader> beatAnnotations(Element element) =>
+List<ConstantReader> invokeAnnotations(Element element) =>
     _invokeAnnotations(element).map((e) => ConstantReader(e)).toList();

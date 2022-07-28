@@ -12,6 +12,9 @@ enum Assignment {
 
   @Beat(event: 'new', to: Assignment.doing)
   done,
+
+  @Beat(event: 'new', to: Assignment.doing)
+  retired,
 }
 
 void main(List<String> arguments) {
