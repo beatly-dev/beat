@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:analyzer/dart/element/element.dart';
 import 'package:beat/beat.dart';
 import 'package:build/build.dart';
@@ -14,6 +16,12 @@ import 'utils/compound_annotation.dart';
 import 'utils/invoke_annotation.dart';
 
 class StationGenerator extends GeneratorForAnnotation<BeatStation> {
+  @override
+  FutureOr<String> generate(LibraryReader library, BuildStep buildStep) async {
+    print("station generator");
+    return super.generate(library, buildStep);
+  }
+
   @override
   generateForAnnotatedElement(
     Element element,

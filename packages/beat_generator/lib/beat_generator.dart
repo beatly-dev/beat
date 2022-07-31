@@ -1,8 +1,21 @@
 library beat_generator;
 
-import 'package:beat_generator/src/station_generator.dart';
 import 'package:build/build.dart';
-import 'package:source_gen/source_gen.dart';
 
-Builder beatMaker(BuilderOptions options) =>
-    PartBuilder([StationGenerator()], '.beat.dart');
+import 'src/beat_builder.dart';
+import 'src/compound_generator.dart';
+import 'src/station_generator.dart';
+
+Builder beatMaker(BuilderOptions options) {
+  final compoundGenerator = CompoundGenerator();
+  final stationGenerator = StationGenerator();
+  final beatBuidler = BeatBuilder();
+  return BeatBuilder();
+  // return PartBuilder(
+  //   [
+  //     compoundGenerator,
+  //     stationGenerator,
+  //   ],
+  //   '.beat.dart',
+  // );
+}
