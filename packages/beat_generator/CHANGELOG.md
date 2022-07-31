@@ -1,3 +1,9 @@
+## 0.8.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: WIP - Building beatly's own generator.
+
 ## 0.7.0
 
 > Note: This release has breaking changes.

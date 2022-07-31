@@ -1,3 +1,7 @@
+## 0.9.1
+
+ - **FEAT**: add Parallel annotation.
+
 ## 0.9.0
 
 > Note: This release has breaking changes.
