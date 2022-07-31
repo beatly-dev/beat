@@ -1,0 +1,3 @@
+class Parallel {
+  const Parallel();
+}

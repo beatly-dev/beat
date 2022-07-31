@@ -26,6 +26,8 @@ A roadmap is as follows, but the order does not matter.
   - [x] Define compound state
   - [x] Using `send()`
   - [x] Using verbose styled transition via `{compoundStateName}Compound` field
+  - [ ] Multi-level compound state
+    - Currently, only 2 level compound state is supported
   - [ ] Custom initialization on parent state creation
   - [ ] Get current state of compound state using `currentState`
     - Currently `{compundStateName}Compound.currentState` is supported
