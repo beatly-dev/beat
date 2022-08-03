@@ -1,8 +1,12 @@
-import '../actions/default.dart';
-
 /// A annotation to define a transition
-class Beat<Event, State, Context, Action extends DefaultAction> {
-  const Beat({required this.event, required this.to, this.actions = const []});
+class Beat<Event, State extends Enum, Context> {
+  const Beat({
+    required this.event,
+    required this.to,
+    this.actions = const [],
+    this.eventDataType = dynamic,
+    this.conditions = const [_alwaysTrueCondition],
+  });
 
   /// Which event will trigger the transition
   final Event event;
@@ -12,4 +16,11 @@ class Beat<Event, State, Context, Action extends DefaultAction> {
 
   // Which actions will be executed when the transition is triggered
   final List<dynamic> actions;
+
+  // Which type of data will be passed to actions and invokes.
+  final Type eventDataType;
+
+  final List<bool Function()> conditions;
 }
+
+bool _alwaysTrueCondition() => true;
