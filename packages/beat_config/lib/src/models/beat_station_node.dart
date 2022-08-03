@@ -5,20 +5,26 @@ part 'beat_station_node.g.dart';
 
 @JsonSerializable()
 class BeatStationNode {
+  // node info
   final BeatStationInfo info;
-  final String parent;
-  final List<BeatStationNode> children;
-  final List<CompoundConfig> compoundConfigs;
-  final List<BeatConfig> beatConfigs;
-  final List<InvokeConfig> invokeConfigs;
+  // parent enum class name
+  String parent;
+  // compound related to enum field
+  final Map<String, List<BeatStationNode>> children;
+  // compounds included in this station
+  final Map<String, List<SubstationConfig>> substationConfigs;
+  // beats included in this station
+  final Map<String, List<BeatConfig>> beatConfigs;
+  // invokes included in this station
+  final Map<String, List<InvokeConfig>> invokeConfigs;
 
-  const BeatStationNode(
+  BeatStationNode(
     this.info, {
     this.parent = '',
-    this.children = const [],
-    this.compoundConfigs = const [],
-    this.beatConfigs = const [],
-    this.invokeConfigs = const [],
+    this.children = const {},
+    this.substationConfigs = const {},
+    this.beatConfigs = const {},
+    this.invokeConfigs = const {},
   });
 
   Map<String, dynamic> toJson() => _$BeatStationNodeToJson(this);

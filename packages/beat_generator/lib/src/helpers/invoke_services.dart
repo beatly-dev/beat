@@ -1,6 +1,6 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:beat_config/beat_config.dart';
 
-import '../models/invoke_config.dart';
 import '../utils/string.dart';
 
 class InvokeServicesBuilder {

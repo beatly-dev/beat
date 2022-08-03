@@ -1,6 +1,6 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:beat_config/beat_config.dart';
 
-import '../models/beat_config.dart';
 import '../utils/create_class.dart';
 import '../utils/string.dart';
 import 'execute_actions.dart';
@@ -78,7 +78,7 @@ void \$${config.event}<Data>([Data? data]);
         body.writeln(
           '''
 void _exec${toBeginningOfSentenceCase(config.event)}Actions(EventData eventData) {
-  for (final action in ${toBeatActionVariableName(config.from, config.event, config.to)}.actions) {
+  for (final action in ${toBeatActionVariableName(config.fromField, config.event, config.toField)}.actions) {
     ${ActionExecutorBuilder(
             actionName: 'action',
             baseName: baseName,
@@ -98,7 +98,7 @@ void \$${config.event}<Data>([Data? data]) {
     event: '${config.event}',
     data: data,
   ));
-  _beatStation._setState($baseName.${config.to});
+  _beatStation._setState($baseName.${config.toField});
 }
 ''',
         );

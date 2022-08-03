@@ -8,7 +8,7 @@ enum CompoundDog {
   waiting,
 
   @Beat(event: 'arriveHome', to: CompoundDog.walkComplete)
-  @Compound(OnWalkingDog)
+  @Substation(OnWalkingDog)
   onAWalk,
 
   walkComplete,
@@ -18,6 +18,7 @@ enum CompoundDog {
 enum OnWalkingDog {
   @Beat(event: 'stop', to: OnWalkingDog.stoppingToSniffGoodSmells)
   @Beat(event: 'speedUp', to: OnWalkingDog.running)
+  @Substation(Tail)
   walking,
 
   @Beat(event: 'slowDown', to: OnWalkingDog.walking)
@@ -27,4 +28,9 @@ enum OnWalkingDog {
   @Beat(event: 'speedUp', to: OnWalkingDog.walking)
   @Beat(event: 'suddenSpeedUp', to: OnWalkingDog.running)
   stoppingToSniffGoodSmells,
+}
+
+@BeatStation()
+enum Tail {
+  wagging,
 }

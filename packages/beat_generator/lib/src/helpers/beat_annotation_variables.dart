@@ -1,4 +1,5 @@
-import '../models/beat_config.dart';
+import 'package:beat_config/beat_config.dart';
+
 import '../utils/string.dart';
 
 class BeatAnnotationVariablesBuilder {
@@ -10,9 +11,9 @@ class BeatAnnotationVariablesBuilder {
     StringBuffer buffer = StringBuffer();
     for (final beat in beats) {
       final decl = toBeatActionVariableDeclaration(
-        beat.from,
+        beat.fromField,
         beat.event,
-        beat.to,
+        beat.toField,
         beat.source,
       );
       buffer.writeln(decl);

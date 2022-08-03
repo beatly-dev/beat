@@ -1,4 +1,22 @@
-import '../models/invoke_config.dart';
+import 'package:beat_config/beat_config.dart';
+
+String firstMatchingList(String source) {
+  final buffer = StringBuffer();
+  int bracketCount = 0;
+  for (var i = 0; i < source.length; ++i) {
+    final char = source[i];
+    if (char == '[') {
+      bracketCount++;
+    } else if (char == ']') {
+      bracketCount--;
+    }
+    buffer.write(char);
+    if (char == ']' && bracketCount == 0) {
+      break;
+    }
+  }
+  return buffer.toString();
+}
 
 String toBeginningOfSentenceCase(String str) {
   if (str.isEmpty) return str;
@@ -52,7 +70,7 @@ String toBeatActionVariableDeclaration(
     'const ${toBeatActionVariableName(from, event, to)} = $source;';
 
 String toInvokeVariableName(InvokeConfig config) =>
-    '_invokeOn${toBeginningOfSentenceCase('${config.stateName}\$${config.on}')}';
+    '_invokeOn${toBeginningOfSentenceCase('${config.stateBase}\$${config.stateField}')}';
 String toInvokeVariableDeclaration(InvokeConfig config) =>
     'const ${toInvokeVariableName(config)} = ${config.source};';
 

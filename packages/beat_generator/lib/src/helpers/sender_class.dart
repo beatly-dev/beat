@@ -1,11 +1,11 @@
-import '../models/beat_config.dart';
-import '../models/compound_config.dart';
+import 'package:beat_config/beat_config.dart';
+
 import '../utils/string.dart';
 
 class SenderClassBuilder {
   final Map<String, List<BeatConfig>> beats;
   final List<BeatConfig> commonBeats;
-  final List<CompoundConfig> compounds;
+  final List<SubstationConfig> compounds;
   final String baseName;
 
   late final String beatStationFieldName;
@@ -23,12 +23,14 @@ class SenderClassBuilder {
     final buffer = StringBuffer();
     final allEvents = _collectEvents();
     final eventsToBeats = _eventsToBeats();
-    final mixins = compounds.map((compound) {
+    final compoundSender = compounds.map((compound) {
       return toBeatSenderClassName(compound.childBase);
     }).join(', ');
-    final withMixins = mixins.isEmpty ? '' : 'with $mixins';
+    final extendsCompound =
+        compoundSender.isEmpty ? '' : 'extends $compoundSender';
 
-    buffer.writeln('class ${toBeatSenderClassName(baseName)} $withMixins {');
+    buffer
+        .writeln('class ${toBeatSenderClassName(baseName)} $extendsCompound {');
     buffer.writeln(
       '''
     late final ${toBeatStationClassName(baseName)} $beatStationFieldName;
@@ -77,7 +79,7 @@ class SenderClassBuilder {
 
   String _eventsExecutor(String event, List<BeatConfig> beatConfigs) {
     return beatConfigs.map((config) {
-      final from = config.from;
+      final from = config.fromField;
       final fieldName = toDartFieldCase(from);
       if (from == baseName) {
         return ' $beatStationFieldName.\$$event(data); ';

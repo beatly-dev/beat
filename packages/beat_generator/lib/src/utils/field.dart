@@ -1,10 +1,21 @@
 import 'package:source_gen/source_gen.dart';
 
-String getFieldValueAsString(ConstantReader reader) {
+String getEnumFieldNameAsString(ConstantReader reader) {
   if (reader.isLiteral) {
-    return reader.literalValue.toString();
+    throw Exception(
+      'Expected a `to` field value to be a enum field, but got a literal',
+    );
   }
   return reader.objectValue.getField('_name')!.toStringValue()!;
+}
+
+String getEnumClassNameAsString(ConstantReader reader) {
+  if (reader.isLiteral) {
+    throw Exception(
+      'Expected a `to` field value to be a enum field, but got a literal',
+    );
+  }
+  return reader.objectValue.toString();
 }
 
 String getFunctionName(ConstantReader? reader) {

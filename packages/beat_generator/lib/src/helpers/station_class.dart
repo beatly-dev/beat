@@ -1,8 +1,6 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:beat_config/beat_config.dart';
 
-import '../models/beat_config.dart';
-import '../models/compound_config.dart';
-import '../models/invoke_config.dart';
 import '../utils/context.dart';
 import '../utils/create_class.dart';
 import '../utils/string.dart';
@@ -32,7 +30,7 @@ class BeatStationBuilder {
   late final String beatStateClassName;
   final Map<String, List<BeatConfig>> beats;
   final Map<String, List<InvokeConfig>> invokes;
-  final List<CompoundConfig> compounds;
+  final List<SubstationConfig> compounds;
 
   final buffer = StringBuffer();
 
@@ -107,7 +105,7 @@ ${toBeatSenderClassName(baseName)} get send => ${toBeatSenderClassName(baseName)
 
       /// TODO: transition on done/error
       return '''
-if (currentState.state == ${config.stateName}.${config.on}) {
+if (currentState.state == ${config.stateBase}.${config.stateField}) {
   for (final invoke in $varName.invokes) {
     if (invoke is InvokeFuture) {
       (() async {
@@ -177,7 +175,7 @@ _invokeServices() async {
       buffer.writeln(
         '''
 void _exec${toBeginningOfSentenceCase(config.event)}Actions(EventData eventData) {
-  for (final action in ${toBeatActionVariableName(config.from, config.event, config.to)}.actions) {
+  for (final action in ${toBeatActionVariableName(config.fromField, config.event, config.toField)}.actions) {
     ${ActionExecutorBuilder(
           actionName: 'action',
           baseName: baseName,
@@ -196,7 +194,7 @@ void \$${config.event}<Data>([Data? data]) {
     event: '${config.event}',
     data: data,
   ));
-  _setState($baseName.${config.to});
+  _setState($baseName.${config.toField});
 }
 ''',
       );

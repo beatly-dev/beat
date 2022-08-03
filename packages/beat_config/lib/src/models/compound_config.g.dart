@@ -6,8 +6,8 @@ part of 'compound_config.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-CompoundConfig _$CompoundConfigFromJson(Map<String, dynamic> json) =>
-    CompoundConfig(
+SubstationConfig _$SubstationConfigFromJson(Map<String, dynamic> json) =>
+    SubstationConfig(
       parentBase: json['parentBase'] as String,
       parentField: json['parentField'] as String,
       childBase: json['childBase'] as String,
@@ -15,7 +15,7 @@ CompoundConfig _$CompoundConfigFromJson(Map<String, dynamic> json) =>
       source: json['source'] as String,
     );
 
-Map<String, dynamic> _$CompoundConfigToJson(CompoundConfig instance) =>
+Map<String, dynamic> _$SubstationConfigToJson(SubstationConfig instance) =>
     <String, dynamic>{
       'parentBase': instance.parentBase,
       'parentField': instance.parentField,

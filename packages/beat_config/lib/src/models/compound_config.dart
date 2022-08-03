@@ -3,14 +3,14 @@ import 'package:json_annotation/json_annotation.dart';
 part 'compound_config.g.dart';
 
 @JsonSerializable()
-class CompoundConfig {
+class SubstationConfig {
   final String parentBase;
   final String parentField;
   final String childBase;
   final String childFirst;
   final String source;
 
-  const CompoundConfig({
+  const SubstationConfig({
     required this.parentBase,
     required this.parentField,
     required this.childBase,
@@ -18,7 +18,7 @@ class CompoundConfig {
     required this.source,
   });
 
-  Map<String, dynamic> toJson() => _$CompoundConfigToJson(this);
-  factory CompoundConfig.fromJson(Map<String, dynamic> json) =>
-      _$CompoundConfigFromJson(json);
+  Map<String, dynamic> toJson() => _$SubstationConfigToJson(this);
+  factory SubstationConfig.fromJson(Map<String, dynamic> json) =>
+      _$SubstationConfigFromJson(json);
 }

@@ -1,18 +1,12 @@
-import 'package:introduction/introduction.dart';
+enum Hello { world }
 
 void main(List<String> arguments) {
-  final station = CompoundDogBeatStation();
-  print('First state: ${station.currentState}');
-  station.send.$leaveHome();
-  print('state: ${station.currentState}');
-  station.send.$arriveHome();
-  print('state: ${station.currentState}');
-  station.resetState();
-  print('state: ${station.currentState}');
-  station.send.$leaveHome();
-  print('state: ${station.currentState}');
-  station.send.$speedUp();
-  print('state: ${station.onWalkingDogCompound.currentState}');
-  station.send.$suddenStop();
-  print('state: ${station.onWalkingDogCompound.currentState}');
+  final wo = Worlder(Hello.world);
+  print(wo.value);
+}
+
+class Worlder<T extends Enum> {
+  final T value;
+
+  Worlder(this.value);
 }
