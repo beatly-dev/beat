@@ -1,3 +1,9 @@
+## 0.10.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **REFACTOR**: namings.
+
 ## 0.9.1
 
  - **FEAT**: add Parallel annotation.
