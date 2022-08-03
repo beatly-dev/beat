@@ -1,3 +1,4 @@
 **/pubspec_overrides.yaml
 .idea/
 *.beat.dart
+pubspec_overrides.yaml
