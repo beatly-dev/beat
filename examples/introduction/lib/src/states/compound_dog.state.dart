@@ -4,7 +4,7 @@ part 'compound_dog.state.beat.dart';
 
 @BeatStation()
 enum CompoundDog {
-  @Beat(event: 'leaveHome', to: CompoundDog.onAWalk)
+  @Beat(event: 'leaveHome', to: onAWalk)
   waiting,
 
   @Beat(event: 'arriveHome', to: CompoundDog.walkComplete)

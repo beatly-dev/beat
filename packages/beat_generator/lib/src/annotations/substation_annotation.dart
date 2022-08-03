@@ -22,6 +22,9 @@ Future<List<SubstationConfig>> aggregateSubstationConfigs(
     final childBase = getTypeField(annotation, 'child')!;
     final childFirst = getFirstFieldOfEnum(annotation, 'child');
     final source = e.source;
+    if (fromBase == childBase) {
+      throw 'Prohibited: self referencing substation $fromBase';
+    }
 
     final config = SubstationConfig(
       parentBase: fromBase!,

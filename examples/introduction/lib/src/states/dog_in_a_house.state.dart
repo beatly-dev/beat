@@ -1,5 +1,4 @@
 import 'package:beat/beat.dart';
-import 'package:introduction/introduction.dart';
 
 part 'dog_in_a_house.state.beat.dart';
 
@@ -8,13 +7,13 @@ part 'dog_in_a_house.state.beat.dart';
 enum DogInAHouse {
   @Beat(
     event: 'wakesUp',
-    to: CompoundDog.waiting,
+    to: awake,
     conditions: [],
     actions: [BowWow2, AssignAction(assign)],
   )
   asleep,
 
-  @Beat(event: 'fallsAsleep', to: DogInAHouse.asleep)
+  @Beat(event: 'fallsAsleep', to: asleep)
   @Substation(Hi)
   @Invokes()
   awake,
