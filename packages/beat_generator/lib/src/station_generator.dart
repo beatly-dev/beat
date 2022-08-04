@@ -4,6 +4,7 @@ import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
 import 'helpers/beat_state_class.dart';
+import 'helpers/beat_station_class.dart';
 import 'resources/beat_tree_resource.dart';
 
 class StationGenerator extends GeneratorForAnnotation<BeatStation> {
@@ -20,10 +21,10 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
 
     return [
       '// ignore_for_file: avoid_function_literals_in_foreach_calls',
-      // BeatStationBuilder(
-      //   baseEnum: element,
-      //   beatTree: beatTree,
-      // ).build(),
+      await BeatStationBuilder(
+        baseEnum: element,
+        beatTree: beatTree,
+      ).build(),
       // BeatTransitionClassBuilder(
       //   baseEnum: element,
       //   beatTree: beatTree,

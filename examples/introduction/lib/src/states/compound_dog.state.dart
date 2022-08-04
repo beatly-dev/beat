@@ -8,29 +8,29 @@ enum CuteDog {
   waiting,
 
   @Beat(event: 'arriveHome', to: CuteDog.walkComplete)
-  @Substation(WalkingDog)
+  @Substation(CuteWalkingDog)
   onAWalk,
 
   walkComplete,
 }
 
 @BeatStation()
-enum WalkingDog {
-  @Beat(event: 'stop', to: WalkingDog.stoppingToSniffGoodSmells)
-  @Beat(event: 'speedUp', to: WalkingDog.running)
-  @Substation(Tail)
+enum CuteWalkingDog {
+  @Beat(event: 'stop', to: CuteWalkingDog.stoppingToSniffGoodSmells)
+  @Beat(event: 'speedUp', to: CuteWalkingDog.running)
+  @Substation(CuteTail)
   walking,
 
-  @Beat(event: 'slowDown', to: WalkingDog.walking)
-  @Beat(event: 'suddenStop', to: WalkingDog.stoppingToSniffGoodSmells)
+  @Beat(event: 'slowDown', to: CuteWalkingDog.walking)
+  @Beat(event: 'suddenStop', to: CuteWalkingDog.stoppingToSniffGoodSmells)
   running,
 
-  @Beat(event: 'speedUp', to: WalkingDog.walking)
-  @Beat(event: 'suddenSpeedUp', to: WalkingDog.running)
+  @Beat(event: 'speedUp', to: CuteWalkingDog.walking)
+  @Beat(event: 'suddenSpeedUp', to: CuteWalkingDog.running)
   stoppingToSniffGoodSmells,
 }
 
 @BeatStation()
-enum Tail {
+enum CuteTail {
   wagging,
 }

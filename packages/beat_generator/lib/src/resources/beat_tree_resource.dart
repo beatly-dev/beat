@@ -107,13 +107,21 @@ class BeatTreeSharedResource {
     reconstructTree();
   }
 
-  Future<List<BeatStationNode>> getRelatedStations(String name) async {
-    var root = _nodes[name]!;
+  Future<List<BeatStationNode>> getRelatedStations(
+    String name, {
+    bool includeRoot = true,
+  }) async {
+    final root = _nodes[name]!;
     final stations = <BeatStationNode>[root];
+    if (!includeRoot && root.info.baseEnumName == name) {
+      stations.clear();
+    }
     final children = root.children.values.expand((element) => element);
     for (final child in children) {
       stations.addAll(await getRelatedStations(child.info.baseEnumName));
     }
     return stations;
   }
+
+  BeatStationNode getNode(String name) => _nodes[name]!;
 }

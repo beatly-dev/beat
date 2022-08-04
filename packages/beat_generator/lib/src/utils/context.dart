@@ -11,3 +11,10 @@ bool isNullableContextType(String contextType) {
       contextType.contains('?') ||
       contextType == 'dynamic';
 }
+
+String toContextType(String providedContextType) {
+  final contextType =
+      isNullContextType(providedContextType) ? 'dynamic' : providedContextType;
+  final isNullable = isNullableContextType(contextType);
+  return '$contextType${isNullable ? "" : "?"}';
+}

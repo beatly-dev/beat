@@ -3,6 +3,7 @@ import 'package:beat_config/beat_config.dart';
 
 import '../constants/field_names.dart';
 import '../resources/beat_tree_resource.dart';
+import '../utils/context.dart';
 import '../utils/create_class.dart';
 import '../utils/string.dart';
 
@@ -23,15 +24,18 @@ class BeatStateBuilder {
       _creatMatcher(relatedStations),
     ].join();
     return createClass(
-      '$beatStateClassName<Context>',
+      beatStateClassName,
       body,
     );
   }
 
   String _createFinalFieldsAndConstructor() {
+    final node = beatTree.getNode(baseEnum.name);
+    final providedContextType = node.info.contextType;
+    final contextType = toContextType(providedContextType);
     final fields = [
       ClassField(stateFieldName, 'dynamic'),
-      ClassField(contextFieldName, 'Context'),
+      ClassField(contextFieldName, contextType),
     ];
     final beatStateClassName = toBeatStateClassName(baseEnum.name);
 
@@ -55,8 +59,8 @@ ${finalFields.toString()}
 
   String _creatMatcher(List<BeatStationNode> nodes) {
     final states = nodes.map((node) {
-      final name = node.info.baseEnumName;
-      return node.info.states.map((state) => _State(name, state));
+      final baseEnumName = node.info.baseEnumName;
+      return node.info.states.map((state) => _State(baseEnumName, state));
     }).expand((states) => states);
 
     final buffer = StringBuffer();

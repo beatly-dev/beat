@@ -18,3 +18,5 @@ const doneFieldName = 'done';
 const stateFieldName = 'state';
 const rootStateFieldName = '_rootState';
 const contextFieldName = 'context';
+
+const stateHistoryFieldName = 'stateHistory';

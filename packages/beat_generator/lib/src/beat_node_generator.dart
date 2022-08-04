@@ -9,6 +9,11 @@ import 'beat_tree_generator/beat_tree_builder.dart';
 import 'resources/beat_tree_resource.dart';
 import 'utils/class_checker.dart';
 
+/// TODO: Rebuild from the previous results.
+/// - Save beat tree json files for each library files.
+/// - If the library changes, read old json from the file.
+/// - Remove all nodes from the old beat tree.
+/// - and then build the new beat tree.
 class BeatNodeGenerator extends Generator {
   TypeChecker get typeChecker => TypeChecker.fromRuntime(BeatStation);
   @override
@@ -40,7 +45,7 @@ class BeatNodeGenerator extends Generator {
 }
 
 // _writeJson() {
-    // final buffer = StringBuffer();
+// final buffer = StringBuffer();
 //       if (nodes.isEmpty) return null;
 
 //     buffer.writeln('[');
