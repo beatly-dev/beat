@@ -1,43 +1,93 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:beat_config/beat_config.dart';
 
-import '../utils/context.dart';
+import '../constants/field_names.dart';
+import '../resources/beat_tree_resource.dart';
 import '../utils/create_class.dart';
 import '../utils/string.dart';
 
 class BeatStateBuilder {
   BeatStateBuilder({
-    required this.contextType,
     required this.baseEnum,
-  }) {
-    baseName = baseEnum.name;
-    beatStateClassName = toBeatStateClassName(baseName);
-    beatStationClassName = toBeatStationClassName(baseName);
-  }
+    required this.beatTree,
+  });
 
   final ClassElement baseEnum;
-  final String contextType;
-  late final String baseName;
-  late final String beatStationClassName;
-  late final String beatStateClassName;
-  final buffer = StringBuffer();
+  final BeatTreeSharedResource beatTree;
 
-  String build() {
-    final contextType =
-        isNullContextType(this.contextType) ? 'dynamic' : this.contextType;
-
+  Future<String> build() async {
+    final relatedStations = await beatTree.getRelatedStations(baseEnum.name);
+    final beatStateClassName = toBeatStateClassName(baseEnum.name);
+    final body = [
+      _createFinalFieldsAndConstructor(),
+      _creatMatcher(relatedStations),
+    ].join();
     return createClass(
-      beatStateClassName,
-      '''
-  const $beatStateClassName({
-    required this.state,
-    ${isNullableContextType(contextType) ? '' : 'required'} this.context,
-  });
-  final $baseName state;
-  final $contextType context;
-
-  @override
-  String toString() => '$beatStateClassName(state: \$state, context: \$context)';
-''',
+      '$beatStateClassName<Context>',
+      body,
     );
   }
+
+  String _createFinalFieldsAndConstructor() {
+    final fields = [
+      ClassField(stateFieldName, 'dynamic'),
+      ClassField(contextFieldName, 'Context'),
+    ];
+    final beatStateClassName = toBeatStateClassName(baseEnum.name);
+
+    final constructor = StringBuffer();
+    final finalFields = StringBuffer();
+
+    constructor.writeln('$beatStateClassName({');
+
+    for (final field in fields) {
+      constructor.writeln('required this.${field.name},');
+      finalFields.writeln('final ${field.type} ${field.name};');
+    }
+
+    constructor.writeln('});');
+
+    return '''
+${constructor.toString()}
+${finalFields.toString()}
+''';
+  }
+
+  String _creatMatcher(List<BeatStationNode> nodes) {
+    final states = nodes.map((node) {
+      final name = node.info.baseEnumName;
+      return node.info.states.map((state) => _State(name, state));
+    }).expand((states) => states);
+
+    final buffer = StringBuffer();
+    for (final state in states) {
+      buffer.writeln(
+        'bool get is${state.baseName}${toBeginningOfSentenceCase(state.fieldName)} {',
+      );
+      buffer.writeln(
+        '''
+return $stateFieldName == ${state.baseName}.${state.fieldName};
+''',
+      );
+      buffer.writeln('}');
+    }
+    return buffer.toString();
+  }
+}
+
+String toPrivateFieldName(String stationName) =>
+    '_${toDartFieldCase(stationName)}';
+
+class _State {
+  final String baseName;
+  final String fieldName;
+
+  _State(this.baseName, this.fieldName);
+}
+
+class ClassField {
+  final String name;
+  final String type;
+
+  ClassField(this.name, this.type);
 }

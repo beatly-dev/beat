@@ -34,7 +34,8 @@ class BeatNodeBuilder {
 
   Future<BeatStationNode> build() async {
     final fields = element.fields;
-    final states = fields.map((e) => e.name).toList();
+    final states =
+        fields.where((e) => e.isEnumConstant).map((e) => e.name).toList();
     final contextType = getBeatStationContextType(annotation);
     final beatConfigs =
         await mapBeatAnnotations(element.name, [element], buildStep);

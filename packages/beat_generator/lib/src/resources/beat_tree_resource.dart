@@ -110,11 +110,9 @@ class BeatTreeSharedResource {
   Future<List<BeatStationNode>> getRelatedStations(String name) async {
     var root = _nodes[name]!;
     final stations = <BeatStationNode>[root];
-    while (root.children.isNotEmpty) {
-      final children = root.children.values.expand((element) => element);
-      for (final child in children) {
-        stations.addAll(await getRelatedStations(child.info.baseEnumName));
-      }
+    final children = root.children.values.expand((element) => element);
+    for (final child in children) {
+      stations.addAll(await getRelatedStations(child.info.baseEnumName));
     }
     return stations;
   }

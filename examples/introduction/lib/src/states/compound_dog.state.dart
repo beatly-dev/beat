@@ -3,30 +3,30 @@ import 'package:beat/beat.dart';
 part 'compound_dog.state.beat.dart';
 
 @BeatStation()
-enum CompoundDog {
+enum CuteDog {
   @Beat(event: 'leaveHome', to: onAWalk)
   waiting,
 
-  @Beat(event: 'arriveHome', to: CompoundDog.walkComplete)
-  @Substation(OnWalkingDog)
+  @Beat(event: 'arriveHome', to: CuteDog.walkComplete)
+  @Substation(WalkingDog)
   onAWalk,
 
   walkComplete,
 }
 
 @BeatStation()
-enum OnWalkingDog {
-  @Beat(event: 'stop', to: OnWalkingDog.stoppingToSniffGoodSmells)
-  @Beat(event: 'speedUp', to: OnWalkingDog.running)
+enum WalkingDog {
+  @Beat(event: 'stop', to: WalkingDog.stoppingToSniffGoodSmells)
+  @Beat(event: 'speedUp', to: WalkingDog.running)
   @Substation(Tail)
   walking,
 
-  @Beat(event: 'slowDown', to: OnWalkingDog.walking)
-  @Beat(event: 'suddenStop', to: OnWalkingDog.stoppingToSniffGoodSmells)
+  @Beat(event: 'slowDown', to: WalkingDog.walking)
+  @Beat(event: 'suddenStop', to: WalkingDog.stoppingToSniffGoodSmells)
   running,
 
-  @Beat(event: 'speedUp', to: OnWalkingDog.walking)
-  @Beat(event: 'suddenSpeedUp', to: OnWalkingDog.running)
+  @Beat(event: 'speedUp', to: WalkingDog.walking)
+  @Beat(event: 'suddenSpeedUp', to: WalkingDog.running)
   stoppingToSniffGoodSmells,
 }
 

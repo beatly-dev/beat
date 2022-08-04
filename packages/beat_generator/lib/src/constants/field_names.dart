@@ -14,3 +14,7 @@ const setContextMethodName = '_setContext';
 
 const nextEventsFieldName = 'nextEvents';
 const doneFieldName = 'done';
+
+const stateFieldName = 'state';
+const rootStateFieldName = '_rootState';
+const contextFieldName = 'context';
