@@ -27,6 +27,7 @@ String getFirstFieldOfEnum(ConstantReader reader, String fieldName) {
   if (fieldLength == 0) {
     throw 'Empty enum is omitted';
   }
-  final firstField = element.fields.first;
+  final firstField =
+      element.fields.firstWhere((element) => element.isEnumConstant);
   return firstField.displayName;
 }
