@@ -65,14 +65,21 @@ class BeatTreeSharedResource {
   reconstructTree() {
     _roots.clear();
     final nodes = _nodes.values;
+
+    // reset tree info
+    for (final node in nodes) {
+      node.children.clear();
+      node.parent = '';
+    }
+
+    // rebuild tree
     for (final node in nodes) {
       final substations =
           node.substationConfigs.values.expand((element) => element);
-      node.children.clear();
       // set children
       for (final substation in substations) {
-        final subName = substation.childBase;
-        final subNode = _nodes[subName];
+        final subEnumName = substation.childBase;
+        final subNode = _nodes[subEnumName];
         if (subNode == null) {
           continue;
         }
@@ -85,6 +92,7 @@ class BeatTreeSharedResource {
       }
     }
 
+    // set roots
     for (final node in nodes) {
       final parent = node.parent;
       // if there is no parent, then it is root
@@ -97,5 +105,17 @@ class BeatTreeSharedResource {
   addNode(BeatStationNode node) async {
     _nodes[node.info.baseEnumName] = node;
     reconstructTree();
+  }
+
+  Future<List<BeatStationNode>> getRelatedStations(String name) async {
+    var root = _nodes[name]!;
+    final stations = <BeatStationNode>[root];
+    while (root.children.isNotEmpty) {
+      final children = root.children.values.expand((element) => element);
+      for (final child in children) {
+        stations.addAll(await getRelatedStations(child.info.baseEnumName));
+      }
+    }
+    return stations;
   }
 }
