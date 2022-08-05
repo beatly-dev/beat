@@ -19,37 +19,32 @@ class BeatStateBuilder {
   Future<String> build() async {
     final relatedStations = await beatTree.getRelatedStations(baseEnum.name);
     final beatStateClassName = toBeatStateClassName(baseEnum.name);
+    final node = beatTree.getNode(baseEnum.name);
+    final providedContextType = node.info.contextType;
+    final contextType = toContextType(providedContextType);
     final body = [
       _createFinalFieldsAndConstructor(),
       _creatMatcher(relatedStations),
     ].join();
     return createClass(
-      beatStateClassName,
+      '$beatStateClassName extends BaseBeatState<dynamic, $contextType>',
       body,
     );
   }
 
   String _createFinalFieldsAndConstructor() {
+    final beatStateClassName = toBeatStateClassName(baseEnum.name);
     final node = beatTree.getNode(baseEnum.name);
     final providedContextType = node.info.contextType;
     final contextType = toContextType(providedContextType);
-    final fields = [
-      ClassField(stateFieldName, 'dynamic'),
-      ClassField(contextFieldName, contextType),
-    ];
-    final beatStateClassName = toBeatStateClassName(baseEnum.name);
 
     final constructor = StringBuffer();
     final finalFields = StringBuffer();
 
     constructor.writeln('$beatStateClassName({');
-
-    for (final field in fields) {
-      constructor.writeln('required this.${field.name},');
-      finalFields.writeln('final ${field.type} ${field.name};');
-    }
-
-    constructor.writeln('});');
+    constructor.writeln('dynamic state,');
+    constructor.writeln('$contextType context,');
+    constructor.writeln('}): super(state, context);');
 
     return '''
 ${constructor.toString()}
