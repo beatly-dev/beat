@@ -3,6 +3,7 @@ import 'package:beat/beat.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
+import 'helpers/beat_annotation_variables.dart';
 import 'helpers/beat_state_class.dart';
 import 'helpers/beat_station_class.dart';
 import 'resources/beat_tree_resource.dart';
@@ -44,6 +45,10 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
       //   baseEnum: element,
       //   beatTree: beatTree,
       // ).build(),
+      await GlobalBeatAnnotationVariablesBuilder(
+        beatTree: beatTree,
+        baseEnum: element,
+      ).build(),
     ];
   }
 }

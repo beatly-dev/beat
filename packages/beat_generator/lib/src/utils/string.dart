@@ -58,16 +58,32 @@ String toBeatStationClassName(String baseName) =>
 String toBeatStateClassName(String baseName) =>
     '${toBeginningOfSentenceCase(baseName)}BeatState';
 
-String toBeatActionVariableName(String from, String event, String to) =>
-    '_${toDartFieldCase(event)}From${toBeginningOfSentenceCase(from)}To${toBeginningOfSentenceCase(to)}';
-
-String toBeatActionVariableDeclaration(
-  String from,
+String toBeatVariableName(
+  String fromBase,
+  String fromField,
   String event,
-  String to,
-  String source,
+  String toBase,
+  String toField,
 ) =>
-    'const ${toBeatActionVariableName(from, event, to)} = $source;';
+    '_${toDartFieldCase(event)}From${toBeginningOfSentenceCase(fromBase)}${toBeginningOfSentenceCase(fromField)}To${toBeginningOfSentenceCase(toBase)}${toBeginningOfSentenceCase(toField)}';
+
+String toBeatVariableDeclaration(
+  String fromBase,
+  String fromField,
+  String event,
+  String toBase,
+  String toField,
+  String? actions,
+  String? conditions,
+  String? eventDataType,
+) =>
+    '''const ${toBeatVariableName(fromBase, fromField, event, toBase, toField)} = Beat(
+      event: '$event',
+      to: $toBase.$toField,
+      actions: ${actions ?? const []},
+      conditions: ${conditions ?? const []},
+      eventDataType: ${eventDataType ?? dynamic},
+    );''';
 
 String toInvokeVariableName(InvokeConfig config) =>
     '_invokeOn${toBeginningOfSentenceCase('${config.stateBase}\$${config.stateField}')}';
