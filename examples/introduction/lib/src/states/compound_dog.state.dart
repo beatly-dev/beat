@@ -1,5 +1,7 @@
 import 'package:beat/beat.dart';
 
+import 'cute_tail.dart';
+
 part 'compound_dog.state.beat.dart';
 
 @BeatStation()
@@ -28,9 +30,4 @@ enum CuteWalkingDog {
   @Beat(event: 'speedUp', to: CuteWalkingDog.walking)
   @Beat(event: 'suddenSpeedUp', to: CuteWalkingDog.running)
   stoppingToSniffGoodSmells,
-}
-
-@BeatStation()
-enum CuteTail {
-  wagging,
 }
