@@ -124,4 +124,6 @@ class BeatTreeSharedResource {
   }
 
   BeatStationNode getNode(String name) => _nodes[name]!;
+
+  List<BeatStationNode> getAllNode() => _nodes.values.toList();
 }

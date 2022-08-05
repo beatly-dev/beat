@@ -47,6 +47,7 @@ class BeatStationBuilder {
     _createReset();
     _createListenersFields(substations);
     _createListenersMethods(substations);
+    _createNotifyListenersMethod(substations);
     _createExecMethods(substations);
     _createMapMethods(substations);
     return createClass(
@@ -126,7 +127,7 @@ final List<$stateClass> $stateHistoryFieldName;
 void _setState($stateClassName state) {
   final nextState = $stateClassName(state: state, context: currentState.context);
   $stateHistoryFieldName.add(nextState);
-  // _notifyListeners();
+  _notifyListeners();
   // _invokeServices();
 }
 ''',
@@ -271,31 +272,33 @@ final ${toListenerFieldName(name)} = <Function>[];
     }
   }
 
-//   void _createNotifyListenersMethod() {
-//     buffer.writeln(
-//       '''
-//   void _notifyListeners() {
-//     _listeners.forEach((listener) => listener());
-//     ''',
-//     );
+  void _createNotifyListenersMethod(List<BeatStationNode> nestedStations) {
+    buffer.writeln(
+      '''
+  void _notifyListeners() {
+    _listeners.forEach((listener) => listener());
+    ''',
+    );
 
-//     buffer.writeln(
-//       enumFields
-//           .map(
-//             (name) => '''
-// if (currentState.state == $baseName.$name) {
-//     ${toListenerFieldName(name)}.forEach((listener) => listener());
-// }
-//     ''',
-//           )
-//           .join('else '),
-//     );
-//     buffer.writeln(
-//       '''
-//   }
-// ''',
-//     );
-//   }
+    buffer.writeln(
+      nestedStations.map((station) {
+        return station.info.states.map((state) {
+          final name =
+              '${station.info.baseEnumName}${toBeginningOfSentenceCase(state)}';
+          return '''
+if (currentState.is$name) {
+    ${toListenerFieldName(name)}.forEach((listener) => listener());
+}
+''';
+        }).join('else ');
+      }).join('else '),
+    );
+    buffer.writeln(
+      '''
+  }
+''',
+    );
+  }
 
   _createListenersMethods(List<BeatStationNode> nestedStations) {
     buffer.writeln(
@@ -437,15 +440,4 @@ T map<T>({
       }
     }
   }
-
-//   void _createCurrentStateCheckerGetter() {
-//     for (final name in enumFields) {
-//       buffer.writeln(
-//         '''
-//   bool get ${toCurrentStateCheckerGetterName(name)} =>
-//       currentState.state == $baseName.$name;
-// ''',
-//       );
-//     }
-//   }
 }
