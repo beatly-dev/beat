@@ -4,10 +4,10 @@ part 'walking_dog.state.beat.dart';
 
 @BeatStation()
 enum WalkingDog {
-  @Beat(event: 'leaveHome', to: onAWalk)
+  @Beat(event: ' leaveHome ', to: onAWalk)
   waiting,
 
-  @Beat(event: 'arriveHome', to: WalkingDog.walkComplete)
+  @Beat(event: r'arr$$$@@#!ive    Home', to: WalkingDog.walkComplete)
   @Invokes([])
   onAWalk,
 
