@@ -37,6 +37,35 @@ Future<List<SubstationConfig>> aggregateSubstationConfigs(
   }).toList();
 }
 
+Future<List<SubstationConfig>> getSubstationConfigs(
+  Element element,
+  String? fromBase,
+  BuildStep buildStep,
+) async {
+  final annotations =
+      await getAnnotations(element, _substationChecker, buildStep);
+  fromBase ??= element.name;
+  return annotations.map((e) {
+    final annotation = e.annotation;
+    final fromField = e.element.name!;
+    final childBase = getTypeField(annotation, 'child')!;
+    final childFirst = getFirstFieldOfEnum(annotation, 'child');
+    final source = e.source;
+    if (fromBase == childBase) {
+      throw 'Prohibited: self referencing substation $fromBase';
+    }
+
+    final config = SubstationConfig(
+      parentBase: fromBase!,
+      parentField: fromField,
+      childBase: childBase,
+      childFirst: childFirst,
+      source: source,
+    );
+    return config;
+  }).toList();
+}
+
 Future<Map<String, List<SubstationConfig>>> mapSubstationAnnotations<C>(
   String stateName,
   List<Element> fields,
@@ -45,7 +74,7 @@ Future<Map<String, List<SubstationConfig>>> mapSubstationAnnotations<C>(
   final substations = <String, List<SubstationConfig>>{};
   for (final field in fields) {
     final substationConfigs =
-        await aggregateSubstationConfigs(field, stateName, buildStep);
+        await getSubstationConfigs(field, stateName, buildStep);
     final from = field.name!;
     substations[from] = substationConfigs;
   }

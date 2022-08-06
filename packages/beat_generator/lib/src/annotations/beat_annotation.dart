@@ -44,6 +44,40 @@ Future<List<BeatConfig>> aggregateBeatConfigs(
   }).toList();
 }
 
+Future<List<BeatConfig>> getBeatConfigs(
+  Element element,
+  String? fromBase,
+  BuildStep buildStep,
+) async {
+  final annotations = await getAnnotations(element, _beatChecker, buildStep);
+  fromBase ??= element.name;
+  return annotations.map((e) {
+    final annotation = ConstantReader(e.annotationObj);
+
+    final event = getAnnotationFieldLiteralValue(annotation, 'event');
+    final fromField = e.element.name!;
+    final toField = getAnnotationEnumFieldValue(annotation, 'to');
+    final toBase = getAnnotationEnumFieldClass(annotation, 'to');
+    final source = e.source;
+    final actions = getBeatActionsField(source);
+    final argType = getBeatArgTypeField(annotation);
+    final conditions = getBeatConditionsField(source);
+
+    final config = BeatConfig(
+      fromBase: fromBase!,
+      fromField: fromField,
+      event: event,
+      toBase: toBase,
+      toField: toField,
+      source: source,
+      actions: actions,
+      eventDataType: argType,
+      conditions: conditions,
+    );
+    return config;
+  }).toList();
+}
+
 Future<Map<String, List<BeatConfig>>> mapBeatAnnotations<C>(
   String stateName,
   List<Element> fields,
@@ -51,7 +85,7 @@ Future<Map<String, List<BeatConfig>>> mapBeatAnnotations<C>(
 ) async {
   final beats = <String, List<BeatConfig>>{};
   for (final field in fields) {
-    final beatConfigs = await aggregateBeatConfigs(field, stateName, buildStep);
+    final beatConfigs = await getBeatConfigs(field, stateName, buildStep);
     final from = field.name!;
     beats[from] = beatConfigs;
     if (field is ClassElement) {
