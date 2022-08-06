@@ -16,7 +16,6 @@ class GlobalBeatAnnotationVariablesBuilder {
     final beatNode = beatTree.getNode(baseName);
     final beats = beatNode.beatConfigs.values.expand((element) => element);
     StringBuffer buffer = StringBuffer();
-    print("Build for $baseName - ${beats.length} beats");
     for (final beat in beats) {
       final decl = toBeatVariableDeclaration(
         beat.fromBase,

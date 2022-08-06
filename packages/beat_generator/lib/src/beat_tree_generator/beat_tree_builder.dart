@@ -40,9 +40,9 @@ class BeatNodeBuilder {
     final beatConfigs =
         await mapBeatAnnotations(element.name, [element], buildStep);
     final substationConfigs =
-        await mapSubstationAnnotations(element.name, [element], buildStep);
+        await mapSubstationAnnotations(element.name, element.fields, buildStep);
     final invokeConfigs =
-        await mapInvokeAnnotations(element.name, [element], buildStep);
+        await mapInvokeAnnotations(element.name, element.fields, buildStep);
 
     final node = BeatStationNode(
       BeatStationInfo(

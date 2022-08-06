@@ -8,6 +8,7 @@ enum WalkingDog {
   waiting,
 
   @Beat(event: 'arriveHome', to: WalkingDog.walkComplete)
+  @Invokes([])
   onAWalk,
 
   walkComplete,
