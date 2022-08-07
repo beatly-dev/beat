@@ -27,7 +27,7 @@ class BeatStateBuilder {
       _creatMatcher(relatedStations),
     ].join();
     return createClass(
-      '$beatStateClassName extends BaseBeatState<dynamic, $contextType>',
+      '$beatStateClassName extends BaseBeatState<$contextType>',
       body,
     );
   }
@@ -42,7 +42,7 @@ class BeatStateBuilder {
     final finalFields = StringBuffer();
 
     constructor.writeln('$beatStateClassName({');
-    constructor.writeln('dynamic state,');
+    constructor.writeln('required Enum state,');
     constructor.writeln('$contextType context,');
     constructor.writeln('}): super(state, context);');
 

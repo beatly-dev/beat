@@ -124,7 +124,7 @@ final List<$stateClass> $stateHistoryFieldName;
     final stateClassName = toBeatStateClassName(baseEnum.name);
     buffer.writeln(
       '''
-void _setState($stateClassName state) {
+void _setState(Enum state) {
   final nextState = $stateClassName(state: state, context: currentState.context);
   $stateHistoryFieldName.add(nextState);
   _notifyListeners();

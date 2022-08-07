@@ -2,7 +2,7 @@ import 'package:beat/beat.dart';
 
 part 'walking_dog.state.beat.dart';
 
-@BeatStation()
+@BeatStation(contextType: int)
 enum WalkingDog {
   @Beat(event: ' leaveHome ', to: onAWalk)
   waiting,
