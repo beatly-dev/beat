@@ -35,6 +35,8 @@ class BeatStateBuilder {
   String _createFinalFieldsAndConstructor() {
     final beatStateClassName = toBeatStateClassName(baseEnum.name);
     final node = beatTree.getNode(baseEnum.name);
+    final childNode = node.children.values.expand((element) => element);
+    final childKeys = node.children.keys;
     final providedContextType = node.info.contextType;
     final contextType = toContextType(providedContextType);
 
@@ -42,13 +44,24 @@ class BeatStateBuilder {
     final finalFields = StringBuffer();
 
     constructor.writeln('$beatStateClassName({');
-    constructor.writeln('required dynamic state,');
+    constructor.writeln('required ${node.info.baseEnumName} state,');
     constructor.writeln('$contextType context,');
     constructor.writeln('}): super(state, context);');
+
+    final hasSubstate = childKeys
+        .map(
+          (state) => '''
+  ${toStateMatcher(node.info.baseEnumName, state)}
+''',
+        )
+        .join(' || ');
 
     return '''
 ${constructor.toString()}
 ${finalFields.toString()}
+
+@override
+bool get hasSubstate => ${childKeys.isEmpty ? 'false' : hasSubstate};
 ''';
   }
 
@@ -58,6 +71,9 @@ ${finalFields.toString()}
       return node.info.states.map((state) => _State(baseEnumName, state));
     }).expand((states) => states);
 
+    /// TODO:
+    /// 1. If a user asks for a substate
+    /// 2. If a user asks for a parallel state
     final buffer = StringBuffer();
     for (final state in states) {
       buffer.writeln(

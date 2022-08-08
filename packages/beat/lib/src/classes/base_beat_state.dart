@@ -6,6 +6,8 @@ abstract class BeatState<Context> {
 
   bool get isParallelState => state is List;
   bool get isSingleState => state is Enum;
+  bool get hasSubstate;
+
   List<Enum>? get parallelState => isParallelState ? state as List<Enum> : null;
   Enum? get singleState => isSingleState ? state as Enum : null;
 }

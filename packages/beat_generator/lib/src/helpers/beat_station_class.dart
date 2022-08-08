@@ -127,6 +127,9 @@ final List<$stateClass> $stateHistoryFieldName;
   }
 
   _createSetState() async {
+    /// TODO
+    /// - set state for substations
+    /// - set state for parallel stations
     final stateClassName = toBeatStateClassName(baseEnum.name);
     buffer.writeln(
       '''
@@ -142,6 +145,9 @@ void $setStateMethodName(dynamic state) {
   }
 
   _createSetContext(String contextType) async {
+    /// TODO
+    /// - set context for substations
+    /// - set context for parallel stations
     final stateClassName = toBeatStateClassName(baseEnum.name);
     buffer.writeln(
       '''
