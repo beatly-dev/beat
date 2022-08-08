@@ -2,7 +2,8 @@ import 'package:beat/beat.dart';
 
 part 'counter.state.beat.dart';
 
-const addBeat = Beat(event: 'add', to: 'added', actions: [AssignAction(adder)]);
+const addBeat =
+    Beat(event: 'add', to: Counter.added, actions: [AssignAction(adder)]);
 
 @BeatStation(contextType: int)
 @Beat(event: 'take', to: Counter.taken, actions: [AssignAction(taker)])

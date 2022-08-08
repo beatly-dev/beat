@@ -9,7 +9,7 @@ enum DogInAHouse {
     event: 'wakesUp',
     to: awake,
     conditions: [],
-    actions: [BowWow2, AssignAction(assign)],
+    actions: [bowWow2, AssignAction(assign)],
   )
   asleep,
 
@@ -21,7 +21,7 @@ enum DogInAHouse {
 
 enum Hi { ho }
 
-BowWow2() {
+bowWow2() {
   if (DogInAHouse is Enum) {
     print('it is an enum');
   }
