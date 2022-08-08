@@ -99,19 +99,8 @@ bool get hasSubstate => ${childKeys.isEmpty ? 'false' : hasSubstate};
       if (rootEnumName != state.baseName) {
         /// TODO: check parent state
         final stationMatcher = toStateMatcher(state.baseName, state.fieldName);
-        var routeToLastStation = '';
-        var currentStation = beatTree.getNode(state.baseName);
-        while (true) {
-          routeToLastStation =
-              '.${toSubstationFieldName(currentStation.info.baseEnumName)}$routeToLastStation';
-          if (currentStation.parent.isEmpty ||
-              currentStation.parent == rootEnumName) {
-            break;
-          }
-          currentStation = beatTree.getNode(currentStation.parent);
-        }
         buffer.writeln(
-          'return _station$routeToLastStation.currentState.$stationMatcher;',
+          'return _station.${beatTree.substationRouteBetween(from: rootEnumName, to: state.baseName)}.currentState.$stationMatcher;',
         );
       } else {
         buffer.writeln(

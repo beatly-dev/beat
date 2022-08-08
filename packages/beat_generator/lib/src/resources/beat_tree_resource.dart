@@ -5,6 +5,8 @@ import 'package:beat_config/beat_config.dart';
 import 'package:build/build.dart';
 import 'package:build_runner_core/build_runner_core.dart';
 
+import '../utils/string.dart';
+
 const jsonLocation = '$entryPointDir/beat_tree.json';
 final inMemoryBeatTree = Resource<BeatTreeSharedResource>(
   () async {
@@ -126,4 +128,19 @@ class BeatTreeSharedResource {
   BeatStationNode getNode(String name) => _nodes[name]!;
 
   List<BeatStationNode> getAllNode() => _nodes.values.toList();
+  List<BeatStationNode> routeBetween({String from = '', required String to}) {
+    if (from == to || to == '') {
+      return [];
+    }
+    final currentStation = getNode(to);
+    final parent = currentStation.parent;
+    return [...routeBetween(from: from, to: parent), currentStation];
+  }
+
+  String substationRouteBetween({String from = '', required String to}) {
+    final routes = routeBetween(to: to, from: from);
+    return routes.map((station) {
+      return toSubstationFieldName(station.info.baseEnumName);
+    }).join('.');
+  }
 }
