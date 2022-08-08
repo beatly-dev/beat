@@ -1,21 +1,23 @@
 import 'package:beat_config/beat_config.dart';
 
 String firstMatchingList(String source) {
-  final buffer = StringBuffer();
   int bracketCount = 0;
+  int start = 0;
   for (var i = 0; i < source.length; ++i) {
     final char = source[i];
     if (char == '[') {
+      if (bracketCount == 0) {
+        start = i;
+      }
       bracketCount++;
     } else if (char == ']') {
       bracketCount--;
     }
-    buffer.write(char);
     if (char == ']' && bracketCount == 0) {
-      break;
+      return source.substring(start, i + 1);
     }
   }
-  return buffer.toString();
+  return '';
 }
 
 String toBeginningOfSentenceCase(String str) {
