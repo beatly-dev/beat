@@ -51,6 +51,9 @@ class BeatStationBuilder {
     await _createSetState();
     await _createSetContext(node.info.contextType);
     _createReset();
+
+    /// TODO:
+    /// - nested listeners
     _createListenersFields(substations);
     _createListenersMethods(substations);
     _createNotifyListenersMethod(substations);
@@ -289,7 +292,7 @@ void \$${config.event}<Data>([Data? data]) {
     for (final state in states) {
       final beatConfigs = node.beatConfigs[state] ?? [];
       buffer.writeln(
-        '''${toBeatTransitionBaseClassName(baseName, state)} get ${toDartFieldCase(state)} {
+        '''${toBeatTransitionBaseClassName(baseName, state)} get ${toTransitionFieldName(state)} {
           if (currentState.state == $baseName.$state) {
             return ${toBeatTransitionRealClassName(baseName, state)}(${beatConfigs.isEmpty ? '' : 'this'});
           }
