@@ -46,6 +46,7 @@ class BeatStationBuilder {
     await _createSubstationFields(substations);
     _createTransitionFields(node);
     _createCommonBeatTransitions(node);
+    _createInvokeServices(node);
     await _createCurrentState();
     await _createSetState();
     await _createSetContext(node.info.contextType);
@@ -134,7 +135,7 @@ void $setStateMethodName(dynamic state) {
   final nextState = $stateClassName(state: state, context: currentState.context);
   $stateHistoryFieldName.add(nextState);
   $notifyListenersMethodName();
-  // _invokeServices();
+  _invokeServices();
 }
 ''',
     );
@@ -148,69 +149,60 @@ void $setContextMethodName($contextType context) {
   final nextState = $stateClassName(state: currentState.state, context: context);
   $stateHistoryFieldName.add(nextState);
   $notifyListenersMethodName();
-  // _invokeServices();
+  _invokeServices();
 }
 ''',
     );
   }
 
-//   void _createInvokeServices() {
-//     final body =
-//         invokes.keys.where((state) => invokes[state]!.isNotEmpty).map((state) {
-//       final config = invokes[state]![0];
-//       final varName = toInvokeVariableName(config);
+  _createInvokeServices(BeatStationNode node) {
+    final invokes = node.invokeConfigs;
+    final baseName = baseEnum.name;
 
-//       /// TODO: transition on done/error
-//       return '''
-// if (currentState.state == ${config.stateBase}.${config.stateField}) {
-//   for (final invoke in $varName.invokes) {
-//     if (invoke is InvokeFuture) {
-//       (() async {
-//         final onDone = invoke.onDone;
-//         final onError = invoke.onError;
-//         try {
-//           await invoke.invokeWith(currentState.state, currentState.context, '');
-//           for (final action in onDone.actions) {
-//             ${ActionExecutorBuilder(
-//         actionName: 'action',
-//         baseName: baseName,
-//         contextType: contextType,
-//         eventData: "EventData(event: 'invoke', data: null)",
-//         isStation: true,
-//       ).build()}
-//           }
-//           if (onDone.to is $baseName) {
-//             _setState(onDone.to);
-//           }
-//         } catch (_) {
-//           for (final action in onError.actions) {
-//             ${ActionExecutorBuilder(
-//         actionName: 'action',
-//         baseName: baseName,
-//         contextType: contextType,
-//         eventData: "EventData(event: 'invoke', data: null)",
-//         isStation: true,
-//       ).build()}
-//           }
-//           if (onError.to is $baseName) {
-//             _setState(onError.to);
-//           }
-//         }
-//       })();
-//     }
-//   }
-// }
-// ''';
-//     }).join('else ');
+    final body =
+        invokes.keys.where((state) => invokes[state]!.isNotEmpty).map((state) {
+      final config = invokes[state]![0];
+      final varName = toInvokeVariableName(config);
 
-//     buffer.writeln(
-//       '''
-// _invokeServices() async {
-//   $body
-// }
-// ''',
-//     );
-//   }
+      /// TODO: transition on done/error
+      return '''
+if (currentState.state == ${config.stateBase}.${config.stateField}) {
+  for (final invoke in $varName.invokes) {
+    if (invoke is InvokeFuture) {
+      (() async {
+        final onDone = invoke.onDone;
+        final onError = invoke.onError;
+        try {
+          await invoke.invokeWith(currentState.state, currentState.context, '');
+          for (final action in onDone.actions) {
+            ${createActionExecutor('action', 'EventData(event:"invoke", data: null)', true)}
+          }
+          if (onDone.to is $baseName) {
+            _setState(onDone.to);
+          }
+        } catch (_) {
+          for (final action in onError.actions) {
+            ${createActionExecutor('action', 'EventData(event:"invoke", data: null)', true)}
+          }
+          if (onError.to is $baseName) {
+            _setState(onError.to);
+          }
+        }
+      })();
+    }
+  }
+}
+''';
+    }).join('else ');
+
+    buffer.writeln(
+      '''
+_invokeServices() async {
+  $body
+}
+''',
+    );
+  }
 
   void _createReset() {
     buffer.writeln(
