@@ -24,6 +24,8 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
 
     return [
       '// ignore_for_file: avoid_function_literals_in_foreach_calls',
+      '// ignore_for_file: unused_field',
+      '// ignore_for_file: unused_element',
       await BeatStationBuilder(
         baseEnum: element,
         beatTree: beatTree,

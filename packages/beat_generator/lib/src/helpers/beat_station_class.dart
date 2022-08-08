@@ -185,9 +185,10 @@ void $setStateMethodName(dynamic state) {
     /// - set context for substations
     /// - set context for parallel stations
     final stateClassName = toBeatStateClassName(baseEnum.name);
+    final realContextType = toContextType(contextType);
     buffer.writeln(
       '''
-void $setContextMethodName($contextType context) {
+void $setContextMethodName($realContextType context) {
   final nextState = $stateClassName(state: currentState.state, context: context)..$stateInitializerMethodName(this);
   $stateHistoryFieldName.add(nextState);
   $notifyListenersMethodName();
