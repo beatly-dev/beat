@@ -6,6 +6,7 @@ import '../resources/beat_tree_resource.dart';
 import '../utils/context.dart';
 import '../utils/create_class.dart';
 import '../utils/string.dart';
+import 'execute_actions.dart';
 
 /// Top-level class
 ///
@@ -35,6 +36,7 @@ class BeatStationBuilder {
   Future<String> build() async {
     final name = baseEnum.name;
     final beatStationClassName = toBeatStationClassName(name);
+    final node = beatTree.getNode(name);
     final substations = await beatTree.getRelatedStations(
       baseEnum.name,
     );
@@ -42,8 +44,11 @@ class BeatStationBuilder {
     await _createInitialStateField();
     await _createStateHistoryField();
     await _createSubstationFields(substations);
+    _createTransitionFields(node);
+    _createCommonBeatTransitions(node);
     await _createCurrentState();
     await _createSetState();
+    await _createSetContext(node.info.contextType);
     _createReset();
     _createListenersFields(substations);
     _createListenersMethods(substations);
@@ -124,11 +129,25 @@ final List<$stateClass> $stateHistoryFieldName;
     final stateClassName = toBeatStateClassName(baseEnum.name);
     buffer.writeln(
       '''
-void _setState(dynamic state) {
+void $setStateMethodName(dynamic state) {
   assert(state is Enum || state is List<Enum>);
   final nextState = $stateClassName(state: state, context: currentState.context);
   $stateHistoryFieldName.add(nextState);
-  _notifyListeners();
+  $notifyListenersMethodName();
+  // _invokeServices();
+}
+''',
+    );
+  }
+
+  _createSetContext(String contextType) async {
+    final stateClassName = toBeatStateClassName(baseEnum.name);
+    buffer.writeln(
+      '''
+void $setContextMethodName($contextType context) {
+  final nextState = $stateClassName(state: currentState.state, context: context);
+  $stateHistoryFieldName.add(nextState);
+  $notifyListenersMethodName();
   // _invokeServices();
 }
 ''',
@@ -209,50 +228,45 @@ void _setState(dynamic state) {
     );
   }
 
-//   void _createCommonBeatTransitions() {
-//     for (final config in commonBeats) {
-//       buffer.writeln(
-//         '''
-// void _exec${toBeginningOfSentenceCase(config.event)}Actions(EventData eventData) {
-//   for (final action in ${toBeatActionVariableName(config.fromField, config.event, config.toField)}.actions) {
-//     ${ActionExecutorBuilder(
-//           actionName: 'action',
-//           baseName: baseName,
-//           contextType: contextType,
-//           eventData: 'eventData',
-//           isStation: true,
-//         ).build()}
-//   }
-// }
-// ''',
-//       );
-//       buffer.writeln(
-//         '''
-// void \$${config.event}<Data>([Data? data]) {
-//   _exec${toBeginningOfSentenceCase(config.event)}Actions(EventData(
-//     event: '${config.event}',
-//     data: data,
-//   ));
-//   _setState($baseName.${config.toField});
-// }
-// ''',
-//       );
-//     }
-//   }
+  void _createCommonBeatTransitions(BeatStationNode node) {
+    final baseName = node.info.baseEnumName;
+    final commonBeats = node.beatConfigs[baseName] ?? [];
+    for (final config in commonBeats) {
+      buffer.writeln(
+        '''
+void ${toActionExecutorMethodName(config.event)}(EventData eventData) {
+  for (final action in ${toBeatVariableName(config.fromBase, config.fromField, config.event, config.toBase, config.toField)}.actions) {
+    ${createActionExecutor('action', 'eventData', true)}
+  }
+}
+''',
+      );
+      buffer.writeln(
+        '''
+void \$${config.event}<Data>([Data? data]) {
+  ${toActionExecutorMethodName(config.event)}(EventData(event: '${config.event}', data: data));
+  _setState($baseName.${config.toField});
+}
+''',
+      );
+    }
+  }
 
-//   void _createTransitionFields() {
-//     for (final state in enumFields) {
-//       final beatConfigs = beats[state] ?? [];
-//       buffer.writeln(
-//         '''${toBeatTransitionBaseClassName(baseName, state)} get ${toDartFieldCase(state)} {
-//           if (currentState.state == $baseName.$state) {
-//             return ${toBeatTransitionRealClassName(baseName, state)}(${beatConfigs.isEmpty ? '' : 'this'});
-//           }
-//           return const ${toBeatTransitionDummyClassName(baseName, state)}();
-//         }''',
-//       );
-//     }
-//   }
+  void _createTransitionFields(BeatStationNode node) {
+    final states = node.info.states;
+    final baseName = node.info.baseEnumName;
+    for (final state in states) {
+      final beatConfigs = node.beatConfigs[state] ?? [];
+      buffer.writeln(
+        '''${toBeatTransitionBaseClassName(baseName, state)} get ${toDartFieldCase(state)} {
+          if (currentState.state == $baseName.$state) {
+            return ${toBeatTransitionRealClassName(baseName, state)}(${beatConfigs.isEmpty ? '' : 'this'});
+          }
+          return const ${toBeatTransitionDummyClassName(baseName, state)}();
+        }''',
+      );
+    }
+  }
 
   _createListenersFields(List<BeatStationNode> nestedStations) {
     buffer.writeln(
