@@ -102,6 +102,8 @@ final $substationClassName $substationFieldName = $substationClassName();
       '${toContextType(contextType)} $initialContextArg,',
     );
     buffer.writeln('})');
+
+    /// additional initializers
     buffer.writeln(':');
 
     buffer.writeln(
@@ -122,6 +124,11 @@ $initialStateFieldName = $stateClass(
     buffer.writeln(
       '''
 $stateHistoryFieldName.add($initialStateFieldName);
+''',
+    );
+    buffer.writeln(
+      '''
+$initialStateFieldName._initialize(this);
 ''',
     );
     buffer.writeln('}');
@@ -161,7 +168,7 @@ final List<$stateClass> $stateHistoryFieldName = [];
       '''
 void $setStateMethodName(dynamic state) {
   assert(state is Enum || state is List<Enum>);
-  final nextState = $stateClassName(state: state, context: currentState.context);
+  final nextState = $stateClassName(state: state, context: currentState.context)..$stateInitializerMethodName(this);
   $stateHistoryFieldName.add(nextState);
   $notifyListenersMethodName();
   _invokeServices();
@@ -178,7 +185,7 @@ void $setStateMethodName(dynamic state) {
     buffer.writeln(
       '''
 void $setContextMethodName($contextType context) {
-  final nextState = $stateClassName(state: currentState.state, context: context);
+  final nextState = $stateClassName(state: currentState.state, context: context)..$stateInitializerMethodName(this);
   $stateHistoryFieldName.add(nextState);
   $notifyListenersMethodName();
   _invokeServices();

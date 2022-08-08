@@ -35,18 +35,33 @@ class BeatStateBuilder {
   String _createFinalFieldsAndConstructor() {
     final beatStateClassName = toBeatStateClassName(baseEnum.name);
     final node = beatTree.getNode(baseEnum.name);
-    final childNode = node.children.values.expand((element) => element);
     final childKeys = node.children.keys;
     final providedContextType = node.info.contextType;
     final contextType = toContextType(providedContextType);
 
     final constructor = StringBuffer();
     final finalFields = StringBuffer();
+    final initializer = StringBuffer();
+    finalFields.writeln(
+      '''
+late final ${toBeatStationClassName(baseEnum.name)} _station;
+''',
+    );
 
-    constructor.writeln('$beatStateClassName({');
+    constructor.writeln(
+      '''$beatStateClassName({''',
+    );
     constructor.writeln('required ${node.info.baseEnumName} state,');
     constructor.writeln('$contextType context,');
     constructor.writeln('}): super(state, context);');
+
+    initializer.writeln(
+      '''
+$stateInitializerMethodName(${toBeatStationClassName(baseEnum.name)} station) {
+  _station = station;
+}
+''',
+    );
 
     final hasSubstate = childKeys
         .map(
@@ -59,6 +74,7 @@ class BeatStateBuilder {
     return '''
 ${constructor.toString()}
 ${finalFields.toString()}
+${initializer.toString()}
 
 @override
 bool get hasSubstate => ${childKeys.isEmpty ? 'false' : hasSubstate};
@@ -66,6 +82,7 @@ bool get hasSubstate => ${childKeys.isEmpty ? 'false' : hasSubstate};
   }
 
   String _creatMatcher(List<BeatStationNode> nodes) {
+    final rootEnumName = baseEnum.name;
     final states = nodes.map((node) {
       final baseEnumName = node.info.baseEnumName;
       return node.info.states.map((state) => _State(baseEnumName, state));
@@ -79,11 +96,30 @@ bool get hasSubstate => ${childKeys.isEmpty ? 'false' : hasSubstate};
       buffer.writeln(
         'bool get ${toStateMatcher(state.baseName, state.fieldName)} {',
       );
-      buffer.writeln(
-        '''
+      if (rootEnumName != state.baseName) {
+        /// TODO: check parent state
+        final stationMatcher = toStateMatcher(state.baseName, state.fieldName);
+        var routeToLastStation = '';
+        var currentStation = beatTree.getNode(state.baseName);
+        while (true) {
+          routeToLastStation =
+              '.${toSubstationFieldName(currentStation.info.baseEnumName)}$routeToLastStation';
+          if (currentStation.parent.isEmpty ||
+              currentStation.parent == rootEnumName) {
+            break;
+          }
+          currentStation = beatTree.getNode(currentStation.parent);
+        }
+        buffer.writeln(
+          'return _station$routeToLastStation.currentState.$stationMatcher;',
+        );
+      } else {
+        buffer.writeln(
+          '''
 return $stateFieldName == ${state.baseName}.${state.fieldName};
 ''',
-      );
+        );
+      }
       buffer.writeln('}');
     }
     return buffer.toString();
