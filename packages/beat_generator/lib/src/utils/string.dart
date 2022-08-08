@@ -111,3 +111,5 @@ String toStateMatcher(String baseName, String fieldName) =>
 
 String toActionExecutorMethodName(String event) =>
     '_exec${toBeginningOfSentenceCase(event)}Actions';
+
+String toSubstationFieldName(String name) => '${toDartFieldCase(name)}\$';

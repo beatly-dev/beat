@@ -62,16 +62,25 @@ class BeatStationBuilder {
     );
   }
 
+  _createStationStatusField(BeatStationNode node) {
+    final parents = node.parent;
+    buffer.writeln(
+      '''
+bool get done => 
+''',
+    );
+  }
+
   _createSubstationFields(List<BeatStationNode> nestedStations) async {
     final directSubstations =
         nestedStations.where((element) => element.parent == baseEnum.name);
     for (final substation in directSubstations) {
       final name = substation.info.baseEnumName;
       final substationClassName = toBeatStationClassName(name);
-      final substationFieldName = toDartFieldCase(name);
+      final substationFieldName = toSubstationFieldName(name);
       buffer.writeln(
         '''
-final $substationClassName $substationFieldName\$ =  $substationClassName();
+final $substationClassName $substationFieldName = $substationClassName();
 ''',
       );
     }
@@ -84,30 +93,47 @@ final $substationClassName $substationFieldName\$ =  $substationClassName();
     final contextType = stationNode.info.contextType;
     final beatStationClassName = toBeatStationClassName(baseEnumName);
     final stateClass = toBeatStateClassName(baseEnumName);
+    final firstStateArg = 'firstState';
+    final initialContextArg = 'initialContext';
     buffer.writeln('$beatStationClassName({');
-    buffer.writeln('  dynamic initialState,');
+    buffer
+        .writeln('  $baseEnumName $firstStateArg = $baseEnumName.$firstState,');
     buffer.writeln(
-      '${toContextType(contextType)} initialContext,',
+      '${toContextType(contextType)} $initialContextArg,',
     );
     buffer.writeln('})');
-    buffer.writeln(': assert(initialState is Enum),');
+    buffer.writeln(':');
+
+    buffer.writeln(
+      [
+        /// initial state
+        '''
+$initialStateFieldName = $stateClass(
+  $stateFieldName: $firstStateArg,
+  $contextFieldName: $initialContextArg,
+)
+''',
+      ].join(','),
+    );
+
+    /// [[ constructor body
+    buffer.writeln('{');
+    // first history
     buffer.writeln(
       '''
-$initialStateFieldName = $stateClass(
-  $stateFieldName: initialState ?? $baseEnumName.$firstState,
-  $contextFieldName: initialContext,
-),
+$stateHistoryFieldName.add($initialStateFieldName);
 ''',
     );
-    buffer.writeln('$stateHistoryFieldName = [$initialStateFieldName]');
-    buffer.writeln(';');
+    buffer.writeln('}');
+
+    /// ]] constructor body
   }
 
   _createStateHistoryField() async {
     final stateClass = toBeatStateClassName(baseEnum.name);
     buffer.writeln(
       '''
-final List<$stateClass> $stateHistoryFieldName;
+final List<$stateClass> $stateHistoryFieldName = [];
 ''',
     );
   }
