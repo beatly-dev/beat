@@ -61,7 +61,7 @@ ${finalFields.toString()}
     final buffer = StringBuffer();
     for (final state in states) {
       buffer.writeln(
-        'bool get is${state.baseName}${toBeginningOfSentenceCase(state.fieldName)} {',
+        'bool get ${toStateMatcher(state.baseName, state.fieldName)} {',
       );
       buffer.writeln(
         '''

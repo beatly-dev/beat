@@ -1,1 +1,1 @@
-abstract class BaseBeatStation {}
+abstract class BeatStationBase {}

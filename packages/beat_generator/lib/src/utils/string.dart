@@ -103,3 +103,6 @@ String toBeatSenderInitializerArgumentName(String base) =>
     '${toDartFieldCase(base)}beatStation';
 
 String toCompoundFieldName(String base) => '${toDartFieldCase(base)}Compound';
+
+String toStateMatcher(String baseName, String fieldName) =>
+    'is$baseName${toBeginningOfSentenceCase(fieldName)}\$';
