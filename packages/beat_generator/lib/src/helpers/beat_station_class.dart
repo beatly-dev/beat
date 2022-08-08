@@ -148,7 +148,7 @@ final List<$stateClass> $stateHistoryFieldName = [];
   _createCurrentState() async {
     final stateClass = toBeatStateClassName(baseEnum.name);
     buffer.writeln(
-      '$stateClass get $currentStateFieldName => $stateHistoryFieldName.first;',
+      '$stateClass get $currentStateFieldName => $stateHistoryFieldName.last;',
     );
   }
 
