@@ -97,10 +97,28 @@ bool get hasSubstate => ${childKeys.isEmpty ? 'false' : hasSubstate};
         'bool get ${toStateMatcher(state.baseName, state.fieldName)} {',
       );
       if (rootEnumName != state.baseName) {
-        /// TODO: check parent state
-        final stationMatcher = toStateMatcher(state.baseName, state.fieldName);
+        /// last level (leaf) node state matcher
+        final lastChecker =
+            '_station.${beatTree.substationRouteBetween(from: rootEnumName, to: state.baseName)}.currentState.${toStateMatcher(state.baseName, state.fieldName)}';
+
+        /// root to parent of the leaf matcher
+        final route =
+            beatTree.routeBetween(from: rootEnumName, to: state.baseName);
+        final stateChecker = route.map((node) {
+          final parentBase = node.parentBase;
+          final parentField = node.parentField;
+          if (parentBase == rootEnumName) {
+            return '''
+ _station.currentState.${toStateMatcher(parentBase, parentField)} 
+''';
+          } else {
+            return '''
+ _station.${beatTree.substationRouteBetween(from: rootEnumName, to: parentBase)}.currentState.${toStateMatcher(parentBase, parentField)} 
+''';
+          }
+        }).join(' && ');
         buffer.writeln(
-          'return _station.${beatTree.substationRouteBetween(from: rootEnumName, to: state.baseName)}.currentState.$stationMatcher;',
+          'return $stateChecker && $lastChecker; ',
         );
       } else {
         buffer.writeln(

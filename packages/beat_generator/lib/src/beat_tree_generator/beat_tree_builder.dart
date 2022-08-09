@@ -54,7 +54,8 @@ class BeatNodeBuilder {
       children: {},
       substationConfigs: substationConfigs,
       invokeConfigs: invokeConfigs,
-      parent: '',
+      parentBase: '',
+      parentField: '',
     );
 
     return node;

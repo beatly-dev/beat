@@ -71,7 +71,8 @@ class BeatTreeSharedResource {
     // reset tree info
     for (final node in nodes) {
       node.children.clear();
-      node.parent = '';
+      node.parentBase = '';
+      node.parentField = '';
     }
 
     // rebuild tree
@@ -85,10 +86,13 @@ class BeatTreeSharedResource {
         if (subNode == null) {
           continue;
         }
+
+        /// TODO: deal with multi parent
         final parentEnumName = substation.parentBase;
         final parentFieldName = substation.parentField;
         // set parent
-        subNode.parent = parentEnumName;
+        subNode.parentBase = parentEnumName;
+        subNode.parentField = parentFieldName;
         node.children[parentFieldName] ??= [];
         node.children[parentFieldName]!.add(subNode);
       }
@@ -96,7 +100,7 @@ class BeatTreeSharedResource {
 
     // set roots
     for (final node in nodes) {
-      final parent = node.parent;
+      final parent = node.parentBase;
       // if there is no parent, then it is root
       if (parent.isEmpty) {
         _roots.add(node);
@@ -133,7 +137,7 @@ class BeatTreeSharedResource {
       return [];
     }
     final currentStation = getNode(to);
-    final parent = currentStation.parent;
+    final parent = currentStation.parentBase;
     return [...routeBetween(from: from, to: parent), currentStation];
   }
 

@@ -9,7 +9,8 @@ part of 'beat_station_node.dart';
 BeatStationNode _$BeatStationNodeFromJson(Map<String, dynamic> json) =>
     BeatStationNode(
       BeatStationInfo.fromJson(json['info'] as Map<String, dynamic>),
-      parent: json['parent'] as String? ?? '',
+      parentBase: json['parentBase'] as String? ?? '',
+      parentField: json['parentField'] as String? ?? '',
       children: (json['children'] as Map<String, dynamic>?)?.map(
             (k, e) => MapEntry(
                 k,
@@ -51,7 +52,8 @@ BeatStationNode _$BeatStationNodeFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$BeatStationNodeToJson(BeatStationNode instance) =>
     <String, dynamic>{
       'info': instance.info,
-      'parent': instance.parent,
+      'parentBase': instance.parentBase,
+      'parentField': instance.parentField,
       'children': instance.children,
       'substationConfigs': instance.substationConfigs,
       'beatConfigs': instance.beatConfigs,

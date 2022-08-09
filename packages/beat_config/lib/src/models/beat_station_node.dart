@@ -8,7 +8,8 @@ class BeatStationNode {
   // node info
   final BeatStationInfo info;
   // parent enum class name
-  String parent;
+  String parentBase;
+  String parentField;
   // compound related to enum field
   final Map<String, List<BeatStationNode>> children;
   // compounds included in this station
@@ -20,13 +21,15 @@ class BeatStationNode {
 
   BeatStationNode(
     this.info, {
-    this.parent = '',
+    this.parentBase = '',
+    this.parentField = '',
     this.children = const {},
     this.substationConfigs = const {},
     this.beatConfigs = const {},
     this.invokeConfigs = const {},
   });
 
+  String get parentEnumName => '$parentBase.$parentField';
   Map<String, dynamic> toJson() => _$BeatStationNodeToJson(this);
   factory BeatStationNode.fromJson(Map<String, dynamic> json) =>
       _$BeatStationNodeFromJson(json);

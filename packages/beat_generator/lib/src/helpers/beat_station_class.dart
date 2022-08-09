@@ -65,18 +65,9 @@ class BeatStationBuilder {
     );
   }
 
-  _createStationStatusField(BeatStationNode node) {
-    final parents = node.parent;
-    buffer.writeln(
-      '''
-bool get done => 
-''',
-    );
-  }
-
   _createSubstationFields(List<BeatStationNode> nestedStations) async {
     final directSubstations =
-        nestedStations.where((element) => element.parent == baseEnum.name);
+        nestedStations.where((element) => element.parentBase == baseEnum.name);
     for (final substation in directSubstations) {
       final name = substation.info.baseEnumName;
       final substationClassName = toBeatStationClassName(name);
