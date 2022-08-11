@@ -1,3 +1,11 @@
+## 0.10.0+1
+
+ - **REFACTOR**: BeatState has an explicit state type.
+ - **REFACTOR**: prepare for parallel state.
+ - **REFACTOR**: force state to be enum.
+ - **REFACTOR**: use `BaseBeatState`.
+ - **FIX**: prevent method name duplication.
+
 ## 0.10.0
 
 > Note: This release has breaking changes.

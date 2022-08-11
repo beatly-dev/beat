@@ -1,3 +1,36 @@
+## 0.10.0
+
+> Note: This release has breaking changes.
+
+ - **REFACTOR**: method name.
+ - **REFACTOR**: invoke variable name.
+ - **REFACTOR**: BeatState has an explicit state type.
+ - **REFACTOR**: change context type arg.
+ - **REFACTOR**: rename transition fields.
+ - **REFACTOR**: route from root to leaf node.
+ - **REFACTOR**: prepare for parallel state.
+ - **REFACTOR**: improve first matching list.
+ - **REFACTOR**: force state to be enum.
+ - **REFACTOR**: use `BaseBeatState`.
+ - **FIX**: get currentState.
+ - **FIX**: station constructor error.
+ - **FIX**: prevent method name duplication.
+ - **FIX**: Accurately get annotations.
+ - **FIX**: find first enum constant.
+ - **FEAT**: Support Sender-styled transitions.
+ - **FEAT**: start/stop station.
+ - **FEAT**: nested state matcher.
+ - **FEAT**: invoking services.
+ - **FEAT**: beat transition supported with new code.
+ - **FEAT**: refine unappropriate characters from event.
+ - **FEAT**: generate invoke declaration.
+ - **FEAT**: generate beat const declarations.
+ - **FEAT**: notifications.
+ - **FEAT**: Station with constructor, listener, exec, map.
+ - **FEAT**: generating BeatState class with infinite nesting.
+ - **FEAT**: reset tree on rebuild, get enum related nodes.
+ - **BREAKING** **FEAT**: state matcher works as expected.
+
 ## 0.9.0
 
 > Note: This release has breaking changes.
