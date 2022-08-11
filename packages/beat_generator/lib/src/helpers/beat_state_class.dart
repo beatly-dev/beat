@@ -27,7 +27,7 @@ class BeatStateBuilder {
       _creatMatcher(relatedStations),
     ].join();
     return createClass(
-      '$beatStateClassName extends BeatState<$contextType>',
+      '$beatStateClassName extends BeatState<${baseEnum.name}, $contextType>',
       body,
     );
   }

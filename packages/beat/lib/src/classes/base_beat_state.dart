@@ -1,5 +1,5 @@
-abstract class BeatState<Context> {
-  final dynamic state;
+abstract class BeatState<State, Context> {
+  final State state;
   final Context context;
   const BeatState(this.state, this.context)
       : assert(state is Enum || state is List<Enum>);
