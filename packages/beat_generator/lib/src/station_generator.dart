@@ -8,6 +8,7 @@ import 'helpers/beat_state_class.dart';
 import 'helpers/beat_station_class.dart';
 import 'helpers/beat_transition_class.dart';
 import 'helpers/invoke_services.dart';
+import 'helpers/sender_class.dart';
 import 'resources/beat_tree_resource.dart';
 
 class StationGenerator extends GeneratorForAnnotation<BeatStation> {
@@ -38,10 +39,10 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
         baseEnum: element,
         beatTree: beatTree,
       ).build(),
-      // await SenderClassBuilder(
-      //   baseEnum: element,
-      //   beatTree: beatTree,
-      // ).build(),
+      await SenderClassBuilder(
+        baseEnum: element,
+        beatTree: beatTree,
+      ).build(),
       await GlobalBeatAnnotationVariablesBuilder(
         beatTree: beatTree,
         baseEnum: element,

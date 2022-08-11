@@ -114,5 +114,5 @@ String toActionExecutorMethodName(String event) =>
 
 String toSubstationFieldName(String name) => '${toDartFieldCase(name)}\$';
 
-String toTransitionFieldName(String event) =>
-    'on${toBeginningOfSentenceCase(event)}\$';
+String toTransitionFieldName(String stateFrom) =>
+    'on${toBeginningOfSentenceCase(stateFrom)}\$';

@@ -52,6 +52,7 @@ class BeatStationBuilder {
     await _createSetState();
     await _createSetContext(node.info.contextType);
     _createReset();
+    _createSender();
 
     /// TODO:
     /// - nested listeners
@@ -63,6 +64,15 @@ class BeatStationBuilder {
     return createClass(
       '$beatStationClassName extends BeatStationBase',
       buffer.toString(),
+    );
+  }
+
+  _createSender() {
+    final senderClassName = toBeatSenderClassName(baseEnum.name);
+    buffer.writeln(
+      '''
+$senderClassName get send => $senderClassName(this);
+''',
     );
   }
 

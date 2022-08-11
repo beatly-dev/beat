@@ -1,124 +1,115 @@
+import 'package:analyzer/dart/element/element.dart';
 import 'package:beat_config/beat_config.dart';
 
+import '../constants/field_names.dart';
+import '../resources/beat_tree_resource.dart';
+import '../utils/create_class.dart';
 import '../utils/string.dart';
 
 class SenderClassBuilder {
-  final Map<String, List<BeatConfig>> beats;
-  final List<BeatConfig> commonBeats;
-  final List<SubstationConfig> compounds;
-  final String baseName;
-
-  late final String beatStationFieldName;
-
   SenderClassBuilder({
-    required this.beats,
-    required this.commonBeats,
-    required this.baseName,
-    required this.compounds,
-  }) {
-    beatStationFieldName = toBeatSenderBeatStationFieldName(baseName);
+    required this.baseEnum,
+    required this.beatTree,
+  });
+  final ClassElement baseEnum;
+  final BeatTreeSharedResource beatTree;
+
+  Future<String> build() async {
+    final enumName = baseEnum.name;
+    final senderClassName = toBeatSenderClassName(enumName);
+    final relatedStations = await beatTree.getRelatedStations(enumName);
+    final events = _gatherByEvents(relatedStations);
+    final body = [
+      _createConstructor(),
+      _createSender(events),
+    ];
+    return createClass(senderClassName, body.join());
   }
 
-  String build() {
-    final buffer = StringBuffer();
-    final allEvents = _collectEvents();
-    final eventsToBeats = _eventsToBeats();
-    final compoundSender = compounds.map((compound) {
-      return toBeatSenderClassName(compound.childBase);
-    }).join(', ');
-    final extendsCompound =
-        compoundSender.isEmpty ? '' : 'extends $compoundSender';
+  String _createConstructor() {
+    final senderClassName = toBeatSenderClassName(baseEnum.name);
+    final baseName = baseEnum.name;
+    return '''
+$senderClassName(this._station);
+final ${toBeatStationClassName(baseName)} _station;
+''';
+  }
 
-    buffer
-        .writeln('class ${toBeatSenderClassName(baseName)} $extendsCompound {');
-    buffer.writeln(
-      '''
-    late final ${toBeatStationClassName(baseName)} $beatStationFieldName;
-    ''',
-    );
-
-    final initializeArguments = [
-      baseName,
-      ...compounds.map((compound) {
-        return compound.childBase;
-      }),
-    ]
-        .map(
-          (name) =>
-              '${toBeatStationClassName(name)} ${toBeatSenderInitializerArgumentName(name)}',
-        )
-        .join(',');
-    final initializerBody = [
-      baseName,
-      ...compounds.map((compound) {
-        return compound.childBase;
-      }),
-    ].map((name) {
-      return '${toBeatSenderBeatStationFieldName(name)} = ${toBeatSenderInitializerArgumentName(name)};';
-    }).join(' ');
-
-    buffer.writeln(
-      '''
-    ${toBeatSenderInitializerMethodName(baseName)}($initializeArguments) {
-      $initializerBody
+  Map<String, List<BeatConfig>> _gatherByEvents(List<BeatStationNode> nodes) {
+    final events = <String, List<BeatConfig>>{};
+    for (final node in nodes) {
+      final beatConfigs = node.beatConfigs.values.expand((element) => element);
+      for (final beat in beatConfigs) {
+        final eventName = beat.event;
+        events[eventName] ??= [];
+        events[eventName]!.add(beat);
+      }
     }
-  ''',
-    );
+    return events;
+  }
 
-    for (final event in allEvents) {
-      buffer.writeln('\$$event<Data>([Data? data]) {');
-      final beatConfigs = eventsToBeats[event]!;
-      buffer.writeln(_eventsExecutor(event, beatConfigs));
+  String _createSender(Map<String, List<BeatConfig>> events) {
+    final rootEnumName = baseEnum.name;
+    final buffer = StringBuffer();
+    for (final event in events.keys) {
+      final beatConfigs = events[event]!;
+      final transitionName = '\$$event';
+      buffer.writeln('$transitionName<Data>([Data? data]) {');
+
+      /// TODO: Common transition
+      final commonTransition = beatConfigs.where((config) {
+        return config.fromBase == rootEnumName &&
+            config.fromBase == config.fromField;
+      }).fold<String>('', (result, beatConfig) {
+        return '''
+  return _station.\$$event(data);
+''';
+      });
+      final rootTransitions = beatConfigs.where((config) {
+        return config.fromBase == rootEnumName &&
+            config.fromBase != config.fromField;
+      }).map((beatConfig) {
+        final fromBase = beatConfig.fromBase;
+        final fromField = beatConfig.fromField;
+        return '''
+if (_station.$currentStateFieldName.${toStateMatcher(fromBase, fromField)}) {
+  return _station.${toTransitionFieldName(fromField)}.\$$event(data);
+}
+''';
+      });
+
+      final childTransitons = beatConfigs.where((config) {
+        return config.fromBase != rootEnumName;
+      }).fold<Set<String>>(<String>{}, (transitions, config) {
+        final fromBase = config.fromBase;
+        final route = beatTree.routeBetween(from: rootEnumName, to: fromBase);
+        final childName = route.first.info.baseEnumName;
+        return transitions..add(childName);
+      }).map((substation) {
+        final node = beatTree.getNode(substation);
+        final parentBase = node.parentBase;
+        final parentField = node.parentField;
+        final substationName = toSubstationFieldName(substation);
+        return '''
+if (_station.$currentStateFieldName.${toStateMatcher(parentBase, parentField)}) {
+  return _station.$substationName.send.\$$event(data);
+}
+''';
+      });
+
+      /// Parent transitions always have priority.
+      /// The priority is as follows:
+      /// Parent's common transitions > Parent's specific transitions > Child's transitions
+      buffer.writeln(
+        [
+          if (commonTransition.isNotEmpty) commonTransition,
+          if (commonTransition.isEmpty) ...rootTransitions,
+          if (rootTransitions.isEmpty) ...childTransitons
+        ].join(' else '),
+      );
 
       buffer.writeln('}');
     }
-
-    buffer.writeln('}');
     return buffer.toString();
-  }
-
-  String _eventsExecutor(String event, List<BeatConfig> beatConfigs) {
-    return beatConfigs.map((config) {
-      final from = config.fromField;
-      final fieldName = toDartFieldCase(from);
-      if (from == baseName) {
-        return ' $beatStationFieldName.\$$event(data); ';
-      }
-      return '''
-if ($beatStationFieldName.currentState.state == $baseName.$from) {
-  $beatStationFieldName.$fieldName.\$$event(data);
-}
-''';
-    }).join('else ');
-  }
-
-  Set<String> _collectEvents() {
-    return <String>{
-      ...commonBeats.map((e) => e.event),
-      ...beats.values.expand((list) => list).map((e) => e.event),
-    };
-  }
-
-  Map<String, List<BeatConfig>> _eventsToBeats() {
-    final eventsToBeats = <String, List<BeatConfig>>{};
-
-    for (final beat in commonBeats) {
-      if (eventsToBeats[beat.event] == null) {
-        eventsToBeats[beat.event] = [beat];
-      } else {
-        eventsToBeats[beat.event]!.add(beat);
-      }
-    }
-
-    for (final beatList in beats.values) {
-      for (final beat in beatList) {
-        if (eventsToBeats[beat.event] == null) {
-          eventsToBeats[beat.event] = [beat];
-        } else {
-          eventsToBeats[beat.event]!.add(beat);
-        }
-      }
-    }
-    return eventsToBeats;
   }
 }
