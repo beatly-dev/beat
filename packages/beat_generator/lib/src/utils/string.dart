@@ -60,7 +60,7 @@ String toBeatStationClassName(String baseName) =>
 String toBeatStateClassName(String baseName) =>
     '${toBeginningOfSentenceCase(baseName)}BeatState';
 
-String toBeatVariableName(
+String toBeatAnnotationVariableName(
   String fromBase,
   String fromField,
   String event,
@@ -69,7 +69,7 @@ String toBeatVariableName(
 ) =>
     '_${toDartFieldCase(event)}From${toBeginningOfSentenceCase(fromBase)}${toBeginningOfSentenceCase(fromField)}To${toBeginningOfSentenceCase(toBase)}${toBeginningOfSentenceCase(toField)}';
 
-String toBeatVariableDeclaration(
+String toBeatAnnotationVariableDeclaration(
   String fromBase,
   String fromField,
   String event,
@@ -79,7 +79,7 @@ String toBeatVariableDeclaration(
   String? conditions,
   String? eventDataType,
 ) =>
-    '''const ${toBeatVariableName(fromBase, fromField, event, toBase, toField)} = Beat(
+    '''const ${toBeatAnnotationVariableName(fromBase, fromField, event, toBase, toField)} = Beat(
       event: '$event',
       to: $toBase.$toField,
       actions: ${actions ?? const []},

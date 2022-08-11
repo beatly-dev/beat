@@ -68,7 +68,7 @@ void \$${config.event}<Data>([Data? data]);
         body.writeln(
           '''
 void ${toActionExecutorMethodName(config.event)}(EventData eventData) {
-  for (final action in ${toBeatVariableName(config.fromBase, config.fromField, config.event, config.toBase, config.toField)}.actions) {
+  for (final action in ${toBeatAnnotationVariableName(config.fromBase, config.fromField, config.event, config.toBase, config.toField)}.actions) {
     ${createActionExecutor('action', 'eventData', false)}
   }
 }

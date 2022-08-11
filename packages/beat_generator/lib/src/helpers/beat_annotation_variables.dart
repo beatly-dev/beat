@@ -17,7 +17,7 @@ class GlobalBeatAnnotationVariablesBuilder {
     final beats = beatNode.beatConfigs.values.expand((element) => element);
     StringBuffer buffer = StringBuffer();
     for (final beat in beats) {
-      final decl = toBeatVariableDeclaration(
+      final decl = toBeatAnnotationVariableDeclaration(
         beat.fromBase,
         beat.fromField,
         beat.event,
