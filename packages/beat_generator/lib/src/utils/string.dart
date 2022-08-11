@@ -88,7 +88,7 @@ String toBeatVariableDeclaration(
     );''';
 
 String toInvokeVariableName(InvokeConfig config) =>
-    '_invokeOn${toBeginningOfSentenceCase('${config.stateBase}${config.stateField}')}';
+    '_invokeOn${toBeginningOfSentenceCase(config.stateBase)}${toBeginningOfSentenceCase(config.stateField)}';
 String toInvokeVariableDeclaration(InvokeConfig config) =>
     'const ${toInvokeVariableName(config)} = ${config.source};';
 
