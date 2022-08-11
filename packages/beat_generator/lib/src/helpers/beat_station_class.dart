@@ -42,6 +42,7 @@ class BeatStationBuilder {
     );
     await _createConstructor(substations);
     await _createInitialStateField();
+    _createStationStatusHandler();
     await _createStateHistoryField();
     await _createSubstationFields(substations);
     _createTransitionFields(node);
@@ -65,6 +66,22 @@ class BeatStationBuilder {
     );
   }
 
+  _createStationStatusHandler() {
+    buffer.writeln(
+      '''
+bool $stationStartedFieldName;
+start() {
+  clearState();
+  $stationStartedFieldName = true;
+}
+
+stop() {
+  $stationStartedFieldName = false;
+}
+''',
+    );
+  }
+
   _createSubstationFields(List<BeatStationNode> nestedStations) async {
     final directSubstations =
         nestedStations.where((element) => element.parentBase == baseEnum.name);
@@ -74,7 +91,7 @@ class BeatStationBuilder {
       final substationFieldName = toSubstationFieldName(name);
       buffer.writeln(
         '''
-final $substationClassName $substationFieldName = $substationClassName();
+final $substationClassName $substationFieldName = $substationClassName(started: false);
 ''',
       );
     }
@@ -95,6 +112,7 @@ final $substationClassName $substationFieldName = $substationClassName();
     buffer.writeln(
       '${toContextType(contextType)} $initialContextArg,',
     );
+    buffer.writeln('this.$stationStartedFieldName = true,');
     buffer.writeln('})');
 
     /// additional initializers

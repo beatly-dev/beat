@@ -54,6 +54,7 @@ void \$${config.event}<Data>([Data? data]);
       final beatConfigs = node.beatConfigs[state] ?? [];
       final body = StringBuffer();
       if (beatConfigs.isNotEmpty) {
+        /// constructor and parent beat station;
         body.writeln(
           '''
   const $className(this._beatStation);
@@ -63,6 +64,7 @@ void \$${config.event}<Data>([Data? data]);
       }
 
       for (final config in beatConfigs) {
+        /// action executors
         body.writeln(
           '''
 void ${toActionExecutorMethodName(config.event)}(EventData eventData) {
@@ -72,10 +74,16 @@ void ${toActionExecutorMethodName(config.event)}(EventData eventData) {
 }
 ''',
         );
+
+        /// transition method
         body.writeln(
           '''
 @override
 void \$${config.event}<Data>([Data? data]) {
+  // if the station is not started (when it's substation), do nothing
+  if (!_beatStation.$stationStartedFieldName) {
+    return ;
+  }
   ${toActionExecutorMethodName(config.event)}(EventData(
     event: '${config.event}',
     data: data,

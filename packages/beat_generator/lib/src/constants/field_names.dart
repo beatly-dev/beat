@@ -22,3 +22,5 @@ const contextFieldName = 'context';
 const stateHistoryFieldName = 'stateHistory';
 
 const stateInitializerMethodName = '_initialize';
+
+const stationStartedFieldName = 'started';
