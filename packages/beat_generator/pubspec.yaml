@@ -11,7 +11,7 @@ dependencies:
   analyzer: ^4.2.0
   args: ^2.3.1
   beat: ^0.10.0
-  beat_config:
+  beat_config: ^0.3.0
   build: ^2.3.0
   build_config: ^1.1.0
   build_runner: ^2.2.0
