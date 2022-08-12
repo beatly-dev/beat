@@ -1,3 +1,7 @@
+## 0.10.0+2
+
+ - **FIX**: match the interface with new api.
+
 ## 0.10.0+1
 
  - **REFACTOR**: BeatState has an explicit state type.
