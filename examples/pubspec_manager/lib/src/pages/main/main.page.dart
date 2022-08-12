@@ -86,15 +86,22 @@ class _SearchedResultWidgetState extends State<SearchedResultWidget> {
   @override
   Widget build(BuildContext context) {
     final station = widget.station;
-    if (station.currentState.isPubSearchResultLoading$) {
+    final state = station.currentState;
+    if (state.isPubSearchResultLoading$) {
       return const Center(child: Text('Loading data...'));
     }
-    if (station.currentState.context?.results == null) {
+
+    final results = state.context?.results?.packages;
+
+    if (results == null) {
       return const Center(child: Text('Type what you want to search for.'));
+    }
+    if (results.isEmpty) {
+      return const Center(child: Text('No results found.'));
     }
     return ListView(
       children: [
-        ...station.currentState.context!.results!.packages.map((package) {
+        ...results.map((package) {
           return ListTile(
             title: Text(package.package),
           );
