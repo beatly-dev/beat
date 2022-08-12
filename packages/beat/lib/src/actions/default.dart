@@ -3,7 +3,6 @@
 class DefaultAction<State, Context, Event, ActionResult> {
   final ActionResult Function(
     State currentState,
-    Context currentContext,
     Event event,
   ) action;
 
@@ -11,9 +10,8 @@ class DefaultAction<State, Context, Event, ActionResult> {
 
   ActionResult execute(
     State currentState,
-    Context currentContext,
     Event event,
   ) {
-    return action(currentState, currentContext, event);
+    return action(currentState, event);
   }
 }
