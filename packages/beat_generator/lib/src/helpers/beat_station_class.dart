@@ -211,7 +211,6 @@ void $setContextMethodName($realContextType context) {
   final nextState = $stateClassName(state: currentState.state, context: context)..$stateInitializerMethodName(this);
   $stateHistoryFieldName.add(nextState);
   $notifyListenersMethodName();
-  _invokeServices();
 }
 ''',
     );
@@ -226,7 +225,7 @@ void $setContextMethodName($realContextType context) {
       final config = invokes[state]![0];
       final varName = toInvokeVariableName(config);
 
-      /// TODO: transition on done/error
+      /// TODO: nested transition on done/error
       return '''
 if (currentState.state == ${config.stateBase}.${config.stateField}) {
   for (final invoke in $varName.invokes) {
@@ -235,9 +234,9 @@ if (currentState.state == ${config.stateBase}.${config.stateField}) {
         final onDone = invoke.onDone;
         final onError = invoke.onError;
         try {
-          await invoke.invokeWith(currentState.state, currentState.context, '');
+          final result = await invoke.invokeWith(currentState, '');
           for (final action in onDone.actions) {
-            ${createActionExecutor('action', 'EventData(event:"invoke", data: null)', true)}
+            ${createActionExecutor('action', 'EventData(event:"invoke", data: result)', true)}
           }
           if (onDone.to is $baseName) {
             _setState(onDone.to);
@@ -251,11 +250,13 @@ if (currentState.state == ${config.stateBase}.${config.stateField}) {
           }
         }
       })();
+    } else {
+      invoke.invokeWith(currentState.state, currentState.context, '');
     }
   }
 }
 ''';
-    }).join('else ');
+    }).join(' else ');
 
     buffer.writeln(
       '''
@@ -272,6 +273,7 @@ _invokeServices() async {
   void resetState() {
     $stateHistoryFieldName.add(initialState);
     $notifyListenersMethodName();
+    _invokeServices();
   }
 
   void clearState() {

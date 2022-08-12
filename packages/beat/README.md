@@ -26,13 +26,12 @@ A roadmap is as follows, but the order does not matter.
   - [x] Define compound state
   - [x] Using `send()`
   - [x] Using verbose styled transition via `{compoundStateName}Compound` field
-  - [ ] Multi-level compound state
-    - Currently, only 2 level compound state is supported
+  - [x] Multi-level (deeply nested) compound state
   - [ ] Custom initialization on parent state creation
   - [ ] Get current state of compound state using `currentState`
     - Currently `{compundStateName}Compound.currentState` is supported
-  - [ ] Reset on parent state enter/exit
-  - [ ] Reset on parent state reset
+  - [x] Reset on parent state enter/exit
+  - [x] Reset on parent state reset
 - [x] Support state change history
 - [x] Support any state transition
   - [x] BeatStation with common `Beat` option
@@ -53,7 +52,9 @@ A roadmap is as follows, but the order does not matter.
 - [ ] Support invoking services
   - [x] async function (or Future)
   - [x] onDone/onError actions
-  - [x] onDone/onError transitions
+  - [ ] onDone/onError transitions
+    - [x] to current station
+    - [ ] to nested station
   - [ ] callback
   - [ ] observables
   - [ ] other beat station

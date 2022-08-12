@@ -1,6 +1,5 @@
 import '../../beat.dart';
 
-class InvokeCallback<State, Context, Event>
-    extends InvokeInterface<State, Context, Event, void> {
-  InvokeCallback(super.invoke);
+class InvokeCallback<Event> extends InvokeInterface<Event, void> {
+  const InvokeCallback(super.invoke);
 }

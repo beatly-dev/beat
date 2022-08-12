@@ -2,8 +2,7 @@ import '../../beat.dart';
 
 /// Invoke asynchronous services.
 /// There should be an async gap to complete services because services can be async.
-class InvokeFuture<State, Context, Event, Result>
-    extends InvokeInterface<State, Context, Event, Result> {
+class InvokeFuture<Event, Result> extends InvokeInterface<Event, Result> {
   const InvokeFuture(
     super.invoke, {
     this.onDone = const AfterInvoke(to: '', actions: []),
