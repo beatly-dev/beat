@@ -1,3 +1,9 @@
+## 0.11.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FIX**: invoking services in proper places.
+
 ## 0.10.0+2
 
  - **FIX**: match the interface with new api.
