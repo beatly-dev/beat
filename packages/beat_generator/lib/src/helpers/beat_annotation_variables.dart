@@ -16,17 +16,22 @@ class GlobalBeatAnnotationVariablesBuilder {
     final beatNode = beatTree.getNode(baseName);
     final beats = beatNode.beatConfigs.values.expand((element) => element);
     StringBuffer buffer = StringBuffer();
+    final onDemandDecl = RegExp(r'^Beat.*\(');
     for (final beat in beats) {
-      final decl = toBeatAnnotationVariableDeclaration(
-        beat.fromBase,
-        beat.fromField,
-        beat.event,
-        beat.toBase,
-        beat.toField,
-        beat.actions,
-        beat.conditions,
-        beat.eventDataType,
-      );
+      var decl =
+          'const ${toBeatAnnotationVariableName(beat.fromBase, beat.fromField, beat.event, beat.toBase, beat.toField)} = ${beat.source};';
+      if (onDemandDecl.hasMatch(beat.source)) {
+        decl = toBeatAnnotationVariableDeclaration(
+          beat.fromBase,
+          beat.fromField,
+          beat.event,
+          beat.toBase,
+          beat.toField,
+          beat.actions,
+          beat.conditions,
+          beat.eventDataType,
+        );
+      }
       buffer.writeln(decl);
     }
     return buffer.toString();

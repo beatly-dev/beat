@@ -2,3 +2,4 @@
 .idea/
 *.beat.dart
 pubspec_overrides.yaml
+/examples/counter/pubspec_overrides.yaml
