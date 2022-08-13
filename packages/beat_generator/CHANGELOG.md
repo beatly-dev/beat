@@ -1,3 +1,7 @@
+## 0.11.1
+
+ - **FEAT**: support predefined annotations.
+
 ## 0.11.0
 
 > Note: This release has breaking changes.
