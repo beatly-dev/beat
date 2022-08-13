@@ -64,6 +64,8 @@ class BeatTreeSharedResource {
     }
   }
 
+  /// TODO: Need Performance Improvements
+
   reconstructTree() {
     _roots.clear();
     final nodes = _nodes.values;
@@ -110,6 +112,11 @@ class BeatTreeSharedResource {
 
   addNode(BeatStationNode node) async {
     _nodes[node.info.baseEnumName] = node;
+    reconstructTree();
+  }
+
+  removeNode(BeatStationNode node) async {
+    _nodes.remove(node.info.baseEnumName);
     reconstructTree();
   }
 

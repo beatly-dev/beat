@@ -56,7 +56,6 @@ final ${toBeatStationClassName(baseName)} _station;
       final transitionName = '\$$event';
       buffer.writeln('$transitionName<Data>([Data? data]) {');
 
-      /// TODO: Common transition
       final commonTransition = beatConfigs.where((config) {
         return config.fromBase == rootEnumName &&
             config.fromBase == config.fromField;

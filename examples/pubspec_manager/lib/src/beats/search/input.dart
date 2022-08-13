@@ -3,15 +3,15 @@ import 'package:beat/beat.dart';
 part 'input.beat.dart';
 
 const enterBeat =
-    Beat(event: 'enter', to: PubSearch.entered, actions: [AssignAction(enter)]);
+    Beat(event: 'enter', to: PubSearch.typed, actions: [AssignAction(enter)]);
 
 @BeatStation(contextType: String)
 @enterBeat
 enum PubSearch {
-  idle,
+  empty,
 
-  @Beat(event: 'clear', to: idle, actions: [AssignAction(clear)])
-  entered,
+  @Beat(event: 'clear', to: empty, actions: [AssignAction(clear)])
+  typed,
 }
 
 enter(state, EventData data) {
