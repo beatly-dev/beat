@@ -14,12 +14,13 @@ class Beat<Event, State extends Enum, Context> {
   /// Which state will be transitioned to
   final State to;
 
-  // Which actions will be executed when the transition is triggered
+  /// Which actions will be executed when the transition is triggered
   final List<dynamic> actions;
 
-  // Which type of data will be passed to actions and invokes.
+  /// Which type of data will be passed to actions and invokes.
   final Type eventDataType;
 
+  /// Guard conditions that must be met before the transition is triggered
   final List<bool Function()> conditions;
 }
 
