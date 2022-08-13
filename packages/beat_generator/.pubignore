@@ -1,2 +1,4 @@
 pubspec_overrides.yaml
 .gitignore
+melos_beat_generator.iml
+test/
