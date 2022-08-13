@@ -1,3 +1,7 @@
+## 0.11.1+1
+
+ - **FIX**: don't need to clean before build.
+
 ## 0.11.1
 
  - **FEAT**: support predefined annotations.
