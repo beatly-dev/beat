@@ -54,6 +54,9 @@ final ${toBeatStationClassName(baseName)} _station;
     for (final event in events.keys) {
       final beatConfigs = events[event]!;
       final transitionName = '\$$event';
+
+      /// sender method
+      /// TODO: support delayed transition
       buffer.writeln('$transitionName<Data>([Data? data]) {');
 
       final commonTransition = beatConfigs.where((config) {
