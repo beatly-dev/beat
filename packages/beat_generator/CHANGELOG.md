@@ -1,3 +1,7 @@
+## 0.11.2
+
+ - **FEAT**: support `EventlessBeat` with delay.
+
 ## 0.11.1+1
 
  - **FIX**: don't need to clean before build.

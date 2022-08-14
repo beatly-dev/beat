@@ -1,3 +1,8 @@
+## 0.11.1
+
+ - **FEAT**: support `EventlessBeat` with delay.
+ - **FEAT**: eventless annotation - functional is not yet supported.
+
 ## 0.11.0
 
 > Note: This release has breaking changes.

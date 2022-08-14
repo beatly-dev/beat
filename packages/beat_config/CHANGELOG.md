@@ -1,3 +1,8 @@
+## 1.1.0
+
+ - **REFACTOR**: rename library files.
+ - **FEAT**: support `EventlessBeat` with delay.
+
 ## 0.3.0
 
 > Note: This release has breaking changes.
