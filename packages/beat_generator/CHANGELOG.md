@@ -1,3 +1,9 @@
+## 0.12.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **REFACTOR**: rename the state matcher.
+
 ## 0.11.2
 
  - **FEAT**: support `EventlessBeat` with delay.
