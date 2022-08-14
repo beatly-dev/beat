@@ -28,7 +28,7 @@ class _MainPageState extends State<MainPage> {
 
   loadData() {
     if (inputStataion.currentState.isSearching$) {
-      resultStation.send.$load(inputStataion.currentState.context);
+      resultStation.send.$load(data: inputStataion.currentState.context);
     }
   }
 
@@ -43,7 +43,10 @@ class _MainPageState extends State<MainPage> {
                 resultStation.send.$clear();
                 inputStataion.send.$clear();
               } else {
-                inputStataion.send.$type(text);
+                inputStataion.send.$type(
+                  data: text,
+                  after: const Duration(milliseconds: 1000),
+                );
               }
             },
           ),

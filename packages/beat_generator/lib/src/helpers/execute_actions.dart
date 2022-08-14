@@ -3,7 +3,7 @@ String createActionExecutor(
   String eventData,
   bool isCommonEvent,
 ) {
-  final prefix = isCommonEvent ? '' : '_beatStation.';
+  final prefix = isCommonEvent ? '' : '_station.';
   return '''
     exec() =>
         $actionName.execute(${prefix}currentState, $eventData);

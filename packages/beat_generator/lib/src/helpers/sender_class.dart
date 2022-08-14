@@ -59,14 +59,16 @@ final ${toBeatStationClassName(baseName)} _station;
 
       /// sender method
       /// TODO: support delayed transition
-      buffer.writeln('$transitionName<Data>([Data? data]) {');
+      buffer.writeln(
+        '$transitionName<Data>({Data? data, Duration after = const Duration(milliseconds: 0)}) {',
+      );
 
       final commonTransition = beatConfigs.where((config) {
         return config.fromBase == rootEnumName &&
             config.fromBase == config.fromField;
       }).fold<String>('', (result, beatConfig) {
         return '''
-  return _station.\$$event(data);
+  return _station.\$$event(data: data, after: after);
 ''';
       });
 
@@ -78,7 +80,7 @@ final ${toBeatStationClassName(baseName)} _station;
         final fromField = beatConfig.fromField;
         return '''
 if (_station.$currentStateFieldName.${toStateMatcher(fromBase, fromField, fromBase == baseEnum.name)}) {
-  return _station.${toTransitionFieldName(fromField)}.\$$event(data);
+  return _station.${toTransitionFieldName(fromField)}.\$$event(data: data, after: after);
 }
 ''';
       });
@@ -97,7 +99,7 @@ if (_station.$currentStateFieldName.${toStateMatcher(fromBase, fromField, fromBa
         final substationName = toSubstationFieldName(substation);
         return '''
 if (_station.$currentStateFieldName.${toStateMatcher(parentBase, parentField, parentBase == baseEnum.name)}) {
-  return _station.$substationName.send.\$$event(data);
+  return _station.$substationName.send.\$$event(data: data, after: after);
 }
 ''';
       });

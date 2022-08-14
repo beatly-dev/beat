@@ -60,11 +60,12 @@ A roadmap is as follows, but the order does not matter.
   - [ ] other beat station
   - [ ] multiple services
 - [ ] Support instance options
-- [ ] Support eventless(always) transition
-- [ ] Support delayed transition
-  - [ ] Delay on eventless transition
-  - [ ] Delay on `send()` or `$event()`
-- [ ] Support
+  - [x] initial state, context
+  - [ ] dynamically defined actions, services, delays, guards
+- [x] Support eventless(always) transition
+- [x] Support delayed transition
+  - [x] Delay on eventless transition
+  - [x] Delay on `send()` or `$event()`
 - [ ] Support `entry` and `exit` actions
 - [ ] Support conditional (guarded) transition
   - [ ] Support custom functions

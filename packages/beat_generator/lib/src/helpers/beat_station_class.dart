@@ -365,7 +365,12 @@ void ${toActionExecutorMethodName(config.event)}(EventData eventData) {
       );
       buffer.writeln(
         '''
-void \$${config.event}<Data>([Data? data]) {
+\$${config.event}<Data>({Data? data, Duration after = const Duration(milliseconds: 0)}) {
+  if (after.inMicroseconds > 0) {
+    return addDelayed(after, () {
+      \$${config.event}(data: data);
+    });
+  }
   ${toActionExecutorMethodName(config.event)}(EventData(event: '${config.event}', data: data));
   _setState($baseName.${config.toField});
 }

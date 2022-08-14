@@ -38,7 +38,7 @@ class BeatTransitionClassBuilder {
       for (final config in beatConfigs) {
         body.writeln(
           '''
-void \$${config.event}<Data>([Data? data]);
+void \$${config.event}<Data>({Data? data, Duration after = const Duration(milliseconds: 0)});
 ''',
         );
       }
@@ -59,8 +59,8 @@ void \$${config.event}<Data>([Data? data]);
         /// constructor and parent beat station;
         body.writeln(
           '''
-  const $className(this._beatStation);
-  final $beatStationClassName _beatStation;
+  const $className(this._station);
+  final $beatStationClassName _station;
   ''',
         );
       }
@@ -81,16 +81,23 @@ void ${toActionExecutorMethodName(config.event)}(EventData eventData) {
         body.writeln(
           '''
 @override
-void \$${config.event}<Data>([Data? data]) {
+\$${config.event}<Data>({Data? data, Duration after = const Duration(milliseconds: 0)}) {
+  // if this transition needs delayed execution 
+  if (after.inMicroseconds > 0) {
+    return _station.addDelayed(after, () {
+      \$${config.event}(data: data);
+    });
+  }
+
   // if the station is not started (when it's substation), do nothing
-  if (!_beatStation.$stationStartedFieldName) {
+  if (!_station.$stationStartedFieldName) {
     return ;
   }
   ${toActionExecutorMethodName(config.event)}(EventData(
     event: '${config.event}',
     data: data,
   ));
-  _beatStation.$setStateMethodName(${config.toBase}.${config.toField});
+  _station.$setStateMethodName(${config.toBase}.${config.toField});
 }
 ''',
         );
@@ -116,7 +123,7 @@ void \$${config.event}<Data>([Data? data]) {
         body.writeln(
           '''
 @override
-void \$${config.event}<Data>([Data? data]) {}
+void \$${config.event}<Data>({Data? data, Duration after = const Duration(milliseconds: 0)}) {}
 ''',
         );
       }
