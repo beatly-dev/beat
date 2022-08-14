@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'compound_config.g.dart';
+part 'substation_config.g.dart';
 
 @JsonSerializable()
 class SubstationConfig {

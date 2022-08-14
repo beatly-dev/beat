@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'compound_config.dart';
+part of 'substation_config.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
