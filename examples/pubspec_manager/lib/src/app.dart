@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pubspec_manager/src/pages/main/main.page.dart';
+
+import 'pages/main/main.page.dart';
 
 class PubspecManager extends StatelessWidget {
   const PubspecManager({Key? key}) : super(key: key);

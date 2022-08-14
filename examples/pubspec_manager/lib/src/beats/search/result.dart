@@ -8,15 +8,15 @@ part 'result.beat.dart';
 @BeatStation(contextType: PubSearchRequest)
 @Beat(
   event: 'load',
-  to: PubSearchResult.loading,
+  to: SearchResult.loading,
   actions: [AssignAction(assignSearchTargetAction)],
 )
 @Beat(
   event: 'clear',
-  to: PubSearchResult.idle,
+  to: SearchResult.idle,
   actions: [AssignAction(clearContextAction)],
 )
-enum PubSearchResult {
+enum SearchResult {
   idle,
 
   @Invokes(
@@ -24,7 +24,7 @@ enum PubSearchResult {
       InvokeFuture(
         loadData,
         onDone: AfterInvoke(
-          to: PubSearchResult.loaded,
+          to: SearchResult.loaded,
           actions: [AssignAction(assignFetchedResultsAction)],
         ),
       ),
@@ -55,14 +55,12 @@ PubSearchRequest assignSearchTargetAction(state, EventData event) {
 PubSearchRequest assignFetchedResultsAction(BeatState state, EventData event) {
   final context = state.context as PubSearchRequest;
   final results = event.data as SearchResults;
-  print('Assign $results');
   return PubSearchRequest(context.target, results);
 }
 
 loadData(BeatState state, event) async {
   final request = state.context as PubSearchRequest;
   final client = PubClient();
-  print('Load data for ${request.target}');
   final result = await client.search(request.target);
   return result;
 }

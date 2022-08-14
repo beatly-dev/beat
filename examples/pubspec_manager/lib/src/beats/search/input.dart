@@ -2,17 +2,31 @@ import 'package:beat/beat.dart';
 
 part 'input.beat.dart';
 
-const enterBeat =
-    Beat(event: 'enter', to: PubSearch.typed, actions: [AssignAction(enter)]);
-
 @BeatStation(contextType: String)
-@enterBeat
-enum PubSearch {
+@typeInput
+@clearInput
+enum SearchInput {
   empty,
 
-  @Beat(event: 'clear', to: empty, actions: [AssignAction(clear)])
+  @searchPackage
+  debouncing,
+
   typed,
 }
+
+const clearInput =
+    Beat(event: 'clear', to: SearchInput.empty, actions: [AssignAction(clear)]);
+
+const typeInput = Beat(
+  event: 'type',
+  to: SearchInput.debouncing,
+  actions: [AssignAction(enter)],
+);
+
+const searchPackage = EventlessBeat(
+  to: SearchInput.typed,
+  after: Duration(milliseconds: 0),
+);
 
 enter(state, EventData data) {
   final input = data.data ?? '';

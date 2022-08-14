@@ -45,6 +45,9 @@ class BeatStationBuilder {
     _createStationStatusHandler();
     await _createStateHistoryField();
     await _createSubstationFields(substations);
+
+    await _createEventlessHandler();
+
     _createTransitionFields(node);
     _createCommonBeatTransitions(node);
     _createInvokeServices(node);
@@ -64,6 +67,66 @@ class BeatStationBuilder {
     return createClass(
       '$beatStationClassName extends BeatStationBase',
       buffer.toString(),
+    );
+  }
+
+  _createEventlessHandler() async {
+    final name = baseEnum.name;
+    final nodes = await beatTree.getRelatedStations(name);
+
+    /// create eventless handler
+    final eventless = nodes.fold<List<BeatConfig>>([], (configs, node) {
+      final beatConfigs = node.beatConfigs.values.expand((element) => element);
+
+      configs.addAll(
+        beatConfigs.where((config) {
+          return config.eventless;
+        }),
+      );
+
+      return configs;
+    });
+
+    final mappedEventless =
+        eventless.fold<Map<String, List<BeatConfig>>>({}, (map, config) {
+      final state = config.fromField;
+      map[state] ??= [];
+      map[state]!.add(config);
+      return map;
+    });
+
+    final body = mappedEventless.keys.map((state) {
+      final configs = mappedEventless[state]!;
+      final matcher = toStateMatcher(name, state);
+      final block = configs.map((config) {
+        final beatname = toBeatAnnotationVariableName(
+          config.fromBase,
+          config.fromField,
+          config.event,
+          config.toBase,
+          config.toField,
+        );
+        return '''
+addDelayed($beatname.after, () {
+  if ($currentStateFieldName.$matcher) {
+    $setStateMethodName(${config.toBase}.${config.toField});
+  }
+});
+''';
+      }).join();
+      return '''
+if ($currentStateFieldName.$matcher) {
+  $block
+}
+''';
+    }).join(' else ');
+
+    buffer.writeln(
+      '''
+void $eventlessHandlerMethodName() {
+  $body
+}
+''',
     );
   }
 
@@ -190,10 +253,12 @@ final List<$stateClass> $stateHistoryFieldName = [];
       '''
 void $setStateMethodName(dynamic state) {
   assert(state is Enum || state is List<Enum>);
+  clearDelayed();
   final nextState = $stateClassName(state: state, context: currentState.context)..$stateInitializerMethodName(this);
   $stateHistoryFieldName.add(nextState);
   $notifyListenersMethodName();
   _invokeServices();
+  $eventlessHandlerMethodName();
 }
 ''',
     );
@@ -210,7 +275,7 @@ void $setStateMethodName(dynamic state) {
 void $setContextMethodName($realContextType context) {
   final nextState = $stateClassName(state: currentState.state, context: context)..$stateInitializerMethodName(this);
   $stateHistoryFieldName.add(nextState);
-  $notifyListenersMethodName();
+  // $notifyListenersMethodName();
 }
 ''',
     );
@@ -286,7 +351,8 @@ _invokeServices() async {
 
   void _createCommonBeatTransitions(BeatStationNode node) {
     final baseName = node.info.baseEnumName;
-    final commonBeats = node.beatConfigs[baseName] ?? [];
+    final commonBeats = (node.beatConfigs[baseName] ?? [])
+        .where((element) => !element.eventless);
     for (final config in commonBeats) {
       buffer.writeln(
         '''
@@ -312,7 +378,8 @@ void \$${config.event}<Data>([Data? data]) {
     final states = node.info.states;
     final baseName = node.info.baseEnumName;
     for (final state in states) {
-      final beatConfigs = node.beatConfigs[state] ?? [];
+      final beatConfigs = (node.beatConfigs[state] ?? [])
+          .where((element) => !element.eventless);
       buffer.writeln(
         '''${toBeatTransitionBaseClassName(baseName, state)} get ${toTransitionFieldName(state)} {
           if (currentState.state == $baseName.$state) {

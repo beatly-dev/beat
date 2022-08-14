@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../args/args.dart';
 import '../../beats/search/input.dart';
 import '../../beats/search/result.dart';
 
@@ -11,8 +12,8 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  final inputStataion = PubSearchBeatStation()..start();
-  final resultStation = PubSearchResultBeatStation()..start();
+  final inputStataion = SearchInputBeatStation()..start();
+  final resultStation = SearchResultBeatStation()..start();
 
   @override
   void initState() {
@@ -26,7 +27,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   loadData() {
-    if (inputStataion.currentState.context?.isNotEmpty ?? false) {
+    if (inputStataion.currentState.isSearchInputTyped$) {
       resultStation.send.$load(inputStataion.currentState.context);
     }
   }
@@ -39,10 +40,10 @@ class _MainPageState extends State<MainPage> {
           TextField(
             onChanged: (text) {
               if (text.isEmpty) {
-                inputStataion.send.$clear();
                 resultStation.send.$clear();
+                inputStataion.send.$clear();
               } else {
-                inputStataion.send.$enter(text);
+                inputStataion.send.$type(text);
               }
             },
           ),
@@ -60,7 +61,7 @@ class _MainPageState extends State<MainPage> {
 class SearchedResultWidget extends StatefulWidget {
   const SearchedResultWidget({required this.station, Key? key})
       : super(key: key);
-  final PubSearchResultBeatStation station;
+  final SearchResultBeatStation station;
 
   @override
   State<SearchedResultWidget> createState() => _SearchedResultWidgetState();
@@ -87,18 +88,22 @@ class _SearchedResultWidgetState extends State<SearchedResultWidget> {
   Widget build(BuildContext context) {
     final station = widget.station;
     final state = station.currentState;
-    if (state.isPubSearchResultLoading$) {
+    if (state.isSearchResultIdle$) {
+      return Center(
+        child: Text('Type what you want to search for. $args'),
+      );
+    }
+
+    if (state.isSearchResultLoading$) {
       return const Center(child: Text('Loading data...'));
     }
 
-    final results = state.context?.results?.packages;
+    final results = state.context!.results!.packages;
 
-    if (results == null) {
-      return const Center(child: Text('Type what you want to search for.'));
-    }
     if (results.isEmpty) {
       return const Center(child: Text('No results found.'));
     }
+
     return ListView(
       children: [
         ...results.map((package) {

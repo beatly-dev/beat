@@ -17,31 +17,7 @@ Future<List<BeatConfig>> aggregateBeatConfigs(
   final annotations =
       await aggregateAnnotations(element, _beatChecker, buildStep);
   fromBase ??= element.name;
-  return annotations.map((e) {
-    final annotation = ConstantReader(e.annotationObj);
-
-    final event = getAnnotationFieldLiteralValue(annotation, 'event');
-    final fromField = e.element.name!;
-    final toField = getAnnotationEnumFieldValue(annotation, 'to');
-    final toBase = getAnnotationEnumFieldClass(annotation, 'to');
-    final source = e.source;
-    final actions = getBeatActionsField(source);
-    final argType = getBeatArgTypeField(annotation);
-    final conditions = getBeatConditionsField(source);
-
-    final config = BeatConfig(
-      fromBase: fromBase!,
-      fromField: fromField,
-      event: event,
-      toBase: toBase,
-      toField: toField,
-      source: source,
-      actions: actions,
-      eventDataType: argType,
-      conditions: conditions,
-    );
-    return config;
-  }).toList();
+  return annotations.map((e) => e.toBeatConfig(fromBase!)).toList();
 }
 
 Future<List<BeatConfig>> getBeatConfigs(
@@ -51,43 +27,7 @@ Future<List<BeatConfig>> getBeatConfigs(
 ) async {
   final annotations = await getAnnotations(element, _beatChecker, buildStep);
   fromBase ??= element.name;
-  return annotations.map((e) {
-    final annotation = ConstantReader(e.annotationObj);
-
-    final fromField = e.element.name!;
-    final toField = getAnnotationEnumFieldValue(annotation, 'to');
-    final toBase = getAnnotationEnumFieldClass(annotation, 'to');
-    final source = e.source;
-    final actions = getBeatActionsField(source);
-    final argType = getBeatArgTypeField(annotation);
-    final conditions = getBeatConditionsField(source);
-
-    var event = getAnnotationFieldLiteralValue(annotation, 'event').trim();
-    final blankRegexp = RegExp(r'\s+(\w)');
-    final blankMatches = blankRegexp.allMatches(event);
-    for (final match in blankMatches) {
-      final firstChar = match.group(match.groupCount)!.toUpperCase();
-      final start = match.start;
-      final end = match.end;
-      event = event.replaceRange(start, end, firstChar);
-    }
-
-    final specialRegexp = RegExp(r'[^a-zA-Z0-9]');
-    event = event.replaceAll(specialRegexp, '');
-
-    final config = BeatConfig(
-      fromBase: fromBase!,
-      fromField: fromField,
-      event: event,
-      toBase: toBase,
-      toField: toField,
-      source: source,
-      actions: actions,
-      eventDataType: argType,
-      conditions: conditions,
-    );
-    return config;
-  }).toList();
+  return annotations.map((e) => e.toBeatConfig(fromBase!)).toList();
 }
 
 Future<Map<String, List<BeatConfig>>> mapBeatAnnotations<C>(
@@ -122,9 +62,54 @@ String? getBeatConditionsField(String source) {
 }
 
 const _beatChecker = TypeChecker.fromRuntime(Beat);
+const _eventlessBeatChecker = TypeChecker.fromRuntime(EventlessBeat);
 
 List<DartObject> _beatAnnotations(Element element) =>
     _beatChecker.annotationsOf(element, throwOnUnresolved: false).toList();
 
 List<ConstantReader> beatAnnotations(Element element) =>
     _beatAnnotations(element).map((e) => ConstantReader(e)).toList();
+
+extension on AggregatedAnnotation {
+  BeatConfig toBeatConfig(String fromBase) {
+    final e = this;
+    final annotation = ConstantReader(e.annotationObj);
+
+    final event = getAnnotationFieldLiteralValue(annotation, 'event');
+    final fromField = e.element.name!;
+    final toField = getAnnotationEnumFieldValue(annotation, 'to');
+    final toBase = getAnnotationEnumFieldClass(annotation, 'to');
+    final source = e.source;
+    final actions = getBeatActionsField(source);
+    final argType = getBeatArgTypeField(annotation);
+    final conditions = getBeatConditionsField(source);
+
+    final type = e.annotationObj.type!;
+    var eventless = false;
+    var after = 'const Duration(milliseconds: 0)';
+    if (_eventlessBeatChecker.isAssignableFromType(type)) {
+      eventless = true;
+      final duration = annotation
+          .read('after')
+          .objectValue
+          .getField('_duration')
+          ?.toIntValue();
+      after = 'const Duration(microseconds: $duration)';
+    }
+
+    final config = BeatConfig(
+      fromBase: fromBase,
+      fromField: fromField,
+      event: event,
+      toBase: toBase,
+      toField: toField,
+      source: source,
+      actions: actions,
+      eventDataType: argType,
+      conditions: conditions,
+      eventless: eventless,
+      after: after,
+    );
+    return config;
+  }
+}

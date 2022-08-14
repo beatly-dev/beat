@@ -13,6 +13,8 @@ class BeatConfig {
   final String? eventDataType;
   final String? conditions;
   final String source;
+  final bool eventless;
+  final String after;
 
   const BeatConfig({
     required this.event,
@@ -24,6 +26,8 @@ class BeatConfig {
     this.actions,
     this.conditions,
     this.eventDataType,
+    this.eventless = false,
+    this.after = 'const Duration(milliseconds: 0)',
   });
 
   factory BeatConfig.fromJson(Map<String, dynamic> json) =>
@@ -33,6 +37,8 @@ class BeatConfig {
 
   @override
   String toString() {
-    return 'from `$fromBase.$fromField` to `$toBase.$toField` by `$event`, actions: $actions, eventDataType: $eventDataType, conditions: $conditions';
+    return '''from `$fromBase.$fromField` to `$toBase.$toField` by `$event`, 
+    actions: $actions, eventDataType: $eventDataType, conditions: $conditions
+    eventless: $eventless, after: $after''';
   }
 }

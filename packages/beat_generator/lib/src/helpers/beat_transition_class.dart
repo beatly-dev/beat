@@ -31,7 +31,8 @@ class BeatTransitionClassBuilder {
       final className = toBeatTransitionBaseClassName(baseName, state);
       final body = StringBuffer();
 
-      final beatConfigs = node.beatConfigs[state] ?? [];
+      final beatConfigs = (node.beatConfigs[state] ?? [])
+          .where((element) => !element.eventless);
 
       body.writeln('const $className();');
       for (final config in beatConfigs) {
@@ -51,7 +52,8 @@ void \$${config.event}<Data>([Data? data]);
     for (final state in node.info.states) {
       final className = toBeatTransitionRealClassName(baseName, state);
       final baseClassName = toBeatTransitionBaseClassName(baseName, state);
-      final beatConfigs = node.beatConfigs[state] ?? [];
+      final beatConfigs = (node.beatConfigs[state] ?? [])
+          .where((element) => !element.eventless);
       final body = StringBuffer();
       if (beatConfigs.isNotEmpty) {
         /// constructor and parent beat station;
@@ -106,7 +108,8 @@ void \$${config.event}<Data>([Data? data]) {
       final baseClassName = toBeatTransitionBaseClassName(baseName, state);
       final body = StringBuffer();
 
-      final beatConfigs = node.beatConfigs[state] ?? [];
+      final beatConfigs = (node.beatConfigs[state] ?? [])
+          .where((element) => !element.eventless);
 
       body.writeln('const $className();');
       for (final config in beatConfigs) {

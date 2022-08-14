@@ -70,21 +70,16 @@ String toBeatAnnotationVariableName(
     '_${toDartFieldCase(event)}From${toBeginningOfSentenceCase(fromBase)}${toBeginningOfSentenceCase(fromField)}To${toBeginningOfSentenceCase(toBase)}${toBeginningOfSentenceCase(toField)}';
 
 String toBeatAnnotationVariableDeclaration(
-  String fromBase,
-  String fromField,
-  String event,
-  String toBase,
-  String toField,
-  String? actions,
-  String? conditions,
-  String? eventDataType,
+  BeatConfig config,
 ) =>
-    '''const ${toBeatAnnotationVariableName(fromBase, fromField, event, toBase, toField)} = Beat(
-      event: '$event',
-      to: $toBase.$toField,
-      actions: ${actions ?? const []},
-      conditions: ${conditions ?? const []},
-      eventDataType: ${eventDataType ?? dynamic},
+    '''const ${toBeatAnnotationVariableName(config.fromBase, config.fromField, config.event, config.toBase, config.toField)} = 
+    ${config.eventless ? 'EventlessBeat' : 'Beat'}(
+      ${config.eventless ? '' : "event: '${config.event}'"},
+      to: ${config.toBase}.${config.toField},
+      actions: ${config.actions ?? const []},
+      conditions: ${config.conditions ?? const []},
+      eventDataType: ${config.eventDataType ?? dynamic},
+      ${config.eventless ? 'after: ${config.after},' : ''}
     );''';
 
 String toInvokeVariableName(InvokeConfig config) =>

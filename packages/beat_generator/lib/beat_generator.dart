@@ -17,6 +17,10 @@ Builder beatMaker(BuilderOptions options) {
   final stationGenerator = StationGenerator();
   // final beatBuidler = BeatBuilder();
   // return BeatBuilder();
+  // return LibraryBuilder(
+  //   stationGenerator,
+  //   generatedExtension: '.beat.dart',
+  // );
   return PartBuilder(
     [
       // compoundGenerator,

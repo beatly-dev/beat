@@ -38,7 +38,9 @@ final ${toBeatStationClassName(baseName)} _station;
   Map<String, List<BeatConfig>> _gatherByEvents(List<BeatStationNode> nodes) {
     final events = <String, List<BeatConfig>>{};
     for (final node in nodes) {
-      final beatConfigs = node.beatConfigs.values.expand((element) => element);
+      final beatConfigs = node.beatConfigs.values
+          .expand((element) => element)
+          .where((element) => !element.eventless);
       for (final beat in beatConfigs) {
         final eventName = beat.event;
         events[eventName] ??= [];
@@ -67,6 +69,7 @@ final ${toBeatStationClassName(baseName)} _station;
   return _station.\$$event(data);
 ''';
       });
+
       final rootTransitions = beatConfigs.where((config) {
         return config.fromBase == rootEnumName &&
             config.fromBase != config.fromField;

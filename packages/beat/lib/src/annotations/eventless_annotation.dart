@@ -4,20 +4,14 @@ import 'beat_annotation.dart';
 /// This defines the transient transition between states.
 /// Users can set the delay time before the transition is triggered.
 /// The first transition that matches the condition and the delay time is triggered.
-class EventlessBeat {
-  const EventlessBeat({this.beats = const []});
-  final List<Eventless> beats;
-}
-
-/// An eventless transition's detail
-class Eventless extends Beat {
-  const Eventless({
+class EventlessBeat extends Beat {
+  const EventlessBeat({
     required super.to,
-    super.actions,
-    super.eventDataType,
-    super.conditions,
-    this.delay = const Duration(milliseconds: 0),
+    super.actions = const [],
+    super.eventDataType = dynamic,
+    super.conditions = const [],
+    this.after = const Duration(milliseconds: 0),
   }) : super(event: '');
 
-  final Duration delay;
+  final Duration after;
 }

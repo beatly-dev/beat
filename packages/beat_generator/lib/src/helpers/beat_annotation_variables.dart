@@ -21,16 +21,7 @@ class GlobalBeatAnnotationVariablesBuilder {
       var decl =
           'const ${toBeatAnnotationVariableName(beat.fromBase, beat.fromField, beat.event, beat.toBase, beat.toField)} = ${beat.source};';
       if (onDemandDecl.hasMatch(beat.source)) {
-        decl = toBeatAnnotationVariableDeclaration(
-          beat.fromBase,
-          beat.fromField,
-          beat.event,
-          beat.toBase,
-          beat.toField,
-          beat.actions,
-          beat.conditions,
-          beat.eventDataType,
-        );
+        decl = toBeatAnnotationVariableDeclaration(beat);
       }
       buffer.writeln(decl);
     }

@@ -16,6 +16,8 @@ BeatConfig _$BeatConfigFromJson(Map<String, dynamic> json) => BeatConfig(
       actions: json['actions'] as String?,
       conditions: json['conditions'] as String?,
       eventDataType: json['eventDataType'] as String?,
+      eventless: json['eventless'] as bool? ?? false,
+      after: json['after'] as String? ?? 'const Duration(milliseconds: 0)',
     );
 
 Map<String, dynamic> _$BeatConfigToJson(BeatConfig instance) =>
@@ -29,4 +31,6 @@ Map<String, dynamic> _$BeatConfigToJson(BeatConfig instance) =>
       'eventDataType': instance.eventDataType,
       'conditions': instance.conditions,
       'source': instance.source,
+      'eventless': instance.eventless,
+      'after': instance.after,
     };

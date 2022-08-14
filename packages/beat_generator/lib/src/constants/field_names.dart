@@ -24,3 +24,7 @@ const stateHistoryFieldName = 'stateHistory';
 const stateInitializerMethodName = '_initialize';
 
 const stationStartedFieldName = 'started';
+
+const eventlessHandlerMethodName = '_triggerEventless';
+
+const delayedQueueFieldName = '_delayed';
