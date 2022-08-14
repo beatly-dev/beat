@@ -11,7 +11,7 @@ enum SearchInput {
   @searchPackage
   debouncing,
 
-  typed,
+  searching,
 }
 
 const clearInput =
@@ -24,8 +24,8 @@ const typeInput = Beat(
 );
 
 const searchPackage = EventlessBeat(
-  to: SearchInput.typed,
-  after: Duration(milliseconds: 0),
+  to: SearchInput.searching,
+  after: Duration(milliseconds: 300),
 );
 
 enter(state, EventData data) {

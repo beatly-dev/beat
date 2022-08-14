@@ -66,7 +66,7 @@ $stateInitializerMethodName(${toBeatStationClassName(baseEnum.name)} station) {
     final hasSubstate = childKeys
         .map(
           (state) => '''
-  ${toStateMatcher(node.info.baseEnumName, state)}
+  ${toStateMatcher(node.info.baseEnumName, state, node.info.baseEnumName == baseEnum.name)}
 ''',
         )
         .join(' || ');
@@ -94,12 +94,12 @@ bool get hasSubstate => ${childKeys.isEmpty ? 'false' : hasSubstate};
     final buffer = StringBuffer();
     for (final state in states) {
       buffer.writeln(
-        'bool get ${toStateMatcher(state.baseName, state.fieldName)} {',
+        'bool get ${toStateMatcher(state.baseName, state.fieldName, rootEnumName == state.baseName)} {',
       );
       if (rootEnumName != state.baseName) {
         /// last level (leaf) node state matcher
         final lastChecker =
-            '_station.${beatTree.substationRouteBetween(from: rootEnumName, to: state.baseName)}.currentState.${toStateMatcher(state.baseName, state.fieldName)}';
+            '_station.${beatTree.substationRouteBetween(from: rootEnumName, to: state.baseName)}.currentState.${toStateMatcher(state.baseName, state.fieldName, state.baseName == baseEnum.name)}';
 
         /// root to parent of the leaf matcher
         final route =
@@ -109,11 +109,11 @@ bool get hasSubstate => ${childKeys.isEmpty ? 'false' : hasSubstate};
           final parentField = node.parentField;
           if (parentBase == rootEnumName) {
             return '''
- _station.currentState.${toStateMatcher(parentBase, parentField)} 
+ _station.currentState.${toStateMatcher(parentBase, parentField, parentBase == baseEnum.name)} 
 ''';
           } else {
             return '''
- _station.${beatTree.substationRouteBetween(from: rootEnumName, to: parentBase)}.currentState.${toStateMatcher(parentBase, parentField)} 
+ _station.${beatTree.substationRouteBetween(from: rootEnumName, to: parentBase)}.currentState.${toStateMatcher(parentBase, parentField, parentBase == baseEnum.name)})} 
 ''';
           }
         }).join(' && ');

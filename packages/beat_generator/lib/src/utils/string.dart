@@ -101,8 +101,12 @@ String toBeatSenderInitializerArgumentName(String base) =>
 
 String toCompoundFieldName(String base) => '${toDartFieldCase(base)}Compound';
 
-String toStateMatcher(String baseName, String fieldName) =>
-    'is$baseName${toBeginningOfSentenceCase(fieldName)}\$';
+String toStateMatcher(
+  String baseName,
+  String fieldName,
+  bool isRoot,
+) =>
+    'is${isRoot ? '' : baseName}${toBeginningOfSentenceCase(fieldName)}\$';
 
 String toActionExecutorMethodName(String event) =>
     '_exec${toBeginningOfSentenceCase(event)}Actions';

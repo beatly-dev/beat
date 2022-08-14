@@ -77,7 +77,7 @@ final ${toBeatStationClassName(baseName)} _station;
         final fromBase = beatConfig.fromBase;
         final fromField = beatConfig.fromField;
         return '''
-if (_station.$currentStateFieldName.${toStateMatcher(fromBase, fromField)}) {
+if (_station.$currentStateFieldName.${toStateMatcher(fromBase, fromField, fromBase == baseEnum.name)}) {
   return _station.${toTransitionFieldName(fromField)}.\$$event(data);
 }
 ''';
@@ -96,7 +96,7 @@ if (_station.$currentStateFieldName.${toStateMatcher(fromBase, fromField)}) {
         final parentField = node.parentField;
         final substationName = toSubstationFieldName(substation);
         return '''
-if (_station.$currentStateFieldName.${toStateMatcher(parentBase, parentField)}) {
+if (_station.$currentStateFieldName.${toStateMatcher(parentBase, parentField, parentBase == baseEnum.name)}) {
   return _station.$substationName.send.\$$event(data);
 }
 ''';

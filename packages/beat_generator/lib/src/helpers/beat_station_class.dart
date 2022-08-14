@@ -97,7 +97,7 @@ class BeatStationBuilder {
 
     final body = mappedEventless.keys.map((state) {
       final configs = mappedEventless[state]!;
-      final matcher = toStateMatcher(name, state);
+      final matcher = toStateMatcher(name, state, name == baseEnum.name);
       final block = configs.map((config) {
         final beatname = toBeatAnnotationVariableName(
           config.fromBase,
@@ -422,7 +422,11 @@ final ${toListenerFieldName(name)} = <Function>[];
     buffer.writeln(
       nestedStations.map((station) {
         return station.info.states.map((state) {
-          final matcher = toStateMatcher(station.info.baseEnumName, state);
+          final matcher = toStateMatcher(
+            station.info.baseEnumName,
+            state,
+            station.info.baseEnumName == baseEnum.name,
+          );
           final name =
               '${station.info.baseEnumName}${toBeginningOfSentenceCase(state)}';
           return '''
@@ -492,7 +496,7 @@ Function()? on${station.info.baseEnumName}${toBeginningOfSentenceCase(state)}
         (station) => station.info.states
             .map(
               (state) => '''
-if (currentState.${toStateMatcher(station.info.baseEnumName, state)}) {
+if (currentState.${toStateMatcher(station.info.baseEnumName, state, station.info.baseEnumName == baseEnum.name)}) {
   return on${station.info.baseEnumName}${toBeginningOfSentenceCase(state)}?.call() ?? orElse();
 }
 ''',
@@ -517,7 +521,7 @@ exec({
         buffer.writeln(
           '''
   void ${toExecMethodName('${station.info.baseEnumName}${toBeginningOfSentenceCase(state)}')}(Function() callback) {
-    if (currentState.${toStateMatcher(station.info.baseEnumName, state)}) {
+    if (currentState.${toStateMatcher(station.info.baseEnumName, state, station.info.baseEnumName == baseEnum.name)}) {
       callback();
     }
   }
@@ -546,7 +550,7 @@ T Function()? on${station.info.baseEnumName}${toBeginningOfSentenceCase(state)}
         (station) => station.info.states
             .map(
               (state) => '''
-if (currentState.${toStateMatcher(station.info.baseEnumName, state)}) {
+if (currentState.${toStateMatcher(station.info.baseEnumName, state, station.info.baseEnumName == baseEnum.name)}) {
   return on${station.info.baseEnumName}${toBeginningOfSentenceCase(state)}?.call() ?? orElse();
 }
 ''',
@@ -570,7 +574,7 @@ T map<T>({
         buffer.writeln(
           '''
   T? ${toMapMethodName('${station.info.baseEnumName}${toBeginningOfSentenceCase(state)}')}<T>(T Function() callback) {
-    if (currentState.${toStateMatcher(station.info.baseEnumName, state)}) {
+    if (currentState.${toStateMatcher(station.info.baseEnumName, state, station.info.baseEnumName == baseEnum.name)}) {
       return callback();
     }
     return null;

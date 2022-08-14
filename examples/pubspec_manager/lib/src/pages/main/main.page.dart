@@ -27,7 +27,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   loadData() {
-    if (inputStataion.currentState.isSearchInputTyped$) {
+    if (inputStataion.currentState.isSearching$) {
       resultStation.send.$load(inputStataion.currentState.context);
     }
   }
@@ -88,13 +88,13 @@ class _SearchedResultWidgetState extends State<SearchedResultWidget> {
   Widget build(BuildContext context) {
     final station = widget.station;
     final state = station.currentState;
-    if (state.isSearchResultIdle$) {
+    if (state.isIdle$) {
       return Center(
         child: Text('Type what you want to search for. $args'),
       );
     }
 
-    if (state.isSearchResultLoading$) {
+    if (state.isLoading$) {
       return const Center(child: Text('Loading data...'));
     }
 
