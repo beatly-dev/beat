@@ -14,6 +14,8 @@ A roadmap is as follows, but the order does not matter.
 
 - [x] Support simple state transition without context
 - [x] Listen to state and context changes
+  - [x] `addListeners`/`removeListeners` and variations are for state
+  - [x] `addContextListeners`/`removeContextListeners` is for context
 - [x] Map states
 - [x] Execute callback on state change
 - [x] Support reset
@@ -24,7 +26,7 @@ A roadmap is as follows, but the order does not matter.
 - [x] Support transition with an argument
 - [ ] Support nested(compound, hierarchical) state
   - [x] Define compound state
-  - [x] Using `send()`
+  - [x] Using `send`
   - [x] Using verbose styled transition via `{compoundStateName}Compound` field
   - [x] Multi-level (deeply nested) compound state
   - [ ] Custom initialization on parent state creation
@@ -65,7 +67,7 @@ A roadmap is as follows, but the order does not matter.
 - [x] Support eventless(always) transition
 - [x] Support delayed transition
   - [x] Delay on eventless transition
-  - [x] Delay on `send()` or `$event()`
+  - [x] Delay on `send` or `$event()`
 - [ ] Support `entry` and `exit` actions
 - [ ] Support conditional (guarded) transition
   - [ ] Support custom functions

@@ -275,7 +275,7 @@ void $setStateMethodName(dynamic state) {
 void $setContextMethodName($realContextType context) {
   final nextState = $stateClassName(state: currentState.state, context: context)..$stateInitializerMethodName(this);
   $stateHistoryFieldName.add(nextState);
-  // $notifyListenersMethodName();
+  _notifyContextListeners();
 }
 ''',
     );
@@ -400,6 +400,7 @@ void ${toActionExecutorMethodName(config.event)}(EventData eventData) {
     buffer.writeln(
       '''
 final _listeners = <Function>[];
+final _contextListeners = <Function>[];
 ''',
     );
 
@@ -425,7 +426,9 @@ final ${toListenerFieldName(name)} = <Function>[];
     );
 
     buffer.writeln(
-      nestedStations.map((station) {
+      nestedStations
+          .where((station) => station.info.baseEnumName == baseEnum.name)
+          .map((station) {
         return station.info.states.map((state) {
           final matcher = toStateMatcher(
             station.info.baseEnumName,
@@ -447,6 +450,15 @@ if (currentState.$matcher) {
   }
 ''',
     );
+    buffer.writeln(
+      '''
+_notifyContextListeners() {
+  for (final listener in _contextListeners) {
+    listener();
+  }
+}
+''',
+    );
   }
 
   _createListenersMethods(List<BeatStationNode> nestedStations) {
@@ -461,6 +473,20 @@ void addListener(Function() callback) {
       '''
 void removeListener(Function() callback) {
   _listeners.remove(callback);
+}
+''',
+    );
+    buffer.writeln(
+      '''
+void addContextListener(Function() callback) {
+  _contextListeners.add(callback);
+}
+''',
+    );
+    buffer.writeln(
+      '''
+void removeContextListener(Function() callback) {
+  _contextListeners.remove(callback);
 }
 ''',
     );
