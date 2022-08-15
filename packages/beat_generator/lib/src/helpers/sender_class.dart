@@ -58,7 +58,6 @@ final ${toBeatStationClassName(baseName)} _station;
       final transitionName = '\$$event';
 
       /// sender method
-      /// TODO: support delayed transition
       buffer.writeln(
         '$transitionName<Data>({Data? data, Duration after = const Duration(milliseconds: 0)}) {',
       );

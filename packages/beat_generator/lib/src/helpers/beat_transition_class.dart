@@ -7,6 +7,8 @@ import '../utils/create_class.dart';
 import '../utils/string.dart';
 import 'execute_actions.dart';
 
+/// TODO:
+/// Support explicitly defined event data type.
 class BeatTransitionClassBuilder {
   BeatTransitionClassBuilder({
     required this.baseEnum,
