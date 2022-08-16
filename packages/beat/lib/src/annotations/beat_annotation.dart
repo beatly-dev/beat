@@ -1,3 +1,5 @@
+import '../../beat.dart';
+
 /// A annotation to define a transition
 class Beat<Event, State extends Enum, Context> {
   const Beat({
@@ -21,7 +23,7 @@ class Beat<Event, State extends Enum, Context> {
   final Type eventDataType;
 
   /// Guard conditions that must be met before the transition is triggered
-  final List<bool Function()> conditions;
+  final List<bool Function(BeatState<State, Context>, EventData)> conditions;
 }
 
-bool _alwaysTrueCondition() => true;
+bool _alwaysTrueCondition(_, __) => true;
