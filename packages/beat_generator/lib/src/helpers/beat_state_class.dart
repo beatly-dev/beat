@@ -7,6 +7,8 @@ import '../utils/context.dart';
 import '../utils/create_class.dart';
 import '../utils/string.dart';
 
+/// TODO:
+/// support required context parameter.
 class BeatStateBuilder {
   BeatStateBuilder({
     required this.baseEnum,
@@ -98,27 +100,27 @@ bool get hasSubstate => ${childKeys.isEmpty ? 'false' : hasSubstate};
       );
       if (rootEnumName != state.baseName) {
         /// last level (leaf) node state matcher
-        final lastChecker =
-            '_station.${beatTree.substationRouteBetween(from: rootEnumName, to: state.baseName)}.currentState.${toStateMatcher(state.baseName, state.fieldName, state.baseName == baseEnum.name)}';
+        final leafChecker =
+            '_station.${beatTree.substationRouteBetween(from: rootEnumName, to: state.baseName)}.currentState.${toStateMatcher(state.baseName, state.fieldName, true)}';
 
         /// root to parent of the leaf matcher
         final route =
             beatTree.routeBetween(from: rootEnumName, to: state.baseName);
-        final stateChecker = route.map((node) {
+        final pathChecker = route.map((node) {
           final parentBase = node.parentBase;
           final parentField = node.parentField;
           if (parentBase == rootEnumName) {
             return '''
- _station.currentState.${toStateMatcher(parentBase, parentField, parentBase == baseEnum.name)} 
+ _station.currentState.${toStateMatcher(parentBase, parentField, true)} 
 ''';
           } else {
             return '''
- _station.${beatTree.substationRouteBetween(from: rootEnumName, to: parentBase)}.currentState.${toStateMatcher(parentBase, parentField, parentBase == baseEnum.name)})} 
+ _station.${beatTree.substationRouteBetween(from: rootEnumName, to: parentBase)}.currentState.${toStateMatcher(parentBase, parentField, true)} 
 ''';
           }
         }).join(' && ');
         buffer.writeln(
-          'return $stateChecker && $lastChecker; ',
+          'return $pathChecker && $leafChecker; ',
         );
       } else {
         buffer.writeln(
