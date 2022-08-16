@@ -7,14 +7,14 @@ const addBeat =
 
 @BeatStation(contextType: int)
 @Beat(event: 'take', to: Counter.taken, actions: [AssignAction(taker)])
-@Beat(event: 'reset', to: Counter.added, actions: [AssignAction(reset)])
+@Beat(
+    event: 'reset', to: Counter.added, actions: [Reset(), AssignAction(reset)])
 @addBeat
 enum Counter {
   @Beat(event: 'test', to: Counter.added)
   @Beat(event: 'reset', to: Counter.added, actions: [AssignAction(reset)])
   @Invokes([
-    InvokeFuture(save,
-        onDone: AfterInvoke(to: Counter.added, actions: [AssignAction(adder)]))
+    InvokeFuture(save),
   ])
   added,
 
@@ -27,7 +27,19 @@ enum Counter {
   error,
 }
 
-saveError(_, __, ___) async {
+class Reset extends AssignActionBase {
+  const Reset();
+  @override
+  Function(BeatState currentState, EventData event) get action => (_, __) {
+        print("Reseter");
+        return 0;
+      };
+}
+
+saveError(
+  _,
+  __,
+) async {
   throw UnimplementedError();
 }
 
@@ -35,21 +47,21 @@ logError() {
   print("Error on Save!");
 }
 
-int adder(Counter currentState, int prevContext, EventData event) {
-  return prevContext + 1;
+int adder(BeatState state, _) {
+  return state.context + 1;
 }
 
-int taker(Counter currentState, int prevContext, EventData event) {
+int taker(BeatState state, EventData event) {
   print("EventData: ${event.event}, ${event.data}");
-  return prevContext - 1;
+  return state.context - 1;
 }
 
-int reset(Counter currentState, int prevContext, EventData event) {
+int reset(BeatState state, EventData event) {
   print("EventData: ${event.event}, ${event.data}");
   return 0;
 }
 
-save(Counter state, int context, String event) async {
+save(_, String event) async {
   print("Saving... $event ");
 }
 

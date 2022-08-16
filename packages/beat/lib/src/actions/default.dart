@@ -1,16 +1,18 @@
+import '../../beat.dart';
+
 /// Default action implementation
 /// All the other actions ahould extend this class
-class DefaultAction<State, Context, Event, ActionResult> {
-  final ActionResult Function(
+abstract class DefaultAction<State extends BeatState, ActionResult> {
+  ActionResult Function(
     State currentState,
-    Event event,
-  ) action;
+    EventData event,
+  ) get action;
 
-  const DefaultAction(this.action);
+  const DefaultAction();
 
   ActionResult execute(
     State currentState,
-    Event event,
+    EventData event,
   ) {
     return action(currentState, event);
   }

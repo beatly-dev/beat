@@ -7,7 +7,7 @@ String createActionExecutor(
   return '''
     exec() =>
         $actionName.execute(${prefix}currentState, $eventData);
-    if ($actionName is AssignAction) {
+    if ($actionName is AssignActionBase) {
       ${prefix}_setContext(exec());
     } else if ($actionName is DefaultAction) {
       exec();
