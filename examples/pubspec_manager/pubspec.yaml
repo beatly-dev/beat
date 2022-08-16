@@ -39,6 +39,8 @@ dependencies:
   path_provider: ^2.0.11
   file_picker: ^5.0.1
   pubspec2: ^2.4.1
+  isar:
+  isar_flutter_libs: ^3.0.0-dev.8
 
 dev_dependencies:
   flutter_test:
@@ -52,6 +54,7 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   beat_generator: ^0.10.0+2
   build_runner: ^2.2.0
+  isar_generator: ^3.0.0-dev.8
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

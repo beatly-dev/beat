@@ -1,120 +1,108 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:macos_ui/macos_ui.dart';
 
-import '../../args/args.dart';
-import '../../beats/search/input.dart';
-import '../../beats/search/result.dart';
+import '../../beats/route/route.dart';
 
-class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  const HomePage(
+    this.routeStation, {
+    Key? key,
+  }) : super(key: key);
+  final MainRouteBeatStation routeStation;
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _MainPageState extends State<MainPage> {
-  final inputStataion = SearchInputBeatStation()..start();
-  final resultStation = SearchResultBeatStation()..start();
-
+class _HomePageState extends State<HomePage> {
   @override
   void initState() {
-    inputStataion.addListener(loadData);
+    widget.routeStation.addContextListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
     super.initState();
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  loadData() {
-    if (inputStataion.currentState.isSearching$) {
-      resultStation.send.$load(data: inputStataion.currentState.context);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
+    final recentProjects = widget.routeStation.currentState.context;
+    return MacosWindow(
+      child: MacosScaffold(
         children: [
-          TextField(
-            onChanged: (text) {
-              if (text.isEmpty) {
-                resultStation.send.$clear();
-                inputStataion.send.$clear();
-              } else {
-                inputStataion.send.$type(
-                  data: text,
-                  after: const Duration(milliseconds: 1000),
-                );
-              }
+          ContentArea(
+            builder: (context, scrollController) {
+              return Center(
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(32, 32, 32, 32),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: MacosTabView(
+                          controller: MacosTabController(length: 1),
+                          tabs: const [
+                            MacosTab(
+                              label: 'Recent Projects',
+                              active: true,
+                            ),
+                          ],
+                          children: [
+                            ListView.separated(
+                              padding: const EdgeInsets.all(16),
+                              itemCount: recentProjects?.length ?? 0,
+                              separatorBuilder: (_, __) {
+                                return const SizedBox(height: 16);
+                              },
+                              itemBuilder: (context, index) {
+                                final project = recentProjects?[index];
+                                if (project == null) {
+                                  return const SizedBox.shrink();
+                                }
+                                return MacosListTile(
+                                  title: Text(
+                                    project.name,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  leadingWhitespace: 0,
+                                  subtitle: Tooltip(
+                                    message: project.path,
+                                    child: Text(
+                                      project.path,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  onClick: () {},
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      PushButton(
+                        buttonSize: ButtonSize.large,
+                        onPressed: () async {
+                          final path =
+                              await FilePicker.platform.getDirectoryPath(
+                                    lockParentWindow: true,
+                                  ) ??
+                                  '';
+                          widget.routeStation.send.$gotoExplorer(
+                            data: RouteArgs(context: context, args: path),
+                          );
+                        },
+                        child: const Text('Open a flutter project'),
+                      ),
+                    ],
+                  ),
+                ),
+              );
             },
-          ),
-          Expanded(
-            child: SearchedResultWidget(
-              station: resultStation,
-            ),
-          ),
+          )
         ],
       ),
-    );
-  }
-}
-
-class SearchedResultWidget extends StatefulWidget {
-  const SearchedResultWidget({required this.station, Key? key})
-      : super(key: key);
-  final SearchResultBeatStation station;
-
-  @override
-  State<SearchedResultWidget> createState() => _SearchedResultWidgetState();
-}
-
-class _SearchedResultWidgetState extends State<SearchedResultWidget> {
-  @override
-  void initState() {
-    widget.station.addListener(handleResult);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    widget.station.removeListener(handleResult);
-    super.dispose();
-  }
-
-  handleResult() {
-    setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final station = widget.station;
-    final state = station.currentState;
-    if (state.isIdle$) {
-      return Center(
-        child: Text('Type what you want to search for. $args'),
-      );
-    }
-
-    if (state.isLoading$) {
-      return const Center(child: Text('Loading data...'));
-    }
-
-    final results = state.context!.results!.packages;
-
-    if (results.isEmpty) {
-      return const Center(child: Text('No results found.'));
-    }
-
-    return ListView(
-      children: [
-        ...results.map((package) {
-          return ListTile(
-            title: Text(package.package),
-          );
-        }).toList(),
-      ],
     );
   }
 }

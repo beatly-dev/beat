@@ -11,7 +11,6 @@ enum SearchInput {
   @searchPackage
   debouncing,
 
-  @clearInput
   searching,
 }
 
@@ -34,7 +33,6 @@ enter(state, EventData data) {
   return input;
 }
 
-clear(state, __) {
-  const dd = const Duration();
+clear(_, __) {
   return '';
 }
