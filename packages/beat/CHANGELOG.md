@@ -1,3 +1,7 @@
+## 0.13.1
+
+ - **FEAT**: access to nested state using `currentState.of`.
+
 ## 0.13.0
 
 > Note: This release has breaking changes.

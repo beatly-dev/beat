@@ -1,3 +1,7 @@
+## 0.13.2
+
+ - **FEAT**: access to nested state using `currentState.of`.
+
 ## 0.13.1
 
  - **FIX**: bugs in state matcher.
