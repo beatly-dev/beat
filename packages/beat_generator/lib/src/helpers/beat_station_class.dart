@@ -402,13 +402,12 @@ final _contextListeners = <Function>[];
 ''',
     );
 
-    for (final station in nestedStations) {
+    for (final station in nestedStations
+        .where((station) => station.info.baseEnumName == baseEnum.name)) {
       for (final state in station.info.states) {
-        final name =
-            '${station.info.baseEnumName}${toBeginningOfSentenceCase(state)}';
         buffer.writeln(
           '''
-final ${toListenerFieldName(name)} = <Function>[];
+final ${toListenerFieldName(state)} = <Function>[];
 ''',
         );
       }
@@ -433,11 +432,9 @@ final ${toListenerFieldName(name)} = <Function>[];
             state,
             station.info.baseEnumName == baseEnum.name,
           );
-          final name =
-              '${station.info.baseEnumName}${toBeginningOfSentenceCase(state)}';
           return '''
 if (currentState.$matcher) {
-    ${toListenerFieldName(name)}.forEach((listener) => listener());
+    ${toListenerFieldName(state)}.forEach((listener) => listener());
 }
 ''';
         }).join('else ');
@@ -489,16 +486,35 @@ void removeContextListener(Function() callback) {
 ''',
     );
     for (final station in nestedStations) {
+      final baseName = station.info.baseEnumName;
       for (final state in station.info.states) {
-        final name =
-            '${station.info.baseEnumName}${toBeginningOfSentenceCase(state)}';
+        final isInCurrentStation = baseName == baseEnum.name;
+        final fieldName = isInCurrentStation
+            ? toListenerFieldName(state)
+            : toSubstationFieldName(
+                beatTree
+                    .routeBetween(from: baseEnum.name, to: baseName)[0]
+                    .info
+                    .baseEnumName,
+              );
+
+        final isDirectChild = station.parentBase == baseEnum.name;
+
+        final adder = isInCurrentStation
+            ? '$fieldName.add'
+            : '$fieldName.${toAddListenerMethodName(isDirectChild ? state : '${station.info.baseEnumName}${toBeginningOfSentenceCase(state)}')}';
+
+        final remover = isInCurrentStation
+            ? '$fieldName.remove'
+            : '$fieldName.${toRemoveListenerMethodName(isDirectChild ? state : '${station.info.baseEnumName}${toBeginningOfSentenceCase(state)}')}';
+
         buffer.writeln(
           '''
-  void ${toAddListenerMethodName(name)}(Function() callback) {
-    ${toListenerFieldName(name)}.add(callback);
+  void ${toAddListenerMethodName(isInCurrentStation ? state : '$baseName${toBeginningOfSentenceCase(state)}')}(Function() callback) {
+    $adder(callback);
   }
-  void ${toRemoveListenerMethodName(name)}(Function() callback) {
-    ${toListenerFieldName(name)}.remove(callback);
+  void ${toRemoveListenerMethodName(isInCurrentStation ? state : '$baseName${toBeginningOfSentenceCase(state)}')}(Function() callback) {
+    $remover(callback);
   }
 ''',
         );
