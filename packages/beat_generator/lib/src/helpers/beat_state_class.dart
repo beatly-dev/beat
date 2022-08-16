@@ -101,8 +101,7 @@ bool get hasSubstate => ${childKeys.isEmpty ? 'false' : hasSubstate};
     }).expand((states) => states);
 
     /// TODO:
-    /// 1. If a user asks for a substate => done
-    /// 2. If a user asks for a parallel state => not yet supported
+    /// If a user asks for a parallel state => not yet supported
     final buffer = StringBuffer();
     for (final state in states) {
       buffer.writeln(

@@ -59,8 +59,6 @@ class BeatStationBuilder {
     _createReset();
     _createSender();
 
-    /// TODO:
-    /// - nested listeners
     _createListenersFields(substations);
     _createListenersMethods(substations);
     _createNotifyListenersMethod(substations);
@@ -284,7 +282,6 @@ $stateClass get $currentStateFieldName => $stateHistoryFieldName.isEmpty ? $init
 
   _createSetState() async {
     /// TODO
-    /// - set state for substations
     /// - set state for parallel stations
     final stateClassName = toBeatStateClassName(baseEnum.name);
     buffer.writeln(
@@ -305,9 +302,6 @@ void $setStateMethodName(dynamic state) {
   }
 
   _createSetContext(String contextType) async {
-    /// TODO
-    /// - set context for substations
-    /// - set context for parallel stations
     final stateClassName = toBeatStateClassName(baseEnum.name);
     final realContextType = toContextType(contextType);
     buffer.writeln(
