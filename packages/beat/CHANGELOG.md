@@ -1,3 +1,10 @@
+## 0.13.0
+
+> Note: This release has breaking changes.
+
+ - **FEAT**: support context change listener.
+ - **BREAKING** **FEAT**: prepare for guarded transitions.
+
 ## 0.12.0
 
 > Note: This release has breaking changes.

@@ -1,3 +1,11 @@
+## 0.13.1
+
+ - **FIX**: bugs in state matcher.
+ - **FIX**: a bug in `resetState` method.
+ - **FIX**: restore accidentally removed event name refiner.
+ - **FEAT**: support nested listeners.
+ - **FEAT**: support context change listener.
+
 ## 0.13.0
 
 > Note: This release has breaking changes.
