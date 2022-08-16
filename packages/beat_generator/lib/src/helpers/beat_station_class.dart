@@ -336,9 +336,7 @@ _invokeServices() async {
     buffer.writeln(
       '''
   void resetState() {
-    $stateHistoryFieldName.add(initialState);
-    $notifyListenersMethodName();
-    _invokeServices();
+    $setStateMethodName($initialStateFieldName.state);
   }
 
   void clearState() {
