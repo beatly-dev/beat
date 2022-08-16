@@ -75,7 +75,6 @@ extension on AggregatedAnnotation {
     final e = this;
     final annotation = ConstantReader(e.annotationObj);
 
-    final event = getAnnotationFieldLiteralValue(annotation, 'event');
     final fromField = e.element.name!;
     final toField = getAnnotationEnumFieldValue(annotation, 'to');
     final toBase = getAnnotationEnumFieldClass(annotation, 'to');
@@ -83,6 +82,18 @@ extension on AggregatedAnnotation {
     final actions = getBeatActionsField(source);
     final argType = getBeatArgTypeField(annotation);
     final conditions = getBeatConditionsField(source);
+    var event = getAnnotationFieldLiteralValue(annotation, 'event').trim();
+    final blankRegexp = RegExp(r'\s+(\w)');
+    final blankMatches = blankRegexp.allMatches(event);
+    for (final match in blankMatches) {
+      final firstChar = match.group(match.groupCount)!.toUpperCase();
+      final start = match.start;
+      final end = match.end;
+      event = event.replaceRange(start, end, firstChar);
+    }
+
+    final specialRegexp = RegExp(r'[^a-zA-Z0-9]');
+    event = event.replaceAll(specialRegexp, '');
 
     final type = e.annotationObj.type!;
     var eventless = false;
