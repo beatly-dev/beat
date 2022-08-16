@@ -8,7 +8,6 @@ enum DogInAHouse {
   @Beat(
     event: 'wakesUp',
     to: awake,
-    conditions: [],
     actions: [bowWow2, AssignAction(assign)],
   )
   asleep,
@@ -27,6 +26,6 @@ bowWow2() {
   }
 }
 
-assign(_, __, ___) {
+assign(_, __) {
   return 1;
 }

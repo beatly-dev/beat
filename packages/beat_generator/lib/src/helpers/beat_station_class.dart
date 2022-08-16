@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:beat/beat.dart';
 import 'package:beat_config/beat_config.dart';
 
 import '../constants/field_names.dart';
@@ -45,6 +46,7 @@ class BeatStationBuilder {
     _createStationStatusHandler();
     await _createStateHistoryField();
     await _createSubstationFields(substations);
+    await _createChildGetter(substations);
 
     await _createEventlessHandler();
 
@@ -143,14 +145,36 @@ $senderClassName get send => $senderClassName(this);
     buffer.writeln(
       '''
 bool $stationStartedFieldName;
+@override
 start() {
   clearState();
   $stationStartedFieldName = true;
 }
 
+@override
 stop() {
   $stationStartedFieldName = false;
 }
+''',
+    );
+  }
+
+  _createChildGetter(List<BeatStationNode> nestedStations) async {
+    final directSubstations =
+        nestedStations.where((element) => element.parentBase == baseEnum.name);
+
+    final body = directSubstations.map((substation) {
+      final name = substation.info.baseEnumName;
+      final substationFieldName = toSubstationFieldName(name);
+      return '''
+currentState.${toStateMatcher(name, substation.parentField, true)} ? $substationFieldName
+''';
+    }).join(' : ');
+
+    buffer.writeln(
+      '''
+@override
+$BeatStationBase? get child => ${body.isEmpty ? 'null' : '$body : null'};
 ''',
     );
   }
@@ -185,7 +209,7 @@ final $substationClassName $substationFieldName = $substationClassName(started: 
     buffer.writeln(
       '${toContextType(contextType)} $initialContextArg,',
     );
-    buffer.writeln('this.$stationStartedFieldName = true,');
+    buffer.writeln('this.$stationStartedFieldName = false,');
     buffer.writeln('})');
 
     /// additional initializers
@@ -216,6 +240,17 @@ $stateHistoryFieldName.add($initialStateFieldName);
 $initialStateFieldName._initialize(this);
 ''',
     );
+    final directSubstations =
+        nestedStations.where((element) => element.parentBase == baseEnum.name);
+    for (final substation in directSubstations) {
+      final name = substation.info.baseEnumName;
+      final substationFieldName = toSubstationFieldName(name);
+      buffer.writeln(
+        '''
+$substationFieldName.setParent(this);
+''',
+      );
+    }
     buffer.writeln('}');
 
     /// ]] constructor body
@@ -240,7 +275,10 @@ final List<$stateClass> $stateHistoryFieldName = [];
   _createCurrentState() async {
     final stateClass = toBeatStateClassName(baseEnum.name);
     buffer.writeln(
-      '$stateClass get $currentStateFieldName => $stateHistoryFieldName.last;',
+      '''
+@override
+$stateClass get $currentStateFieldName => $stateHistoryFieldName.isEmpty ? $initialStateFieldName: $stateHistoryFieldName.last;
+''',
     );
   }
 
@@ -253,12 +291,14 @@ final List<$stateClass> $stateHistoryFieldName = [];
       '''
 void $setStateMethodName(dynamic state) {
   assert(state is Enum || state is List<Enum>);
+  child?.stop();
   clearDelayed();
   final nextState = $stateClassName(state: state, context: currentState.context)..$stateInitializerMethodName(this);
   $stateHistoryFieldName.add(nextState);
   $notifyListenersMethodName();
   _invokeServices();
   $eventlessHandlerMethodName();
+  child?.start();
 }
 ''',
     );

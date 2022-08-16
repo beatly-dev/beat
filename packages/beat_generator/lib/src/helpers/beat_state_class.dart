@@ -26,12 +26,22 @@ class BeatStateBuilder {
     final contextType = toContextType(providedContextType);
     final body = [
       _createFinalFieldsAndConstructor(),
+      _createInheritedStateGetter(),
       _creatMatcher(relatedStations),
     ].join();
     return createClass(
       '$beatStateClassName extends BeatState<${baseEnum.name}, $contextType>',
       body,
     );
+  }
+
+  String _createInheritedStateGetter() {
+    return '''
+@override
+BeatState? of(Type enumType) {
+  return _station.stateOf(enumType);
+}
+''';
   }
 
   String _createFinalFieldsAndConstructor() {

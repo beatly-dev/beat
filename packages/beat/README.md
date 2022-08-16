@@ -30,8 +30,8 @@ A roadmap is as follows, but the order does not matter.
   - [x] Using verbose styled transition via `{compoundStateName}Compound` field
   - [x] Multi-level (deeply nested) compound state
   - [ ] Custom initialization on parent state creation
-  - [ ] Get current state of compound state using `currentState`
-    - Currently `{compundStateName}Compound.currentState` is supported
+  - [x] Get a current state of nested state using `currentState`
+    - `currentState.of(EnumType)` returns the current state of the nested state
   - [x] Reset on parent state enter/exit
   - [x] Reset on parent state reset
 - [x] Support state change history
@@ -40,6 +40,7 @@ A roadmap is as follows, but the order does not matter.
 - [x] Support `state.matches` as a `is{State}`
 - [x] Support `send()` styled transition
   - `station.send` is supported
+- [ ] Support initial context defined in the station definition
 - [ ] Support actions (fire-and-forget)
   - [x] callback action
   - [x] assign action

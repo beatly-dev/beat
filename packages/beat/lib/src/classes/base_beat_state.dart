@@ -10,4 +10,6 @@ abstract class BeatState<State, Context> {
 
   List<Enum>? get parallelState => isParallelState ? state as List<Enum> : null;
   Enum? get singleState => isSingleState ? state as Enum : null;
+
+  BeatState? of(Type enumType) => null;
 }
