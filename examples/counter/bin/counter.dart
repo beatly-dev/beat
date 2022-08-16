@@ -2,35 +2,27 @@ import 'counter.state.dart';
 
 void main(List<String> arguments) async {
   final counter = CounterBeatStation(
-    CounterBeatState(context: 0, state: Counter.added),
+    firstState: Counter.added,
+    initialContext: 0,
   );
 
   counter.addListener(() {
-    print("Counter is ${counter.currentState}");
+    print("Counter is ${counter.currentState.context}");
   });
 
-  counter.$add('hi');
+  counter.$add();
   // to invoke services, use `Future.delay` rather than `sleep`.
-  await Future.delayed(Duration(milliseconds: 1000));
-  counter.$add('hi');
-  await Future.delayed(Duration(milliseconds: 1000));
-  counter.$add('hi');
-  await Future.delayed(Duration(milliseconds: 1000));
+  counter.$add();
+  counter.$add();
 
-  counter.$take('hi');
-  await Future.delayed(Duration(milliseconds: 1000));
+  counter.$take();
 
-  counter.$take('hi');
-  await Future.delayed(Duration(milliseconds: 1000));
-  counter.$take('hi');
-  await Future.delayed(Duration(milliseconds: 1000));
+  counter.$take();
+  counter.$take();
 
-  counter.$take('hi');
-  await Future.delayed(Duration(milliseconds: 1000));
-  counter.$take('hi');
-  await Future.delayed(Duration(milliseconds: 1000));
-  counter.$take('hi');
-  await Future.delayed(Duration(milliseconds: 1000));
-  counter.$add('hi');
-  await Future.delayed(Duration(milliseconds: 1000));
+  counter.$take();
+  counter.$take();
+  counter.$take();
+  counter.$add();
+  counter.$reset();
 }
