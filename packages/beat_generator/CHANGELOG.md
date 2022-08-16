@@ -1,3 +1,7 @@
+## 0.13.3
+
+ - **FEAT**: support extendable actions.
+
 ## 0.13.2
 
  - **FEAT**: access to nested state using `currentState.of`.
