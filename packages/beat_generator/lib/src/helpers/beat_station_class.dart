@@ -7,7 +7,6 @@ import '../resources/beat_tree_resource.dart';
 import '../utils/context.dart';
 import '../utils/create_class.dart';
 import '../utils/string.dart';
-import 'execute_actions.dart';
 
 /// Top-level class
 ///
@@ -107,13 +106,8 @@ class BeatStationBuilder {
           config.toField,
         );
 
-        /// TODO: Fix this to run the actions
         return '''
-addDelayed($beatname.after, () {
-  if ($currentStateFieldName.$matcher) {
-    $setStateMethodName(${config.toBase}.${config.toField});
-  }
-});
+triggerTransitions($beatname, null, beatname.after);
 ''';
       }).join();
       return '''
@@ -288,6 +282,7 @@ $stateClass get $currentStateFieldName => $stateHistoryFieldName.isEmpty ? $init
     final stateClassName = toBeatStateClassName(baseEnum.name);
     buffer.writeln(
       '''
+@override
 void $setStateMethodName(dynamic state) {
   assert(state is Enum || state is List<Enum>);
   child?.stop();
@@ -308,6 +303,7 @@ void $setStateMethodName(dynamic state) {
     final realContextType = toContextType(contextType);
     buffer.writeln(
       '''
+@override
 void $setContextMethodName($realContextType context) {
   final nextState = $stateClassName(state: currentState.state, context: context)..$stateInitializerMethodName(this);
   $stateHistoryFieldName.add(nextState);
@@ -337,17 +333,17 @@ if (currentState.state == ${config.stateBase}.${config.stateField}) {
         try {
           final result = await invoke.invokeWith(currentState, '');
           for (final action in onDone.actions) {
-            ${createActionExecutor('action', 'EventData(event:"invoke", data: result)', true)}
+            executeActions(action, 'action', 'EventData(event:"invoke", data: result)');
           }
           if (onDone.to is $baseName) {
-            _setState(onDone.to);
+            setState(onDone.to);
           }
         } catch (_) {
           for (final action in onError.actions) {
-            ${createActionExecutor('action', 'EventData(event:"invoke", data: null)', true)}
+            executeActions(action, 'action', 'EventData(event:"invoke", data: null)');
           }
           if (onError.to is $baseName) {
-            _setState(onError.to);
+            setState(onError.to);
           }
         }
       })();
@@ -388,34 +384,17 @@ _invokeServices() async {
     final commonBeats = (node.beatConfigs[baseName] ?? [])
         .where((element) => !element.eventless);
     for (final config in commonBeats) {
-      buffer.writeln(
-        '''
-void ${toActionExecutorMethodName(config.event)}(EventData eventData) {
-  for (final action in ${toBeatAnnotationVariableName(config.fromBase, config.fromField, config.event, config.toBase, config.toField)}.actions) {
-    ${createActionExecutor('action', 'eventData', true)}
-  }
-}
-''',
+      final beatAnnotation = toBeatAnnotationVariableName(
+        config.fromBase,
+        config.fromField,
+        config.event,
+        config.toBase,
+        config.toField,
       );
       buffer.writeln(
         '''
 \$${config.event}<Data>({Data? data, Duration after = const Duration(milliseconds: 0)}) {
-  if (after.inMicroseconds > 0) {
-    return addDelayed(after, () {
-      \$${config.event}(data: data);
-    });
-  }
-  final eventData = EventData(
-    event: '${config.event}',
-    data: data,
-  );
-  for (final condition in ${toBeatAnnotationVariableName(config.fromBase, config.fromField, config.event, config.toBase, config.toField)}.conditions) {
-    if (!condition(currentState, eventData)) {
-      return ;
-    }
-  }
-  ${toActionExecutorMethodName(config.event)}(eventData);
-  _setState($baseName.${config.toField});
+  triggerTransitions($beatAnnotation, data, after);
 }
 ''',
       );

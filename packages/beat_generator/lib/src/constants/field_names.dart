@@ -1,7 +1,7 @@
 const initialStateFieldName = 'initialState';
 const currentStateFieldName = 'currentState';
 const privateCurrentStateFieldName = '_$currentStateFieldName';
-const setStateMethodName = '_setState';
+const setStateMethodName = 'setState';
 
 const initialContextFieldName = 'initialContext';
 const currentContextFieldName = 'currentContext';
@@ -10,7 +10,7 @@ const privateCurrentContextFieldName = '_$currentContextFieldName';
 const notifyListenersMethodName = '_notifyListeners';
 const listenersFieldName = '_listeners';
 
-const setContextMethodName = '_setContext';
+const setContextMethodName = 'setContext';
 
 const nextEventsFieldName = 'nextEvents';
 const doneFieldName = 'done';

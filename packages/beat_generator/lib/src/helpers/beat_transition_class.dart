@@ -1,11 +1,9 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:beat_config/beat_config.dart';
 
-import '../constants/field_names.dart';
 import '../resources/beat_tree_resource.dart';
 import '../utils/create_class.dart';
 import '../utils/string.dart';
-import 'execute_actions.dart';
 
 /// TODO:
 /// Support explicitly defined event data type.
@@ -68,15 +66,12 @@ void \$${config.event}<Data>({Data? data, Duration after = const Duration(millis
       }
 
       for (final config in beatConfigs) {
-        /// action executors
-        body.writeln(
-          '''
-void ${toActionExecutorMethodName(config.event)}(EventData eventData) {
-  for (final action in ${toBeatAnnotationVariableName(config.fromBase, config.fromField, config.event, config.toBase, config.toField)}.actions) {
-    ${createActionExecutor('action', 'eventData', false)}
-  }
-}
-''',
+        final beatAnnotation = toBeatAnnotationVariableName(
+          config.fromBase,
+          config.fromField,
+          config.event,
+          config.toBase,
+          config.toField,
         );
 
         /// transition method
@@ -84,28 +79,8 @@ void ${toActionExecutorMethodName(config.event)}(EventData eventData) {
           '''
 @override
 \$${config.event}<Data>({Data? data, Duration after = const Duration(milliseconds: 0)}) {
-  // if this transition needs delayed execution 
-  if (after.inMicroseconds > 0) {
-    return _station.addDelayed(after, () {
-      \$${config.event}(data: data);
-    });
-  }
-
-  // if the station is not started (when it's substation), do nothing
-  if (!_station.$stationStartedFieldName) {
-    return ;
-  }
-  final eventData = EventData(
-    event: '${config.event}',
-    data: data,
-  );
-  for (final condition in ${toBeatAnnotationVariableName(config.fromBase, config.fromField, config.event, config.toBase, config.toField)}.conditions) {
-    if (!condition(_station.currentState, eventData)) {
-      return ;
-    }
-  }
   ${toActionExecutorMethodName(config.event)}(eventData);
-  _station.$setStateMethodName(${config.toBase}.${config.toField});
+  _station.triggerTransitions($beatAnnotation, data, after);
 }
 ''',
         );
