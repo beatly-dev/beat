@@ -1,3 +1,7 @@
+## 0.13.4
+
+ - **FEAT**: support conditions on transition (`Beat`).
+
 ## 0.13.3
 
  - **FEAT**: support extendable actions.
