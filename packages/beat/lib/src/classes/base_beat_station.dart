@@ -29,6 +29,7 @@ abstract class BeatStationBase<State extends Enum, Context> {
   @protected
   @mustCallSuper
   setContext(Context context) {
+    _stateStreamController.add(currentState);
     _contextStreamController.add(context);
   }
 
