@@ -67,6 +67,14 @@ abstract class BeatStationBase<State extends Enum, Context> {
     exec() => action.execute(currentState, eventData);
     if (action is AssignActionBase) {
       setContext(exec());
+    } else if (action is ChooseAction) {
+      print("Conditional actions");
+      final actions = exec();
+      print("Execute conditional actions $actions");
+      for (final action in actions) {
+        print("Execute conditional actions $action");
+        executeActions(action, eventName, eventData);
+      }
     } else if (action is DefaultAction) {
       exec();
     } else if (action is Function(BeatState, EventData)) {

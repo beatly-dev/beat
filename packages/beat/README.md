@@ -16,6 +16,7 @@ A roadmap is as follows, but the order does not matter.
 - [x] Listen to state and context changes
   - [x] `addListeners`/`removeListeners` and variations are for state
   - [x] `addContextListeners`/`removeContextListeners` is for context
+  - [x] `stateStream` for `BeatState`, `enumStream` for your enum state, and `contextStream` for your data.
 - [x] Map states
 - [x] Execute callback on state change
 - [x] Support reset
@@ -40,12 +41,12 @@ A roadmap is as follows, but the order does not matter.
 - [x] Support `state.matches` as a `is{State}`
 - [x] Support `send()` styled transition
   - `station.send` is supported
-- [ ] Support initial context defined in the station definition
+- [ ] Support initial context defined in the station annotation
 - [ ] Support actions (fire-and-forget)
   - [x] callback action
   - [x] assign action
   - [x] callback action with variable length of arguments
-  - [ ] choose action
+  - [x] choose action
   - [ ] forwardTo action
   - [ ] log action
   - [ ] pure action

@@ -58,7 +58,7 @@ PubSearchRequest assignFetchedResultsAction(BeatState state, EventData event) {
   return PubSearchRequest(context.target, results);
 }
 
-loadData(BeatState state, _) async {
+Future<SearchResults> loadData(BeatState state, _) async {
   final request = state.context as PubSearchRequest;
   final client = PubClient();
   final result = await client.search(request.target);

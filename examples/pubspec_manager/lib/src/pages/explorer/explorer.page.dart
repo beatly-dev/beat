@@ -58,7 +58,6 @@ class _ExplorerPageState extends State<ExplorerPage> {
     super.dispose();
   }
 
-  // TODO: if beat support Notifier or stream, then use it.
   handlePubspecInfo() {
     pubspecInfoStation.exec(
       onPubspecInfoLoaded: () {
@@ -71,6 +70,7 @@ class _ExplorerPageState extends State<ExplorerPage> {
         return widget.routeStation.$gotoHome(data: RouteArgs(context: context));
       },
       orElse: () {
+        // TODO: if beat support Notifier or stream, then use it.
         if (mounted) {
           setState(() {});
         }
@@ -80,7 +80,6 @@ class _ExplorerPageState extends State<ExplorerPage> {
 
   loadData() {
     if (inputStataion.currentState.isSearching$) {
-      // TODO: If beat support `send` action, then use it.
       resultStation.send.$load(data: inputStataion.currentState.context);
     }
   }
@@ -166,6 +165,20 @@ class _ExplorerPageState extends State<ExplorerPage> {
                   );
                 }),
               ),
+              ResizablePane(
+                resizableSide: ResizableSide.left,
+                minWidth: 300,
+                startWidth: 300,
+                builder: (_, __) => StreamBuilder<PubspecInfoData>(
+                  stream: pubspecInfoStation.contextStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Text(snapshot.data?.pubspec?.name ?? 'PATH');
+                    }
+                    return const Text('Loading');
+                  },
+                ),
+              ),
             ],
           ),
           MacosScaffold(
@@ -196,27 +209,6 @@ class _ExplorerPageState extends State<ExplorerPage> {
           ),
         ],
       ),
-      // Column(
-      //   children: [
-      //     MacosTextField(
-      //       onChanged: (text) {
-      //         if (text.isEmpty) {
-      //           resultStation.send.$clear();
-      //           inputStataion.send.$clear();
-      //         } else {
-      //           inputStataion.send.$type(
-      //             data: text,
-      //           );
-      //         }
-      //       },
-      //     ),
-      //     Expanded(
-      //       child: SearchedResultWidget(
-      //         station: resultStation,
-      //       ),
-      //     ),
-      //   ],
-      // ),
     );
   }
 }

@@ -17,14 +17,16 @@ enum PubspecInfo {
 const loadPubspecBeat = Beat(event: 'load', to: PubspecInfo.loading);
 
 const invokeLoader = Invokes([
+  /// TODO: Add conditions to service, after invoke, and actions.
   InvokeFuture(
     loadPubspecInfoService,
     onDone: AfterInvoke(
       to: PubspecInfo.loaded,
-      actions: [AssignAction(assignPubspecAction)],
+      actions: [assignPubspec],
     ),
     onError: AfterInvoke(
       to: PubspecInfo.error,
+      actions: [logError],
     ),
   ),
 ]);
@@ -32,28 +34,40 @@ const invokeLoader = Invokes([
 Future<PubSpec?> loadPubspecInfoService(BeatState state, __) async {
   final data = state.context;
 
-  /// TODO
-  /// if beat support guarded transition, we can use this to avoid type and null check
   if (data is! PubspecInfoData) {
-    return null;
+    throw 'Invalid context type: ${data.runtimeType}';
   }
   final projectPath = data.projectPath;
   final pubspec = await PubSpec.load(Directory(projectPath));
   return pubspec;
 }
 
+const assignPubspec = ChooseAction([
+  ChooseActionItem(
+    conditions: [
+      isEventDataValid,
+    ],
+    actions: [
+      AssignAction(assignPubspecAction),
+    ],
+  ),
+]);
+
+bool isEventDataValid(_, EventData event) {
+  final data = event.data;
+  return data is PubSpec;
+}
+
 PubspecInfoData assignPubspecAction(BeatState state, EventData event) {
   final data = event.data;
-
-  /// TODO
-  /// if beat support guarded transition, we can use this to avoid type and null check
-  if (data is! PubSpec) {
-    return state.context;
-  }
   return PubspecInfoData(
     projectPath: state.context.projectPath,
     pubspec: data,
   );
+}
+
+logError(_, event) {
+  print(event.data);
 }
 
 class PubspecInfoData {
