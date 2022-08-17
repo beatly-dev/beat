@@ -1,6 +1,6 @@
 name: beat_generator
 description: A code genrator for beat state management. Heavily inspired by xstate.js.org
-version: 0.13.4+2
+version: 0.13.5
 repository: https://github.com/beatly-dev/beat
 issue_tracker: https://github.com/beatly-dev/beat/issues
 

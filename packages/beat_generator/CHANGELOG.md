@@ -1,3 +1,7 @@
+## 0.13.5
+
+ - **FEAT**: Invoke's `onError` can receive thrown error.
+
 ## 0.13.4+2
 
  - **FIX**: bugs on refactored code.

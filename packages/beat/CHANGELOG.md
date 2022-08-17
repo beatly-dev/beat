@@ -1,3 +1,7 @@
+## 0.13.4
+
+ - **FEAT**: `ChooseAction` is supported.
+
 ## 0.13.3+2
 
  - **FIX**: bugs on refactored code.

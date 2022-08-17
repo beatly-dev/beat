@@ -1,6 +1,6 @@
 name: beat
 description: A set of annotations for beat state management. Heavily inspired by xstate.js.org
-version: 0.13.3+2
+version: 0.13.4
 repository: https://github.com/beatly-dev/beat
 issue_tracker: https://github.com/beatly-dev/beat/issues
 
