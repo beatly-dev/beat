@@ -106,6 +106,8 @@ class BeatStationBuilder {
           config.toBase,
           config.toField,
         );
+
+        /// TODO: Fix this to run the actions
         return '''
 addDelayed($beatname.after, () {
   if ($currentStateFieldName.$matcher) {
@@ -403,7 +405,16 @@ void ${toActionExecutorMethodName(config.event)}(EventData eventData) {
       \$${config.event}(data: data);
     });
   }
-  ${toActionExecutorMethodName(config.event)}(EventData(event: '${config.event}', data: data));
+  final eventData = EventData(
+    event: '${config.event}',
+    data: data,
+  );
+  for (final condition in ${toBeatAnnotationVariableName(config.fromBase, config.fromField, config.event, config.toBase, config.toField)}.conditions) {
+    if (!condition(currentState, eventData)) {
+      return ;
+    }
+  }
+  ${toActionExecutorMethodName(config.event)}(eventData);
   _setState($baseName.${config.toField});
 }
 ''',

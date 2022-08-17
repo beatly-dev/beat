@@ -95,10 +95,16 @@ void ${toActionExecutorMethodName(config.event)}(EventData eventData) {
   if (!_station.$stationStartedFieldName) {
     return ;
   }
-  ${toActionExecutorMethodName(config.event)}(EventData(
+  final eventData = EventData(
     event: '${config.event}',
     data: data,
-  ));
+  );
+  for (final condition in ${toBeatAnnotationVariableName(config.fromBase, config.fromField, config.event, config.toBase, config.toField)}.conditions) {
+    if (!condition(_station.currentState, eventData)) {
+      return ;
+    }
+  }
+  ${toActionExecutorMethodName(config.event)}(eventData);
   _station.$setStateMethodName(${config.toBase}.${config.toField});
 }
 ''',
