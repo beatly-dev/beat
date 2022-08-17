@@ -1,3 +1,7 @@
+## 0.13.5+2
+
+ - **FIX**: update dependency.
+
 ## 0.13.5+1
 
  - Update a dependency to the latest release.
