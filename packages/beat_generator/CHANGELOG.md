@@ -1,3 +1,7 @@
+## 0.13.4+2
+
+ - **FIX**: bugs on refactored code.
+
 ## 0.13.4+1
 
  - **REFACTOR**: clean up code.
