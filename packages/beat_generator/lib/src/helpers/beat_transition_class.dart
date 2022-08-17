@@ -79,7 +79,6 @@ void \$${config.event}<Data>({Data? data, Duration after = const Duration(millis
           '''
 @override
 \$${config.event}<Data>({Data? data, Duration after = const Duration(milliseconds: 0)}) {
-  ${toActionExecutorMethodName(config.event)}(eventData);
   _station.triggerTransitions($beatAnnotation, data, after);
 }
 ''',

@@ -4,19 +4,33 @@ import 'package:meta/meta.dart';
 
 import '../../beat.dart';
 
-abstract class BeatStationBase<Context> {
+abstract class BeatStationBase<State extends Enum, Context> {
   final _delayed = <Timer>{};
 
   BeatState get initialState;
   BeatState get currentState =>
       stateHistory.isEmpty ? initialState : stateHistory.last;
   List<BeatState> get stateHistory;
+  final _stateStreamController = StreamController<BeatState>.broadcast();
+  final _stateEnumStreamControler = StreamController<State>.broadcast();
+  final _contextStreamController = StreamController<Context>.broadcast();
+
+  Stream<BeatState> get stateStream => _stateStreamController.stream;
+  Stream<State> get enumStream => _stateEnumStreamControler.stream;
+  Stream<Context> get contextStream => _contextStreamController.stream;
 
   @protected
-  setState(Enum state);
+  @mustCallSuper
+  setState(State state) {
+    _stateStreamController.add(currentState);
+    _stateEnumStreamControler.add(state);
+  }
 
   @protected
-  setContext(Context context);
+  @mustCallSuper
+  setContext(Context context) {
+    _contextStreamController.add(context);
+  }
 
   @protected
   triggerTransitions<Data>(

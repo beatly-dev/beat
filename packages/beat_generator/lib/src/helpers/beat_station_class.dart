@@ -63,8 +63,12 @@ class BeatStationBuilder {
     _createNotifyListenersMethod(substations);
     _createExecMethods(substations);
     _createMapMethods(substations);
+    final contextType = isNullContextType(node.info.contextType)
+        ? 'dynamic'
+        : node.info.contextType;
+
     return createClass(
-      '$beatStationClassName extends BeatStationBase',
+      '$beatStationClassName extends BeatStationBase<${baseEnum.name}, $contextType>',
       buffer.toString(),
     );
   }
@@ -107,7 +111,7 @@ class BeatStationBuilder {
         );
 
         return '''
-triggerTransitions($beatname, null, beatname.after);
+triggerTransitions($beatname, null, $beatname.after);
 ''';
       }).join();
       return '''
@@ -283,8 +287,7 @@ $stateClass get $currentStateFieldName => $stateHistoryFieldName.isEmpty ? $init
     buffer.writeln(
       '''
 @override
-void $setStateMethodName(dynamic state) {
-  assert(state is Enum || state is List<Enum>);
+void $setStateMethodName(${baseEnum.name} state) {
   child?.stop();
   clearDelayed();
   final nextState = $stateClassName(state: state, context: currentState.context)..$stateInitializerMethodName(this);
@@ -293,6 +296,7 @@ void $setStateMethodName(dynamic state) {
   _invokeServices();
   $eventlessHandlerMethodName();
   child?.start();
+  super.setState(state);
 }
 ''',
     );
@@ -300,14 +304,16 @@ void $setStateMethodName(dynamic state) {
 
   _createSetContext(String contextType) async {
     final stateClassName = toBeatStateClassName(baseEnum.name);
-    final realContextType = toContextType(contextType);
+    final nonNullContextType =
+        isNullContextType(contextType) ? 'dynamic' : contextType;
     buffer.writeln(
       '''
 @override
-void $setContextMethodName($realContextType context) {
+void $setContextMethodName($nonNullContextType context) {
   final nextState = $stateClassName(state: currentState.state, context: context)..$stateInitializerMethodName(this);
   $stateHistoryFieldName.add(nextState);
   _notifyContextListeners();
+  super.setContext(context);
 }
 ''',
     );
@@ -333,14 +339,14 @@ if (currentState.state == ${config.stateBase}.${config.stateField}) {
         try {
           final result = await invoke.invokeWith(currentState, '');
           for (final action in onDone.actions) {
-            executeActions(action, 'action', 'EventData(event:"invoke", data: result)');
+            executeActions(action, 'action', EventData(event:"invoke", data: result));
           }
           if (onDone.to is $baseName) {
             setState(onDone.to);
           }
         } catch (_) {
           for (final action in onError.actions) {
-            executeActions(action, 'action', 'EventData(event:"invoke", data: null)');
+            executeActions(action, 'action', EventData(event:"invoke", data: null));
           }
           if (onError.to is $baseName) {
             setState(onError.to);
