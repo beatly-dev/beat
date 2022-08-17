@@ -344,9 +344,9 @@ if (currentState.state == ${config.stateBase}.${config.stateField}) {
           if (onDone.to is $baseName) {
             setState(onDone.to);
           }
-        } catch (_) {
+        } catch (error) {
           for (final action in onError.actions) {
-            executeActions(action, 'action', EventData(event:"invoke", data: null));
+            executeActions(action, 'action', EventData(event:"invoke", data: error));
           }
           if (onError.to is $baseName) {
             setState(onError.to);
