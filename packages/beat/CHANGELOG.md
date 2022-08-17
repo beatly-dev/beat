@@ -1,3 +1,7 @@
+## 0.13.4+1
+
+ - **FIX**: `stateStream` is notified when context changes.
+
 ## 0.13.4
 
  - **FEAT**: `ChooseAction` is supported.

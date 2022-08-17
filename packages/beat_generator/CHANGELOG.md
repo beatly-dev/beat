@@ -1,3 +1,7 @@
+## 0.13.5+1
+
+ - Update a dependency to the latest release.
+
 ## 0.13.5
 
  - **FEAT**: Invoke's `onError` can receive thrown error.
