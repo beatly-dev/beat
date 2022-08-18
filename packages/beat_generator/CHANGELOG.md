@@ -1,3 +1,9 @@
+## 0.14.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: First version of flutter support!
+
 ## 0.13.5+2
 
  - **FIX**: update dependency.

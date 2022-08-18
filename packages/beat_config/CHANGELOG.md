@@ -1,3 +1,9 @@
+## 2.0.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: First version of flutter support!
+
 ## 1.1.0
 
  - **REFACTOR**: rename library files.
