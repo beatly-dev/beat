@@ -1,3 +1,7 @@
+## 0.14.0+1
+
+ - **FIX**: flutter beat generation bugs.
+
 ## 0.14.0
 
 > Note: This release has breaking changes.
