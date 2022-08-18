@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:beat/beat.dart';
+import 'package:flutter_beat/flutter_beat.dart';
 import 'package:pub_api_client/pub_api_client.dart';
 
 part 'result.beat.dart';

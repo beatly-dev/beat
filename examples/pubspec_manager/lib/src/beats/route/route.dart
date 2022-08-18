@@ -1,5 +1,4 @@
-import 'package:beat/beat.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_beat/flutter_beat.dart';
 import 'package:isar/isar.dart';
 
 import '../../db/recent_projects.dart';
@@ -7,6 +6,7 @@ import 'constants.dart';
 
 part 'route.beat.dart';
 
+@WithFlutter()
 @BeatStation(contextType: List<RecentProjects>)
 @gotoHomeBeat
 enum MainRoute {

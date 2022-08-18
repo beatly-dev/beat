@@ -178,7 +178,7 @@ class ${className}State extends BeatStationScopeState<$className> {
     return StreamBuilder(
       stream: widget.station.stateStream,
       builder: (context, snapshot) {
-        return CounterProviderScope(
+        return ${className}Scope(
           station: widget.station,
           child: widget.child,
         );

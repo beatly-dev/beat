@@ -102,7 +102,7 @@ bool get $matcher;
     return matchers.map((matcher) {
       return '''
   @override
-  bool get $matcher => CounterProviderScope.of(this, dependency: r'$matcher')
+  bool get $matcher => ${enumName}ProviderScope.of(this, dependency: r'$matcher')
       .station
       .currentState
       .$matcher;

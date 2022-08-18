@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:beat/beat.dart';
+import 'package:flutter_beat/flutter_beat.dart';
 import 'package:pubspec2/pubspec2.dart';
 
 part 'pubspec.beat.dart';

@@ -1,4 +1,4 @@
-import 'package:beat/beat.dart';
+import 'package:flutter_beat/flutter_beat.dart';
 
 part 'input.beat.dart';
 

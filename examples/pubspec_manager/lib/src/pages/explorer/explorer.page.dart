@@ -169,7 +169,7 @@ class _ExplorerPageState extends State<ExplorerPage> {
                 resizableSide: ResizableSide.left,
                 minWidth: 300,
                 startWidth: 300,
-                builder: (_, __) => StreamBuilder<PubspecInfoData>(
+                builder: (_, __) => StreamBuilder<PubspecInfoData?>(
                   stream: pubspecInfoStation.contextStream,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
