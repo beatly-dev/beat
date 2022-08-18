@@ -51,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
             CounterConsumer(
               builder: (context, ref, _) {
                 return Text(
-                  '${ref.context?.count}',
+                  '${ref.$$count ?? 0}',
                   style: Theme.of(context).textTheme.headline4,
                 );
               },
