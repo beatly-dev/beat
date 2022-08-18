@@ -2,6 +2,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:beat_config/beat_config.dart';
 
 import '../constants/field_names.dart';
+import '../models/state.dart';
 import '../resources/beat_tree_resource.dart';
 import '../utils/context.dart';
 import '../utils/create_class.dart';
@@ -30,7 +31,7 @@ class BeatStateBuilder {
       _creatMatcher(relatedStations),
     ].join();
     return createClass(
-      '$beatStateClassName extends BeatState<${baseEnum.name}, $contextType>',
+      '$beatStateClassName extends BeatState<$contextType>',
       body,
     );
   }
@@ -56,6 +57,12 @@ BeatState? of(Type enumType) {
     final initializer = StringBuffer();
     finalFields.writeln(
       '''
+@override
+final ${baseEnum.name} state;
+
+@override
+final $contextType context;
+
 late final ${toBeatStationClassName(baseEnum.name)} _station;
 ''',
     );
@@ -63,9 +70,9 @@ late final ${toBeatStationClassName(baseEnum.name)} _station;
     constructor.writeln(
       '''$beatStateClassName({''',
     );
-    constructor.writeln('required ${node.info.baseEnumName} state,');
-    constructor.writeln('$contextType context,');
-    constructor.writeln('}): super(state, context);');
+    constructor.writeln('required this.state,');
+    constructor.writeln('this.context,');
+    constructor.writeln('});');
 
     initializer.writeln(
       '''
@@ -97,7 +104,7 @@ bool get hasSubstate => ${childKeys.isEmpty ? 'false' : hasSubstate};
     final rootEnumName = baseEnum.name;
     final states = nodes.map((node) {
       final baseEnumName = node.info.baseEnumName;
-      return node.info.states.map((state) => _State(baseEnumName, state));
+      return node.info.states.map((state) => StateWrapper(baseEnumName, state));
     }).expand((states) => states);
 
     /// TODO:
@@ -146,17 +153,3 @@ return $stateFieldName == ${state.baseName}.${state.fieldName};
 
 String toPrivateFieldName(String stationName) =>
     '_${toDartFieldCase(stationName)}';
-
-class _State {
-  final String baseName;
-  final String fieldName;
-
-  _State(this.baseName, this.fieldName);
-}
-
-class ClassField {
-  final String name;
-  final String type;
-
-  ClassField(this.name, this.type);
-}

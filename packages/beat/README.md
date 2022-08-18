@@ -8,7 +8,40 @@ I highly recommend reading the docs of [xstate.js](https://xstate.js.org).
 
 Go to the [Beatly Book](https://book.beatly.dev/) for more information.
 
-# Roadmap - Features compatible with xstate.js
+# Roadmap
+
+`beat` will be gradually improved and polished in the future. I have a kind of roadmap.
+
+## State management for Dart-only applications
+
+You can use `beat` as a Dart's state management system.
+
+## State management for Flutter applications
+
+`beat` provides a set of widgets that will increase your productivity
+when building your flutter application. `beat` also provides
+inspectors for debugging your state machine.
+
+## GUI for state machines
+
+Low-coding GUI application for your flutter's state machine.
+
+## beat market place
+
+You can share and sell your wonderful state machine.
+
+## Real-time collaboration of state machines
+
+Your team can collaborate online in real-time.
+
+## Others
+
+I aim to make `beat` to be a framework for flutter applications.
+There will be another enhancement in the future including
+easier network requests, form validation, render/computation separation,
+and others. I might implement some kind of _full-stack_ dart framework in the future.
+
+# Features compatible with xstate.js
 
 A roadmap is as follows, but the order does not matter.
 
@@ -99,12 +132,6 @@ A roadmap is as follows, but the order does not matter.
 - [ ] Support bootstrapping
 - [ ] Support CLI/GUI tools
 - [ ] xstate.js compatible beat station
-
-# Features not supported by this package but in xstate.js
-
-- The `final` state is naturally defined which does not have any `Beat` annotation
-- `state.toString()`: naturally supported
-- wildcard transitions and forbidden transitions are not needed because there will be no typo
 
 # Additionals for flutter
 

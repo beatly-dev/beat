@@ -12,6 +12,7 @@ BeatStationInfo _$BeatStationInfoFromJson(Map<String, dynamic> json) =>
       contextType: json['contextType'] as String,
       states:
           (json['states'] as List<dynamic>).map((e) => e as String).toList(),
+      withFlutter: json['withFlutter'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$BeatStationInfoToJson(BeatStationInfo instance) =>
@@ -19,4 +20,5 @@ Map<String, dynamic> _$BeatStationInfoToJson(BeatStationInfo instance) =>
       'baseEnumName': instance.baseEnumName,
       'contextType': instance.contextType,
       'states': instance.states,
+      'withFlutter': instance.withFlutter,
     };

@@ -19,8 +19,8 @@ String? getTypeField(ConstantReader reader, String fieldName) {
 
 String getFirstFieldOfEnum(ConstantReader reader, String fieldName) {
   final enumField = reader.read(fieldName);
-  final element = enumField.typeValue.element;
-  if (element is! ClassElement || !element.isEnum) {
+  final element = enumField.typeValue.element2;
+  if (element is! ClassElement || element is! EnumElement) {
     throw 'Expected enum type for $fieldName';
   }
   final fieldLength = element.fields.length;

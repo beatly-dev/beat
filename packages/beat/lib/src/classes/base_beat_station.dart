@@ -4,31 +4,36 @@ import 'package:meta/meta.dart';
 
 import '../../beat.dart';
 
-abstract class BeatStationBase<State extends Enum, Context> {
+abstract class BeatStationBase<Context> {
   final _delayed = <Timer>{};
 
-  BeatState get initialState;
-  BeatState get currentState =>
+  BeatState<Context?> get initialState;
+  BeatState<Context?> get currentState =>
       stateHistory.isEmpty ? initialState : stateHistory.last;
-  List<BeatState> get stateHistory;
-  final _stateStreamController = StreamController<BeatState>.broadcast();
-  final _stateEnumStreamControler = StreamController<State>.broadcast();
-  final _contextStreamController = StreamController<Context>.broadcast();
+  List<BeatState<Context?>> get stateHistory;
+
+  final _stateStreamController =
+      StreamController<BeatState<Context?>>.broadcast();
+  final _stateEnumStreamControler = StreamController<Enum>.broadcast();
+  final _contextStreamController = StreamController<Context?>.broadcast();
 
   Stream<BeatState> get stateStream => _stateStreamController.stream;
-  Stream<State> get enumStream => _stateEnumStreamControler.stream;
-  Stream<Context> get contextStream => _contextStreamController.stream;
+  Stream<Enum> get enumStream => _stateEnumStreamControler.stream;
+  Stream<Context?> get contextStream => _contextStreamController.stream;
+
+  @protected
+  List<BeatStationBase> get substations;
 
   @protected
   @mustCallSuper
-  setState(State state) {
+  setState(Enum state) {
     _stateStreamController.add(currentState);
     _stateEnumStreamControler.add(state);
   }
 
   @protected
   @mustCallSuper
-  setContext(Context context) {
+  setContext(Context? context) {
     _stateStreamController.add(currentState);
     _contextStreamController.add(context);
   }
@@ -59,8 +64,9 @@ abstract class BeatStationBase<State extends Enum, Context> {
     for (final action in actions) {
       executeActions(action, eventName, eventData);
     }
-
-    setState(nextState);
+    if (nextState.runtimeType == currentState.state.runtimeType) {
+      setState(nextState);
+    }
   }
 
   @protected
@@ -87,6 +93,7 @@ abstract class BeatStationBase<State extends Enum, Context> {
     }
   }
 
+  bool get started;
   start();
   stop();
 
@@ -101,6 +108,7 @@ abstract class BeatStationBase<State extends Enum, Context> {
     parent = p;
   }
 
+  // TODO: Improve performance by using HashMap
   @protected
   BeatStationBase? ancestorOf(Type type) {
     if (currentState.state.runtimeType == type) {
@@ -111,17 +119,21 @@ abstract class BeatStationBase<State extends Enum, Context> {
 
   @protected
   BeatStationBase? descendantOf(Type type) {
-    /// 1. check current state has child
     if (currentState.state.runtimeType == type) {
       return this;
     }
     return child?.descendantOf(type);
   }
 
+  BeatStationBase? of(Type type) {
+    final station = ancestorOf(type);
+    if (station != null) return station;
+    return descendantOf(type);
+  }
+
   BeatState? stateOf(Type type) {
-    final state = ancestorOf(type)?.currentState;
-    if (state != null) return state;
-    return descendantOf(type)?.currentState;
+    final state = of(type)?.currentState;
+    return state;
   }
 
   @protected

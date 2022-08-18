@@ -1,4 +1,11 @@
 include: package:flutter_lints/flutter.yaml
-
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
+linter:
+  rules:
+    - prefer_relative_imports
+    - require_trailing_commas
+    - prefer_single_quotes
+    - avoid_empty_else
+    - prefer_asserts_with_message
+    - prefer_final_in_for_each

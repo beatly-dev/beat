@@ -3,7 +3,7 @@ import 'package:source_gen/source_gen.dart';
 
 String getAnnotationEnumFieldValue(ConstantReader reader, String fieldName) {
   final element = getElementForField(reader, fieldName);
-  if (element == null || !element.isEnum) {
+  if (element == null || element is! EnumElement) {
     throw Exception('Expected field $fieldName to be a Enum value');
   }
   final field = reader.read(fieldName);
@@ -12,7 +12,7 @@ String getAnnotationEnumFieldValue(ConstantReader reader, String fieldName) {
 
 String getAnnotationEnumFieldClass(ConstantReader reader, String fieldName) {
   final element = getElementForField(reader, fieldName);
-  if (element == null || !element.isEnum) {
+  if (element == null || element is! EnumElement) {
     throw Exception('Expected field $fieldName to be a Enum value');
   }
   return element.displayName;
@@ -34,5 +34,5 @@ ClassElement? getElementForField(ConstantReader reader, String fieldName) {
 
 ClassElement? getElementFromConstantReader(ConstantReader reader) {
   final object = reader.objectValue;
-  return object.type?.element as ClassElement?;
+  return object.type?.element2 as ClassElement?;
 }

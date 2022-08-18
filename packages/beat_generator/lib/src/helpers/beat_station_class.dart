@@ -68,7 +68,7 @@ class BeatStationBuilder {
         : node.info.contextType;
 
     return createClass(
-      '$beatStationClassName extends BeatStationBase<${baseEnum.name}, $contextType>',
+      '$beatStationClassName extends BeatStationBase<$contextType>',
       buffer.toString(),
     );
   }
@@ -134,7 +134,7 @@ void $eventlessHandlerMethodName() {
     final senderClassName = toBeatSenderClassName(baseEnum.name);
     buffer.writeln(
       '''
-$senderClassName get send => $senderClassName(this);
+late final $senderClassName send = $senderClassName(this);
 ''',
     );
   }
@@ -142,6 +142,7 @@ $senderClassName get send => $senderClassName(this);
   _createStationStatusHandler() {
     buffer.writeln(
       '''
+@override
 bool $stationStartedFieldName;
 @override
 start() {
@@ -151,6 +152,8 @@ start() {
 
 @override
 stop() {
+  child?.stop();
+  clearDelayed();
   $stationStartedFieldName = false;
 }
 ''',
@@ -180,16 +183,26 @@ $BeatStationBase? get child => ${body.isEmpty ? 'null' : '$body : null'};
   _createSubstationFields(List<BeatStationNode> nestedStations) async {
     final directSubstations =
         nestedStations.where((element) => element.parentBase == baseEnum.name);
+    final substationNames = <String>[];
     for (final substation in directSubstations) {
       final name = substation.info.baseEnumName;
       final substationClassName = toBeatStationClassName(name);
       final substationFieldName = toSubstationFieldName(name);
+      substationNames.add(substationFieldName);
       buffer.writeln(
         '''
 final $substationClassName $substationFieldName = $substationClassName(started: false);
 ''',
       );
     }
+    buffer.writeln(
+      '''
+@override
+List<BeatStationBase> get substations => [
+  ${substationNames.join(',')}
+];
+''',
+    );
   }
 
   _createConstructor(List<BeatStationNode> nestedStations) async {
@@ -258,6 +271,7 @@ $substationFieldName.setParent(this);
     final stateClass = toBeatStateClassName(baseEnum.name);
     buffer.writeln(
       '''
+@override
 final List<$stateClass> $stateHistoryFieldName = [];
 ''',
     );
@@ -266,7 +280,10 @@ final List<$stateClass> $stateHistoryFieldName = [];
   _createInitialStateField() async {
     final stateClass = toBeatStateClassName(baseEnum.name);
     buffer.writeln(
-      'final $stateClass $initialStateFieldName;',
+      '''
+@override
+final $stateClass $initialStateFieldName;
+''',
     );
   }
 
@@ -287,7 +304,7 @@ $stateClass get $currentStateFieldName => $stateHistoryFieldName.isEmpty ? $init
     buffer.writeln(
       '''
 @override
-void $setStateMethodName(${baseEnum.name} state) {
+void $setStateMethodName(covariant ${baseEnum.name} state) {
   child?.stop();
   clearDelayed();
   final nextState = $stateClassName(state: state, context: currentState.context)..$stateInitializerMethodName(this);
@@ -304,8 +321,7 @@ void $setStateMethodName(${baseEnum.name} state) {
 
   _createSetContext(String contextType) async {
     final stateClassName = toBeatStateClassName(baseEnum.name);
-    final nonNullContextType =
-        isNullContextType(contextType) ? 'dynamic' : contextType;
+    final nonNullContextType = toContextType(contextType);
     buffer.writeln(
       '''
 @override

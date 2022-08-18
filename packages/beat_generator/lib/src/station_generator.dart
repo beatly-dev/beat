@@ -3,6 +3,8 @@ import 'package:beat/beat.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
+import 'flutter/consumer.dart';
+import 'flutter/provider.dart';
 import 'helpers/beat_annotation_variables.dart';
 import 'helpers/beat_state_class.dart';
 import 'helpers/beat_station_class.dart';
@@ -18,7 +20,7 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
     ConstantReader annotation,
     BuildStep buildStep,
   ) async {
-    if (element is! ClassElement || !element.isEnum) {
+    if (element is! ClassElement || element is! EnumElement) {
       throw 'BeatStation can only be used on enums';
     }
     final beatTree = await buildStep.fetchResource(inMemoryBeatTree);
@@ -51,6 +53,11 @@ class StationGenerator extends GeneratorForAnnotation<BeatStation> {
         beatTree: beatTree,
         baseEnum: element,
       ).build(),
+      await BeatProviderGenerator(
+        element,
+        beatTree,
+      ).toProvider(),
+      await BeatConsumerGenerator(element, beatTree).toConsumer(),
     ];
   }
 }

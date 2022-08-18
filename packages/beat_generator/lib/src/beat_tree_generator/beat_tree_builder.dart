@@ -10,6 +10,7 @@ import '../annotations/beat_annotation.dart';
 import '../annotations/beat_station_annotation.dart';
 import '../annotations/invoke_annotation.dart';
 import '../annotations/substation_annotation.dart';
+import '../annotations/with_flutter_annotation.dart';
 
 /// Dependency Builder
 TypeChecker get beatChecker => TypeChecker.fromRuntime(Beat);
@@ -43,12 +44,14 @@ class BeatNodeBuilder {
         await mapSubstationAnnotations(element.name, element.fields, buildStep);
     final invokeConfigs =
         await mapInvokeAnnotations(element.name, element.fields, buildStep);
+    final withFlutter = withFlutterChecker.hasAnnotationOf(element);
 
     final node = BeatStationNode(
       BeatStationInfo(
         baseEnumName: element.name,
         contextType: contextType,
         states: states,
+        withFlutter: withFlutter,
       ),
       beatConfigs: beatConfigs,
       children: {},

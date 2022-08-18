@@ -1,7 +1,6 @@
 library flutter_beat;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export 'package:beat/beat.dart';
+export 'package:flutter/widgets.dart';
+
+export 'src/classes/classes.dart';

@@ -55,6 +55,10 @@ Future<Map<String, List<InvokeConfig>>> mapInvokeAnnotations(
 ) async {
   final invokes = <String, List<InvokeConfig>>{};
   for (final field in fields) {
+    if (field is! ClassElement &&
+        !(field is FieldElement && field.isEnumConstant)) {
+      continue;
+    }
     final invokeConfigs =
         await getInvokeAnnotations(field, stateName, buildStep);
     final from = field.name!;

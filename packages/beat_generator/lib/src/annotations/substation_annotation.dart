@@ -73,6 +73,10 @@ Future<Map<String, List<SubstationConfig>>> mapSubstationAnnotations<C>(
 ) async {
   final substations = <String, List<SubstationConfig>>{};
   for (final field in fields) {
+    if (field is! ClassElement &&
+        !(field is FieldElement && field.isEnumConstant)) {
+      continue;
+    }
     final substationConfigs =
         await getSubstationConfigs(field, stateName, buildStep);
     final from = field.name!;

@@ -1,7 +1,7 @@
 import '../../beat.dart';
 
 /// A annotation to define a transition
-class Beat<Event, NextState, State> {
+class Beat {
   const Beat({
     required this.event,
     required this.to,
@@ -11,10 +11,10 @@ class Beat<Event, NextState, State> {
   });
 
   /// Which event will trigger the transition
-  final Event event;
+  final String event;
 
   /// Which state will be transitioned to
-  final NextState to;
+  final Enum to;
 
   /// Which actions will be executed when the transition is triggered
   final List<dynamic> actions;
@@ -23,7 +23,7 @@ class Beat<Event, NextState, State> {
   final Type eventDataType;
 
   /// Guard conditions that must be met before the transition is triggered
-  final List<bool Function(BeatState<State, dynamic>, EventData)> conditions;
+  final List<bool Function(BeatState<dynamic>, EventData)> conditions;
 }
 
 bool _alwaysTrueCondition(_, __) => true;

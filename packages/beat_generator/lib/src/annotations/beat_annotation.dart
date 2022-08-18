@@ -37,6 +37,10 @@ Future<Map<String, List<BeatConfig>>> mapBeatAnnotations<C>(
 ) async {
   final beats = <String, List<BeatConfig>>{};
   for (final field in fields) {
+    if (field is! ClassElement &&
+        !(field is FieldElement && field.isEnumConstant)) {
+      continue;
+    }
     final beatConfigs = await getBeatConfigs(field, stateName, buildStep);
     final from = field.name!;
     beats[from] = beatConfigs;
