@@ -1,3 +1,9 @@
+## 0.14.1
+
+ - **FEAT**: done getter.
+ - **FEAT**: nextEvents.
+ - **FEAT**: send event by string.
+
 ## 0.14.0+1
 
  - **FIX**: flutter beat generation bugs.
