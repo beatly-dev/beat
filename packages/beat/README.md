@@ -113,9 +113,9 @@ A roadmap is as follows, but the order does not matter.
 - [ ] Support multiple targets
 - [ ] Support multiple events
 - [ ] Support actors
-- [ ] Support `state.nextEvents`
+- [x] Support `state.nextEvents`
 - [ ] Support `state.changed`
-- [ ] Support `state.done`
+- [x] Support `state.done`
 - [ ] Support `state.meta`, `state.tags`
 - [ ] Support `state.can`
 - [ ] Support history JSON to persist
