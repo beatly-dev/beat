@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:analyzer/dart/element/element.dart';
 
 import '../models/state.dart';
@@ -110,10 +112,24 @@ bool get $matcher;
     }).join();
   }
 
-  Future<String> toConsumer() async {
-    if (!node.info.withFlutter) {
+  Future<String> toConsumer([bool force = false]) async {
+    if (!force && !node.info.withFlutter) {
       return '';
     }
+    final children = (await beatTree.getRelatedStations(enumName))
+        .where(
+          (element) =>
+              element.info.baseEnumName != enumName &&
+              !element.info.withFlutter,
+        )
+        .map((node) => node.info.baseEnumName)
+        .toList();
+
+    if (children.isNotEmpty) {
+      throw '***** You should annotate your substate enums with @withFlutter *****'
+          '\nMissing children: $children';
+    }
+
     return '''
 abstract class ${enumName}Ref{
   $stationName get station;
@@ -209,7 +225,6 @@ class Stateful${enumName}ConsumerElement extends StatefulElement
 
   ${await stateMatcherGetter()}
 }
-
 ''';
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:analyzer/dart/element/element.dart';
 
 import '../models/state.dart';
@@ -143,12 +145,26 @@ if (dependencies.contains(r'$matcher') && $matcher != oldWidget.$matcher) {
     }).join();
   }
 
-  Future<String> toProvider() async {
-    if (!node.info.withFlutter) {
+  Future<String> toProvider([bool force = false]) async {
+    if (!force && !node.info.withFlutter) {
       return '';
+    }
+    final children = (await beatTree.getRelatedStations(enumName))
+        .where(
+          (element) =>
+              element.info.baseEnumName != enumName &&
+              !element.info.withFlutter,
+        )
+        .map((node) => node.info.baseEnumName)
+        .toList();
+
+    if (children.isNotEmpty) {
+      throw '***** You should annotate your substate enums with @withFlutter *****'
+          '\nMissing children: $children';
     }
 
     return '''
+
 class $className extends BeatStationScope<${contextType.replaceAll(r'?', '')}> {
   $className({
     required super.child,
