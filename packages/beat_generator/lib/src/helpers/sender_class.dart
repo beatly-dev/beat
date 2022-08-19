@@ -23,6 +23,7 @@ class SenderClassBuilder {
       _createConstructor(),
       _createSender(events),
       _createStringSender(events),
+      _createNextEvents(),
     ];
     return createClass(senderClassName, body.join());
   }
@@ -132,6 +133,39 @@ if (event == '$event') {
 call<Data>(String event, {Data? data, Duration after = const Duration(milliseconds: 0)}) {
   $body
   return;
+}
+''';
+  }
+
+  String _createNextEvents() {
+    final node = beatTree.getNode(baseEnum.name);
+    final nextEvents = node.info.states.map((state) {
+      final beats = node.beatConfigs[state];
+      final events =
+          beats?.map((beat) => "'${beat.event}'").join(', ') ?? '...[]';
+
+      final stateMatcher = toStateMatcher(baseEnum.name, state, true);
+      final children = node.children[state];
+      final childrenEvents = children?.map((node) {
+            final childName = node.info.baseEnumName;
+            final stationField = toSubstationFieldName(childName);
+            return '''
+..._station.$stationField.send.nextEvents
+''';
+          }).join(', ') ??
+          '...[]';
+
+      return '''
+if (_station.currentState.$stateMatcher) {
+  return [$events, $childrenEvents];
+}
+''';
+    }).join();
+
+    return '''
+List<String> get nextEvents {
+  $nextEvents
+  return [];
 }
 ''';
   }

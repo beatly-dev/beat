@@ -63,6 +63,7 @@ class BeatStationBuilder {
     _createNotifyListenersMethod(substations);
     _createExecMethods(substations);
     _createMapMethods(substations);
+    _createNextEvents();
     final contextType = isNullContextType(node.info.contextType)
         ? 'dynamic'
         : node.info.contextType;
@@ -70,6 +71,14 @@ class BeatStationBuilder {
     return createClass(
       '$beatStationClassName extends BeatStationBase<$contextType>',
       buffer.toString(),
+    );
+  }
+
+  _createNextEvents() {
+    buffer.writeln(
+      '''
+List<String> get nextEvents => send.nextEvents;
+''',
     );
   }
 
