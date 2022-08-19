@@ -1,3 +1,7 @@
+## 0.14.2
+
+ - **FEAT**: warn when substations are not annoted by @WithFlutter.
+
 ## 0.14.1
 
  - **FEAT**: done getter.
