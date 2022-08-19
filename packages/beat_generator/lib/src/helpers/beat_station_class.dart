@@ -64,6 +64,7 @@ class BeatStationBuilder {
     _createExecMethods(substations);
     _createMapMethods(substations);
     _createNextEvents();
+    _createDone();
     final contextType = isNullContextType(node.info.contextType)
         ? 'dynamic'
         : node.info.contextType;
@@ -71,6 +72,14 @@ class BeatStationBuilder {
     return createClass(
       '$beatStationClassName extends BeatStationBase<$contextType>',
       buffer.toString(),
+    );
+  }
+
+  _createDone() {
+    buffer.writeln(
+      '''
+bool get done => nextEvents.isEmpty;
+''',
     );
   }
 

@@ -29,11 +29,18 @@ class BeatStateBuilder {
       _createFinalFieldsAndConstructor(),
       _createInheritedStateGetter(),
       _creatMatcher(relatedStations),
+      _createDone(),
     ].join();
     return createClass(
       '$beatStateClassName extends BeatState<$contextType>',
       body,
     );
+  }
+
+  String _createDone() {
+    return '''
+bool get done => _station.nextEvents.isEmpty;
+''';
   }
 
   String _createInheritedStateGetter() {
