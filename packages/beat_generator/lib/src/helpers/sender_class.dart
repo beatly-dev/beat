@@ -22,6 +22,7 @@ class SenderClassBuilder {
     final body = [
       _createConstructor(),
       _createSender(events),
+      _createStringSender(events),
     ];
     return createClass(senderClassName, body.join());
   }
@@ -117,5 +118,21 @@ if (_station.$currentStateFieldName.${toStateMatcher(parentBase, parentField, pa
       buffer.writeln('}');
     }
     return buffer.toString();
+  }
+
+  String _createStringSender(Map<String, List<BeatConfig>> events) {
+    final body = events.keys.map((event) {
+      return '''
+if (event == '$event') {
+  return \$$event(data: data, after: after);
+}
+''';
+    }).join();
+    return '''
+call<Data>(String event, {Data? data, Duration after = const Duration(milliseconds: 0)}) {
+  $body
+  return;
+}
+''';
   }
 }
