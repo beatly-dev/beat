@@ -7,9 +7,9 @@ class BeatStationInfo {
   final String baseEnumName;
   final String contextType;
   final List<String> states;
-  final bool withFlutter;
+  bool withFlutter;
 
-  const BeatStationInfo({
+  BeatStationInfo({
     required this.baseEnumName,
     required this.contextType,
     required this.states,

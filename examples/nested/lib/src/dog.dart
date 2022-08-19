@@ -2,6 +2,7 @@ import 'package:flutter_beat/flutter_beat.dart';
 
 part 'dog.beat.dart';
 
+@WithFlutter()
 @BeatStation()
 enum Dog {
   @Beat(event: 'gotoWalk', to: onWalking)

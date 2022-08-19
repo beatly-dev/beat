@@ -17,8 +17,8 @@ class BeatNodeGenerator extends Generator {
   TypeChecker get typeChecker => TypeChecker.fromRuntime(BeatStation);
   @override
   FutureOr<String?> generate(LibraryReader library, BuildStep buildStep) async {
-    final resource = await buildStep.fetchResource(inMemoryBeatTree);
-    final nodes = <BeatStationNode>[];
+    final beatTree = await buildStep.fetchResource(inMemoryBeatTree);
+    final localNodes = <BeatStationNode>[];
     final libraryPath =
         Uri.parse(library.element.identifier).path.split('/').last;
     final filename = libraryPath.replaceAll(RegExp(r'.dart$'), '');
@@ -32,7 +32,7 @@ class BeatNodeGenerator extends Generator {
       final oldNodes = jsonDecode(oldJson) as List<dynamic>;
       for (final item in oldNodes) {
         final node = BeatStationNode.fromJson(item);
-        resource.removeNode(node);
+        beatTree.removeNode(node);
       }
     }
 
@@ -55,10 +55,10 @@ class BeatNodeGenerator extends Generator {
       );
 
       final node = await builder.build();
-      await resource.addNode(node);
-      nodes.add(node);
+      await beatTree.addNode(node);
+      localNodes.add(node);
     }
-    _writeJson(library, buildStep, nodes, oldJson);
+    _writeJson(library, buildStep, localNodes, oldJson);
     return null;
   }
 
