@@ -6,7 +6,7 @@
 This project is my toy project to simplify the state management flows in `Flutter` and `dart`. Whole functionalities are heavily inspired by [xstate.js](https://xstate.js.org).
 I highly recommend reading the docs of [xstate.js](https://xstate.js.org).
 
-Go to the [Beatly Book](https://book.beatly.dev/) for more information.
+Go to the [Beatly Book](https://book.beatly.dev/), [한국어 문서](https://book.beatly.dev/v/beat-kr/) for more information.
 
 # Roadmap
 
