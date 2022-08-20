@@ -61,6 +61,19 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             CounterConsumer(
               builder: (context, ref, _) {
+                final count = ref.select(
+                  (station) {
+                    final count = station.currentState.context?.count ?? 0;
+                    return (count ~/ 2) * 2;
+                  },
+                );
+                return Text(
+                  'Even number counter: $count',
+                );
+              },
+            ),
+            CounterConsumer(
+              builder: (context, ref, _) {
                 final isEven = ref.select(
                   (station) {
                     final count = station.currentState.context?.count ?? 0;
