@@ -139,10 +139,13 @@ call<Data>(String event, {Data? data, Duration after = const Duration(millisecon
 
   String _createNextEvents() {
     final node = beatTree.getNode(baseEnum.name);
+
     final nextEvents = node.info.states.map((state) {
       final beats = node.beatConfigs[state];
-      final events =
-          beats?.map((beat) => "'${beat.event}'").join(', ') ?? '...[]';
+      final events = beats?.where((beat) => !beat.eventless).map((beat) {
+            return "'${beat.event}'";
+          }).join(', ') ??
+          '...[]';
 
       final stateMatcher = toStateMatcher(baseEnum.name, state, true);
       final children = node.children[state];
@@ -157,7 +160,10 @@ call<Data>(String event, {Data? data, Duration after = const Duration(millisecon
 
       return '''
 if (_station.currentState.$stateMatcher) {
-  return [$events, $childrenEvents];
+  return [
+    ${events.isNotEmpty ? events : '...[]'},
+    ${childrenEvents.isNotEmpty ? childrenEvents : '...[]'},
+  ];
 }
 ''';
     }).join();
