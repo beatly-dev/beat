@@ -64,6 +64,7 @@ class BeatStationBuilder {
     _createExecMethods(substations);
     _createMapMethods(substations);
     _createNextEvents();
+    _createCommonEvents();
     _createDone();
     final contextType = isNullContextType(node.info.contextType)
         ? 'dynamic'
@@ -79,6 +80,21 @@ class BeatStationBuilder {
     buffer.writeln(
       '''
 bool get done => nextEvents.isEmpty;
+''',
+    );
+  }
+
+  _createCommonEvents() {
+    final node = beatTree.getNode(baseEnum.name);
+    final commonEvents = node.beatConfigs[node.info.baseEnumName]?.map((beat) {
+          return "'${beat.event}'";
+        }).join(', ') ??
+        '...[]';
+    buffer.writeln(
+      '''
+List<String> get commonEvents => [
+      ${commonEvents.isNotEmpty ? commonEvents : '...[]'},
+];
 ''',
     );
   }
