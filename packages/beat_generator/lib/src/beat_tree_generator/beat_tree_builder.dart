@@ -44,7 +44,8 @@ class BeatNodeBuilder {
         await mapSubstationAnnotations(element.name, element.fields, buildStep);
     final invokeConfigs =
         await mapInvokeAnnotations(element.name, element.fields, buildStep);
-    final withFlutter = withFlutterChecker.hasAnnotationOf(element);
+    final withFlutter = withFlutterChecker.hasAnnotationOf(element) ||
+        (annotation.peek('withFlutter')?.boolValue ?? false);
 
     final node = BeatStationNode(
       BeatStationInfo(

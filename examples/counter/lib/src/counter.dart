@@ -2,8 +2,7 @@ import 'package:flutter_beat/flutter_beat.dart';
 
 part 'counter.beat.dart';
 
-@WithFlutter()
-@BeatStation(contextType: CounterContext)
+@BeatStation(contextType: CounterContext, withFlutter: true)
 @addOneBeat
 @takeOneBeat
 enum Counter {
@@ -16,9 +15,10 @@ enum Counter {
 
 class CounterContext {
   final int count;
+  final int someOther;
   final Dummy dummy = const Dummy();
 
-  CounterContext([this.count = 0]);
+  CounterContext([this.count = 0, this.someOther = 0]);
 }
 
 class Dummy {
