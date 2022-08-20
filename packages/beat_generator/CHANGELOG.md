@@ -1,3 +1,9 @@
+## 0.14.3
+
+ - **FIX**: bugs on `nextEvents` generation.
+ - **FEAT**: deprecating `WithFlutter` annotation.
+ - **FEAT**: `commonEvents` on BeatStation.
+
 ## 0.14.2
 
  - **FEAT**: warn when substations are not annoted by @WithFlutter.

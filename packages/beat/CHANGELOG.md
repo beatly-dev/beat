@@ -1,3 +1,7 @@
+## 0.14.1
+
+ - **FEAT**: deprecating `WithFlutter` annotation.
+
 ## 0.14.0
 
 > Note: This release has breaking changes.
