@@ -1,11 +1,12 @@
 import 'package:flutter_beat/flutter_beat.dart';
+import 'package:nested/src/context.dart';
 
 import 'tail.dart';
 
 part 'dog.beat.dart';
 
 @WithFlutter()
-@BeatStation()
+@BeatStation(contextType: MyContext)
 enum Dog {
   @Beat(event: 'gotoWalk', to: onWalking)
   home,

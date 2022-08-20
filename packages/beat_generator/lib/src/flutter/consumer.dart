@@ -132,13 +132,12 @@ bool get $matcher;
 
     return '''
 abstract class ${enumName}Ref{
+
   $stationName get station;
-  $beatName get currentState;
-  $enumName get enumState;
-  $contextType get context;
-  ${contextTypeFields()}
-  ${await stateMatcherFields()}
-  ${toBeatSenderClassName(enumName)} get send;
+  $stationName get readStation;
+  
+  T read<T>(T Function(${enumName}BeatStation station) reader);
+  T select<T>(T Function(${enumName}BeatStation station) selector);
 }
 
 class ${enumName}Consumer extends ${enumName}ConsumerWidget {
@@ -195,35 +194,36 @@ class Stateful${enumName}ConsumerElement extends StatefulElement
     implements ${enumName}Ref {
   Stateful${enumName}ConsumerElement(super.widget);
 
+  int _count = 0;
+
+  /// Get the station and listen to all type of changes,
+  /// including enum state changes, context changes, and the station itself.
   @override
   $stationName get station =>
       ${enumName}ProviderScope.of(this, dependency: 'station').station;
 
+  /// Read the station and not listening to any changes.
   @override
-  $beatName get currentState =>
-      ${enumName}ProviderScope.of(this, dependency: 'currentState')
-          .station
-          .currentState;
+  $stationName get readStation =>
+      ${enumName}ProviderScope.of(this, dependency: '_readonly_').station;
 
+  /// Read the station or its values but not listening to it. 
   @override
-  $enumName get enumState =>
-      ${enumName}ProviderScope.of(this, dependency: 'enumState')
-          .station
-          .currentState
-          .state;
+  T read<T>(T Function(${enumName}BeatStation station) selector) {
+    final station = ${enumName}ProviderScope.of(this, dependency: '_readonly_').station;
+    final result = selector(station);
+    return result;
+  }
 
+  /// Precisely listen to the station or its values.
+  /// `ref.station` will watch everything, 
+  /// `ref.select((station) => station.currentState.context)` will watch only the context's changes.
+  /// `ref.select((station) => station.currentState.context.myField)` will watch only the context's myField changes.
   @override
-  $contextType get context => ${enumName}ProviderScope.of(this, dependency: 'context')
-      .station
-      .currentState
-      .context;
-
-  @override
-  ${toBeatSenderClassName(enumName)} get send => station.send;
-
-  ${contextFieldGetter()}
-
-  ${await stateMatcherGetter()}
+  T select<T>(T Function(${enumName}BeatStation station) selector) {
+    final id = '\$hashCode.\${_count++}';
+    return ${enumName}ProviderScope.of(this, dependency: id).watch(id, selector);
+  }
 }
 ''';
   }

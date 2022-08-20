@@ -22,7 +22,12 @@ class BeatProviderGenerator {
   String get senderName => toBeatSenderClassName(enumName);
   String get contextType => toContextType(node.info.contextType);
   ClassElement? get contextClass =>
-      baseEnum.library.getClass(node.info.contextType);
+      baseEnum.library.getClass(node.info.contextType) ??
+      baseEnum.library.units
+          .firstWhere(
+            (element) => element.getClass(node.info.contextType) != null,
+          )
+          .getClass(node.info.contextType);
 
   String contextTypeFields() {
     final context = contextClass;
@@ -208,20 +213,11 @@ class ${className}Scope extends BeatStationProviderScope {
     required super.child,
     required this.station,
     super.key,
-  })  : ${[
-      'state = station.currentState',
-      'enumState = station.currentState.state',
-      'context = station.currentState.context',
-      contextFieldInitializer(),
-      await stateMatcherInitializer()
-    ].where((e) => e.isNotEmpty).join(',')};
+  });
 
   final $stationName station;
-  final $beatName state;
-  final $enumName enumState;
-  final $contextType context;
-  ${contextTypeFields()}
-  ${await stateMatcherFields()}
+  final Map<String, dynamic> _partOfMaps = {};
+  final Map<String, dynamic> _partOfSelectorMaps = {};
 
   static ${className}Scope of(
     BuildContext context, {
@@ -232,6 +228,14 @@ class ${className}Scope extends BeatStationProviderScope {
       dependency: dependency,
     );
   }
+
+  T watch<T>(String key, T Function(${enumName}BeatStation station) selector) {
+    final value = selector(station);
+    _partOfMaps.addAll({key: value});
+    _partOfSelectorMaps.addAll({key: selector});
+    return value;
+  }
+
 
   @override
   bool updateShouldNotify(
@@ -245,25 +249,31 @@ class ${className}Scope extends BeatStationProviderScope {
     covariant ${className}Scope oldWidget,
     Set<Object> dependencies,
   ) {
-    if (dependencies.isNotEmpty && station != oldWidget.station) {
+    final deps = dependencies.where((element) => element != '_readonly_');
+    if (deps.isEmpty) {
+      return false;
+    }
+
+    if (station != oldWidget.station) {
       return true;
     }
 
-    if (dependencies.contains('currentState') && state != oldWidget.state) {
-      return true;
-    }
-    if (dependencies.contains('enumState') &&
-        enumState != oldWidget.enumState) {
+    // if it depdens on station, every changes should notify
+    if (deps.any((d) => d == 'station')) {
       return true;
     }
 
-    if (dependencies.contains('context') && context != oldWidget.context) {
-      return true;
-    }
-    ${contextFieldConditions()}
+    final watched = deps.where((d) => d != 'station');
+    final changed = watched.any((d) {
+      if (d == 'station' || d is! String) return false;
+      final oldValue = oldWidget._partOfMaps[d];
+      final newValue = oldWidget._partOfSelectorMaps[d]?.call(station);
+      _partOfMaps[d] = newValue;
+      _partOfSelectorMaps[d] = oldWidget._partOfSelectorMaps[d];
+      return oldValue != newValue;
+    });
 
-    ${await stateMatcherConditions()}
-    return false;
+    return changed;
   }
 }
 
