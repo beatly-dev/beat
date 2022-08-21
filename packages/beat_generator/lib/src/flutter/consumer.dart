@@ -143,26 +143,26 @@ abstract class ${enumName}Ref{
 class ${enumName}Consumer extends ${enumName}ConsumerWidget {
   const ${enumName}Consumer({
     required this.builder,
-    super.child,
+    super.placeHolder,
     super.key,
   });
 
-  final Widget Function(BuildContext, ${enumName}Ref, Widget?) builder;
+  final Widget Function(BuildContext, ${enumName}Ref) builder;
 
   @override
   Widget build(BuildContext context, ${enumName}Ref ref) {
-    return builder(context, ref, child);
+    return builder(context, ref);
   }
 }
 
 abstract class ${enumName}ConsumerWidget extends Stateful${enumName}ConsumerWidget {
   const ${enumName}ConsumerWidget({
     Key? key,
-    this.child = const SizedBox.shrink(),
+    this.placeHolder = const SizedBox.shrink(),
   }) : super(key: key);
 
   Widget build(BuildContext context, ${enumName}Ref ref);
-  final Widget child;
+  final Widget placeHolder;
 
   @override
   // ignore: library_private_types_in_public_api
@@ -175,7 +175,7 @@ class _${enumName}ConsumerState
   Widget build(BuildContext context) {
     final started = ref.select((station) => station.started);
     if (!started) {
-      return widget.child;
+      return widget.placeHolder;
     }
     return widget.build(context, ref);
   }
