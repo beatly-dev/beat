@@ -5,8 +5,7 @@ import 'tail.dart';
 
 part 'dog.beat.dart';
 
-@WithFlutter()
-@BeatStation(contextType: MyContext)
+@BeatStation(contextType: MyContext, withFlutter: true)
 enum Dog {
   @Beat(event: 'gotoWalk', to: onWalking)
   home,

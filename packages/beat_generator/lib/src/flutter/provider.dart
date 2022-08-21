@@ -150,6 +150,22 @@ if (dependencies.contains(r'$matcher') && $matcher != oldWidget.$matcher) {
     }).join();
   }
 
+  Future<String> wrapProvider(String provider) async {
+    final children = await beatTree.getRelatedStations(enumName);
+    final directChildren =
+        children.where((element) => element.parentBase == enumName);
+    final wrapped = directChildren.fold(provider, (code, node) {
+      final name = node.info.baseEnumName;
+      return '''
+${name}Provider(
+  baseStation: widget.station.${toSubstationFieldName(name)},
+  child: $provider, 
+)
+''';
+    });
+    return wrapped;
+  }
+
   Future<String> toProvider([bool force = false]) async {
     if (!force && !node.info.withFlutter) {
       return '';
@@ -178,13 +194,21 @@ class $className extends BeatStationScope<${contextType.replaceAll(r'?', '')}> {
     super.beforeDispose,
     super.beforeStart,
     super.key,
+    this.baseStation,
   });
 
   final $enumName firstState;
   final $contextType initialContext;
 
+  final $stationName? baseStation;
+
   @override
-  late final $stationName station = $stationName(
+  bool get autoStart => baseStation == null;
+
+  @override
+  $stationName get station => baseStation ?? _internalStation;
+
+  late final $stationName _internalStation = $stationName(
     firstState: firstState,
     initialContext: initialContext,
   );
@@ -196,7 +220,9 @@ class $className extends BeatStationScope<${contextType.replaceAll(r'?', '')}> {
 class ${className}State extends BeatStationScopeState<$className> {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
+    return ${await wrapProvider(
+      '''
+    StreamBuilder(
       stream: widget.station.stateStream,
       builder: (context, snapshot) {
         return ${className}Scope(
@@ -204,7 +230,9 @@ class ${className}State extends BeatStationScopeState<$className> {
           child: widget.child,
         );
       },
-    );
+    )
+''',
+    )};
   }
 }
 

@@ -2,8 +2,7 @@ import 'package:flutter_beat/flutter_beat.dart';
 
 part 'tail.beat.dart';
 
-@WithFlutter()
-@BeatStation()
+@BeatStation(withFlutter: true)
 enum Tail {
   @Beat(event: 'wag', to: wagging)
   stopped,

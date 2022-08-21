@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nested/src/dog.dart';
+import 'package:nested/src/tail.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,21 +12,23 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+    return DogProvider(
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          // This is the theme of your application.
+          //
+          // Try running your application with "flutter run". You'll see the
+          // application has a blue toolbar. Then, without quitting the app, try
+          // changing the primarySwatch below to Colors.green and then invoke
+          // "hot reload" (press "r" in the console where you ran "flutter run",
+          // or simply save your changes to "hot reload" in a Flutter IDE).
+          // Notice that the counter didn't reset back to zero; the application
+          // is not restarted.
+          primarySwatch: Colors.blue,
+        ),
+        home: const MyHomePage(title: 'Flutter Demo Home Page'),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
@@ -102,13 +106,69 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
+            DogConsumer(builder: (context, ref, _) {
+              print("Rebuild dog consumer");
+              final isWalking = ref.station.currentState.isOnWalking$;
+              return Text("Bow wow walking: $isWalking");
+            }),
+            TailConsumer(builder: (context, ref, _) {
+              print("Rebuild tail consumer");
+              final isWagging = ref.station.currentState.isWagging$;
+              return Text(isWagging ? "Wagging" : "Stopped");
+            })
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      floatingActionButton: Align(
+        alignment: Alignment.bottomRight,
+        child: Column(
+          children: [
+            TailConsumer(
+              builder: (context, ref, _) {
+                return FloatingActionButton(
+                  onPressed: () {
+                    ref.readStation.send.$wag();
+                  },
+                  tooltip: 'Increment',
+                  child: const Icon(Icons.motorcycle),
+                );
+              },
+            ),
+            TailConsumer(
+              builder: (context, ref, _) {
+                return FloatingActionButton(
+                  onPressed: () {
+                    ref.readStation.send.$stop();
+                  },
+                  tooltip: 'Increment',
+                  child: const Icon(Icons.stop),
+                );
+              },
+            ),
+            DogConsumer(
+              builder: (context, ref, _) {
+                return FloatingActionButton(
+                  onPressed: () {
+                    ref.readStation.send.$goHome();
+                  },
+                  tooltip: 'Increment',
+                  child: const Icon(Icons.home),
+                );
+              },
+            ),
+            DogConsumer(
+              builder: (context, ref, _) {
+                return FloatingActionButton(
+                  onPressed: () {
+                    ref.readStation.send.$gotoWalk();
+                  },
+                  tooltip: 'Increment',
+                  child: const Icon(Icons.directions_walk),
+                );
+              },
+            ),
+          ],
+        ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }

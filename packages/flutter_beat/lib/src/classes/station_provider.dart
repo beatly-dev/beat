@@ -20,6 +20,7 @@ abstract class BeatStationScope<Context> extends StatefulWidget {
   final void Function(BeatStationBase<Context>)? beforeStart;
   final void Function(BeatStationBase<Context>)? beforeDispose;
 
+  bool get autoStart;
   BeatStationBase<Context> get station;
 }
 
@@ -30,7 +31,9 @@ abstract class BeatStationScopeState<Scope extends BeatStationScope>
   void initState() {
     super.initState();
     widget.beforeStart?.call(widget.station);
-    widget.station.start();
+    if (widget.autoStart) {
+      widget.station.start();
+    }
   }
 
   @override

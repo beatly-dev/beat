@@ -189,6 +189,7 @@ stop() {
   child?.stop();
   clearDelayed();
   $stationStartedFieldName = false;
+  clearState();
 }
 ''',
     );
