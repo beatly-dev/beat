@@ -44,6 +44,9 @@ abstract class BeatStationBase<Context> {
     Data? data,
     Duration after = const Duration(milliseconds: 0),
   ]) {
+    if (!started) {
+      return;
+    }
     final nextState = beat.to;
     final eventName = beat.event;
     final actions = beat.actions;
