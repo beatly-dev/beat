@@ -45,16 +45,20 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             DogConsumer(
-              builder: (context, ref, _) {
+              builder: (context, ref) {
                 final isWalking =
                     ref.select((station) => station.currentState.isOnWalking$);
                 return Text("Bow wow walking: $isWalking");
               },
             ),
-            TailConsumer(builder: (context, ref, _) {
-              final isWagging = ref.station.currentState.isWagging$;
-              return Text(isWagging ? "Wagging" : "Stopped");
-            })
+            const TailListener(),
+            TailConsumer(
+              builder: (context, ref) {
+                final isWagging = ref.station.currentState.isWagging$;
+                return Text(isWagging ? "Wagging" : "Stopped");
+              },
+              placeHolder: const Text("Tail not started"),
+            )
           ],
         ),
       ),
@@ -64,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             TailConsumer(
-              builder: (context, ref, _) {
+              builder: (context, ref) {
                 return FloatingActionButton(
                   onPressed: () {
                     ref.readStation.send.$wag();
@@ -75,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             TailConsumer(
-              builder: (context, ref, _) {
+              builder: (context, ref) {
                 return FloatingActionButton(
                   onPressed: () {
                     ref.readStation.send.$stop();
@@ -86,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             DogConsumer(
-              builder: (context, ref, _) {
+              builder: (context, ref) {
                 return FloatingActionButton(
                   onPressed: () {
                     ref.readStation.send.$goHome();
@@ -97,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             DogConsumer(
-              builder: (context, ref, _) {
+              builder: (context, ref) {
                 return FloatingActionButton(
                   onPressed: () {
                     ref.readStation.send.$gotoWalk();
@@ -111,5 +115,32 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+}
+
+class TailListener extends StatefulTailConsumerWidget {
+  const TailListener({Key? key}) : super(key: key);
+
+  @override
+  TailConsumerWidgetState<StatefulTailConsumerWidget> createState() =>
+      _TailState();
+}
+
+class _TailState extends TailConsumerWidgetState<TailListener> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    ref.readStation.removeListener(handleDog);
+    ref.readStation.addListener(handleDog);
+  }
+
+  handleDog() {
+    final state = ref.readStation.currentState.state;
+    print("Tail is $state");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text("I am a tail listener");
   }
 }
