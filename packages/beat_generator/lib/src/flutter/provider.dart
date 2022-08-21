@@ -191,14 +191,19 @@ class $className extends BeatStationScope<${contextType.replaceAll(r'?', '')}> {
     required super.child,
     this.firstState = $enumName.$firstField,
     this.initialContext,
-    super.beforeDispose,
-    super.beforeStart,
+    this.beforeDispose,
+    this.beforeStart,
     super.key,
     this.baseStation,
   });
 
   final $enumName firstState;
   final $contextType initialContext;
+
+  @override
+  final void Function(covariant ${enumName}BeatStation station)? beforeStart;
+  @override
+  final void Function(covariant ${enumName}BeatStation station)? beforeDispose;
 
   final $stationName? baseStation;
 
