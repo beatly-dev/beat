@@ -1,3 +1,10 @@
+## 0.16.0
+
+> Note: This release has breaking changes.
+
+ - **FEAT**: clear all listeners.
+ - **BREAKING** **REFACTOR**: rename consumer field.
+
 ## 0.15.2
 
  - **REFACTOR**: type mismatch, protected method.
