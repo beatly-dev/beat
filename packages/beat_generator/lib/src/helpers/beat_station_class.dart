@@ -58,9 +58,11 @@ class BeatStationBuilder {
     _createReset();
     _createSender();
 
-    _createListenersFields(substations);
+    _createListenersFields();
     _createListenersMethods(substations);
     _createNotifyListenersMethod(substations);
+    _clearListeners();
+
     _createExecMethods(substations);
     _createMapMethods(substations);
     _createNextEvents();
@@ -76,6 +78,38 @@ class BeatStationBuilder {
       '$beatStationClassName extends BeatStationBase<$contextType>',
       buffer.toString(),
     );
+  }
+
+  _clearListeners() async {
+    final node = beatTree.getNode(baseEnum.name);
+    final directListeners = node.info.states.map((state) {
+      return '''
+${toListenerFieldName(state)}.clear();
+''';
+    }).join();
+
+    final nested = await beatTree.getRelatedStations(
+      node.info.baseEnumName,
+      includeRoot: false,
+    );
+
+    final childrenListeners = nested
+        .where((station) => station.parentBase == node.info.baseEnumName)
+        .map((station) {
+      final name = station.info.baseEnumName;
+      return '''
+${toSubstationFieldName(name)}.clearListeners();
+''';
+    }).join();
+
+    return '''
+clearListeners() {
+  _listeners.clear();
+  _contextListeners.clear();
+  $directListeners
+  $childrenListeners
+}
+''';
   }
 
   _protectTriggerTransisions() {
@@ -492,24 +526,20 @@ _invokeServices() async {
     }
   }
 
-  _createListenersFields(List<BeatStationNode> nestedStations) {
+  _createListenersFields() {
+    final node = beatTree.getNode(baseEnum.name);
+    final states = node.info.states.map((state) {
+      return '''
+final ${toListenerFieldName(state)} = <Function>[];
+''';
+    }).join();
     buffer.writeln(
       '''
 final _listeners = <Function>[];
 final _contextListeners = <Function>[];
+$states
 ''',
     );
-
-    for (final station in nestedStations
-        .where((station) => station.info.baseEnumName == baseEnum.name)) {
-      for (final state in station.info.states) {
-        buffer.writeln(
-          '''
-final ${toListenerFieldName(state)} = <Function>[];
-''',
-        );
-      }
-    }
   }
 
   void _createNotifyListenersMethod(List<BeatStationNode> nestedStations) {
