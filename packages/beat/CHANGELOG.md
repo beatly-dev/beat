@@ -1,3 +1,7 @@
+## 0.14.1+1
+
+ - **FIX**: transitions even when not started.
+
 ## 0.14.1
 
  - **FEAT**: deprecating `WithFlutter` annotation.
