@@ -1,3 +1,7 @@
+## 0.1.1+1
+
+ - **REFACTOR**: type mismatch, protected method.
+
 ## 0.1.1
 
  - **FEAT**: Nested Provider/Consumer.

@@ -1,3 +1,7 @@
+## 0.14.1+2
+
+ - **REFACTOR**: type mismatch, protected method.
+
 ## 0.14.1+1
 
  - **FIX**: transitions even when not started.

@@ -1,3 +1,8 @@
+## 0.15.2
+
+ - **REFACTOR**: type mismatch, protected method.
+ - **FEAT**: `beforeStart`, `beforeDispose` takes proper station.
+
 ## 0.15.1
 
  - **FEAT**: Nested Provider/Consumer.
