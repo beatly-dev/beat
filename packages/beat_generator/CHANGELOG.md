@@ -1,3 +1,7 @@
+## 0.15.1
+
+ - **FEAT**: Nested Provider/Consumer.
+
 ## 0.15.0+1
 
  - Update a dependency to the latest release.
