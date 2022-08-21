@@ -12,13 +12,13 @@ abstract class BeatStationScope<Context> extends StatefulWidget {
   const BeatStationScope({
     Key? key,
     required this.child,
-    this.beforeDispose,
-    this.beforeStart,
   }) : super(key: key);
 
   final Widget child;
-  final void Function(BeatStationBase<Context>)? beforeStart;
-  final void Function(BeatStationBase<Context>)? beforeDispose;
+  @protected
+  void beforeStart(BeatStationBase<Context> station) {}
+  @protected
+  void beforeDispose(BeatStationBase<Context> station) {}
 
   bool get autoStart;
   BeatStationBase<Context> get station;
@@ -30,7 +30,7 @@ abstract class BeatStationScopeState<Scope extends BeatStationScope>
   @mustCallSuper
   void initState() {
     super.initState();
-    widget.beforeStart?.call(widget.station);
+    widget.beforeStart(widget.station);
     if (widget.autoStart) {
       widget.station.start();
     }
@@ -39,7 +39,7 @@ abstract class BeatStationScopeState<Scope extends BeatStationScope>
   @override
   @mustCallSuper
   void dispose() {
-    widget.beforeDispose?.call(widget.station);
+    widget.beforeDispose(widget.station);
     widget.station.stop();
     super.dispose();
   }
@@ -62,8 +62,9 @@ abstract class BeatStationProviderScope extends InheritedModel<Object> {
     super.key,
   });
   static Provider of<Provider extends InheritedModel<Object>>(
-      BuildContext context,
-      {Object? dependency}) {
+    BuildContext context, {
+    Object? dependency,
+  }) {
     final provider = InheritedModel.inheritFrom<Provider>(
       context,
       aspect: dependency,

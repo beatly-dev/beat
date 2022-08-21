@@ -66,6 +66,8 @@ class BeatStationBuilder {
     _createNextEvents();
     _createCommonEvents();
     _createDone();
+    _protectTriggerTransisions();
+
     final contextType = isNullContextType(node.info.contextType)
         ? 'dynamic'
         : node.info.contextType;
@@ -73,6 +75,21 @@ class BeatStationBuilder {
     return createClass(
       '$beatStationClassName extends BeatStationBase<$contextType>',
       buffer.toString(),
+    );
+  }
+
+  _protectTriggerTransisions() {
+    buffer.writeln(
+      '''
+  @override
+  @protected
+  triggerTransitions<Data>(
+    Beat beat, [
+    Data? data,
+    Duration after = const Duration(milliseconds: 0),
+  ]) =>
+      super.triggerTransitions(beat, data, after);
+''',
     );
   }
 

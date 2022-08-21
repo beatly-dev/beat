@@ -38,7 +38,6 @@ abstract class BeatStationBase<Context> {
     _contextStreamController.add(context);
   }
 
-  @protected
   triggerTransitions<Data>(
     Beat beat, [
     Data? data,
