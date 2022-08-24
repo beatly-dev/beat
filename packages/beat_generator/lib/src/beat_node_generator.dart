@@ -14,7 +14,7 @@ import 'resources/beat_tree_resource.dart';
 import 'utils/class_checker.dart';
 
 class BeatNodeGenerator extends Generator {
-  TypeChecker get typeChecker => TypeChecker.fromRuntime(BeatStation);
+  TypeChecker get typeChecker => TypeChecker.fromRuntime(Station);
   @override
   FutureOr<String?> generate(LibraryReader library, BuildStep buildStep) async {
     final beatTree = await buildStep.fetchResource(inMemoryBeatTree);
@@ -34,6 +34,19 @@ class BeatNodeGenerator extends Generator {
         final node = BeatStationNode.fromJson(item);
         beatTree.removeNode(node);
       }
+    }
+
+    for (var ann
+        in library.annotatedWith(TypeChecker.fromRuntime(ParallelStation))) {
+      final elm = ann.element as ClassElement;
+      print(
+        elm.fields.map((e) {
+          return e.;
+        }),
+      );
+      print(
+        ann.annotation.read('children').listValue.map((e) => e.toTypeValue()),
+      );
     }
 
     for (var annotatedElement in library.annotatedWith(typeChecker)) {

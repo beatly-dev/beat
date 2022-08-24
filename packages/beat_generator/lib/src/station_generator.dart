@@ -13,7 +13,7 @@ import 'helpers/invoke_services.dart';
 import 'helpers/sender_class.dart';
 import 'resources/beat_tree_resource.dart';
 
-class StationGenerator extends GeneratorForAnnotation<BeatStation> {
+class StationGenerator extends GeneratorForAnnotation<Station> {
   @override
   generateForAnnotatedElement(
     Element element,

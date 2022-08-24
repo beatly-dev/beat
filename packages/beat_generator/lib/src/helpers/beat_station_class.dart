@@ -261,7 +261,7 @@ currentState.${toStateMatcher(name, substation.parentField, true)} ? $substation
     buffer.writeln(
       '''
 @override
-$BeatStationBase? get child => ${body.isEmpty ? 'null' : '$body : null'};
+$Station? get child => ${body.isEmpty ? 'null' : '$body : null'};
 ''',
     );
   }

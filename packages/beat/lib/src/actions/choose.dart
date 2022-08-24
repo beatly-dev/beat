@@ -1,41 +1,43 @@
+import 'package:meta/meta.dart';
+
 import '../../beat.dart';
+import '../utils/function.dart';
 
 /// Define actions to change the context of the state
 /// This is same as `if`/`else if`/`else`.
 /// The first matching actions will only be executed.
-class ChooseAction<State extends BeatState> extends ChooseActionBase<State> {
-  const ChooseAction(this.conditionals);
+@sealed
+class Choose {
+  const Choose(this.conditionals);
 
-  @override
-  Function(State currentState, EventData event) get action =>
-      throw UnimplementedError();
+  final List<ChooseItem> conditionals;
 
-  final List<ChooseActionItem> conditionals;
-
-  @override
-  List<dynamic> execute(State currentState, EventData event) {
-    for (final element in conditionals) {
-      if (element.conditions.every((element) => element(currentState, event))) {
-        return element.actions;
-      }
-    }
-    return [];
+  /// Returns the first matching actions to execute.
+  List<dynamic> filter(BeatState state, EventData event) {
+    return conditionals
+        .firstWhere(
+          (conditional) => conditional.tests.every(
+            (test) => execActionMethod<bool>(test, state, event) ?? false,
+          ),
+          orElse: () => ChooseItem(actions: []),
+        )
+        .actions;
   }
 }
 
-class ChooseActionItem {
-  final List<bool Function(BeatState, EventData)> conditions;
+@sealed
+class ChooseItem {
+  /// Conditions to test
+  /// If all the conditions are met, the [actions] will be executed.
+  final List<dynamic> tests;
+
+  /// Same syntax with an [Beat.actions] field
   final List<dynamic> actions;
 
-  const ChooseActionItem({
-    this.conditions = const [_alwaysTrue],
+  const ChooseItem({
+    this.tests = const [_alwaysTrue],
     required this.actions,
   });
 }
 
 bool _alwaysTrue(_, __) => true;
-
-abstract class ChooseActionBase<State extends BeatState>
-    extends DefaultAction<State, dynamic> {
-  const ChooseActionBase();
-}

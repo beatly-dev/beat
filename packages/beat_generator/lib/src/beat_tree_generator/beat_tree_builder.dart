@@ -14,10 +14,10 @@ import '../annotations/with_flutter_annotation.dart';
 
 /// Dependency Builder
 TypeChecker get beatChecker => TypeChecker.fromRuntime(Beat);
-TypeChecker get beatStationChecker => TypeChecker.fromRuntime(BeatStation);
+TypeChecker get beatStationChecker => TypeChecker.fromRuntime(Station);
 TypeChecker get compoundChecker => TypeChecker.fromRuntime(Substation);
 TypeChecker get invokeChecker => TypeChecker.fromRuntime(Invokes);
-TypeChecker get parallelChecker => TypeChecker.fromRuntime(Parallel);
+TypeChecker get parallelChecker => TypeChecker.fromRuntime(ParallelStation);
 
 class BeatNodeBuilder {
   /// Returns set of root beat tree nodes.
