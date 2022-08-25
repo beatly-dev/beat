@@ -1,9 +1,9 @@
 class ParallelStation {
   const ParallelStation([
-    this.children = const [],
     this.id,
+    this.withFlutter = false,
   ]);
 
   final String? id;
-  final List<Type> children;
+  final bool withFlutter;
 }
