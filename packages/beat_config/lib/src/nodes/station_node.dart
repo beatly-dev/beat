@@ -1,5 +1,7 @@
-import 'package:beat_config/beat_config.dart';
 import 'package:json_annotation/json_annotation.dart';
+
+import '../configs/beat_config.dart';
+import '../configs/service_config.dart';
 
 part 'station_node.g.dart';
 
