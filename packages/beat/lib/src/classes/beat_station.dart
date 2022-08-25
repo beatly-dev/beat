@@ -156,31 +156,23 @@ abstract class BeatStation<State extends Enum, Context> {
   }
 
   /// Check eventless events' guards
-  checkGuardedEventless() {
+  bool checkGuardedEventless() {
     /// From all queued eventless events,
     for (final eventless in guardedEventlesses) {
       final eventData = EventData(
         event:
             'beat.${State}Station($id).${currentState.state}.guardedEventless',
       );
-      final test = eventless.conditions.fold<bool>(
-        false,
-        (result, e) =>
-            result ||
-            (execActionMethod<bool>(
-                  e,
-                  currentState,
-                  eventData,
-                ) ??
-                false),
-      );
+
+      final test = _passGuards(eventless, eventData);
 
       /// if all condition matches then execute the transition
       if (test) {
         handleBeat(eventless.to, eventData, eventless.actions);
-        break;
+        return true;
       }
     }
+    return false;
   }
 
   /// Current state to beat event
@@ -307,19 +299,34 @@ abstract class BeatStation<State extends Enum, Context> {
     /// 4-1. Check queued eventless events in [BeatMachine]
     machine.checkGuardedEventless();
 
-    /// 4-2. if: Check imediate eventless events in this [BeatStation]
+    /// 4-2. check guarded eventless first
+    final guarded = eventlessBeats.where(
+      (beat) => !_isDelayedBeat(beat) && beat.conditions.isNotEmpty,
+    );
+
+    guardedEventlesses.addAll(guarded);
+
+    final handled = checkGuardedEventless();
+
+    if (handled) {
+      return;
+    }
+
+    /// 4-3. if: Check imediate eventless events in this [BeatStation]
+    /// - no delay
+    /// - no gaurds
     final imediates = eventlessBeats.where(
       (beat) => !_isDelayedBeat(beat) && beat.conditions.isEmpty,
     );
 
+    /// only the first eventless event is handled
     if (imediates.isNotEmpty) {
-      for (final beat in imediates) {
-        handleBeat(beat.to, eventData, beat.actions);
-      }
+      final beat = imediates.first;
+      handleBeat(beat.to, eventData, beat.actions);
       return;
     }
 
-    /// 4-3. else: Queue delayed/guarded eventless events
+    /// 4-4. else: Queue delayed
     final delayed = eventlessBeats.where(
       (beat) => _isDelayedBeat(beat),
     );
@@ -345,12 +352,6 @@ abstract class BeatStation<State extends Enum, Context> {
         delay,
       );
     }
-
-    final guarded = eventlessBeats.where(
-      (beat) => !_isDelayedBeat(beat) && beat.conditions.isNotEmpty,
-    );
-
-    guardedEventlesses.addAll(guarded);
   }
 
   /// Helper method to handle actions
@@ -370,6 +371,9 @@ abstract class BeatStation<State extends Enum, Context> {
   }
 
   bool _passGuards(Beat beat, EventData event) {
+    if (beat.conditions.isEmpty) {
+      return true;
+    }
     return beat.conditions.fold<bool>(
       false,
       (result, e) =>
