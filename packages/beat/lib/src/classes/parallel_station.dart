@@ -12,12 +12,16 @@ abstract class ParallelStation
   @override
   BeatStation<Enum, dynamic>? get child => null;
 
+  /// Check if all the parallel stations are done.
   @override
-  bool get done;
+  bool get done =>
+      parallels.fold(true, (done, station) => done && station.done);
 
+  /// Entry atcions should be defined in the children station.
   @override
   List get entry => [];
 
+  /// Exit atcions should be defined in the children station.
   @override
   List get exit => [];
 
@@ -31,8 +35,10 @@ abstract class ParallelStation
   @override
   Sender<BeatStation<Enum, dynamic>> get send => throw UnimplementedError();
 
+  /// Parallel stations included here
   List<BeatStation> get parallels;
 
+  /// Start all parallel stations
   @override
   start({Enum? state, EventData? eventData, context}) {
     super.start();
@@ -41,6 +47,7 @@ abstract class ParallelStation
     }
   }
 
+  /// Stop all parallel stations
   @override
   stop() {
     for (final station in parallels) {
@@ -68,17 +75,22 @@ abstract class ParallelStation
 
   /// Should propagate the checking request to all parallel stations.
   @override
-  checkGuardedEventless() {
+  bool checkGuardedEventless() {
+    bool handled = false;
     for (final station in parallels) {
-      station.checkGuardedEventless();
+      /// all parallel station must receive the event
+      handled = station.checkGuardedEventless() || handled;
     }
+    return handled;
   }
 
+  /// This shouldn't be called in any time
   @override
   handleBeat(Enum nextState, EventData eventData, [List actions = const []]) {
     throw UnimplementedError('ParallelStation.handleBeat should not be called');
   }
 
+  /// This shouldn't be called in any time
   @override
   handleTransition(ParallelStationState nextState, EventData eventData) {
     throw UnimplementedError(
