@@ -6,9 +6,9 @@ enum ParallelStationState {
   started,
 }
 
-abstract class ParallelStation
+abstract class ParallelBeatStation
     extends BeatStation<ParallelStationState, dynamic> {
-  ParallelStation({required super.machine, super.parent});
+  ParallelBeatStation({required super.machine, super.parent});
 
   @override
   BeatStation<Enum, dynamic>? get child => null;
