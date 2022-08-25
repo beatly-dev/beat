@@ -8,4 +8,7 @@ class EventData<Data> {
 
   final String event;
   final Data? data;
+
+  @override
+  String toString() => "{'event': '$event', 'data': ${data.toString()}}";
 }

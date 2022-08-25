@@ -3,7 +3,7 @@ export 'on_entry.dart';
 export 'on_entry.dart';
 export 'on_exit.dart';
 export 'parallel_station.dart';
-export 'service.dart';
+export 'services/services.dart';
 export 'station.dart';
 export 'substation.dart';
 export 'with_flutter.dart';

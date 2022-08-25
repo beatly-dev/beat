@@ -1,6 +1,5 @@
 import '../../beat.dart';
 import 'models/result.dart';
-import 'sender.dart';
 
 enum ParallelStationState {
   started,
@@ -33,9 +32,6 @@ abstract class ParallelBeatStation
         this,
       );
 
-  @override
-  Sender<BeatStation<Enum, dynamic>> get send => throw UnimplementedError();
-
   /// Parallel stations included here
   List<BeatStation> get parallels;
 
@@ -61,7 +57,7 @@ abstract class ParallelBeatStation
   @override
   EventResult handleEvent<Data>(
     String event,
-    String eventId, [
+    int eventId, [
     Data? data,
     Duration after = const Duration(milliseconds: 0),
   ]) {

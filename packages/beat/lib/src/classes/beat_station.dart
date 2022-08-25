@@ -6,7 +6,6 @@ import 'package:meta/meta.dart';
 import '../../beat.dart';
 import '../utils/function.dart';
 import 'models/result.dart';
-import 'sender.dart';
 import 'utils/action.dart';
 
 /// TODO: hanlde services
@@ -95,9 +94,6 @@ abstract class BeatStation<State extends Enum, Context> {
   /// Check the machine reaches `final` state
   bool get done;
 
-  /// Sender handles all event
-  Sender get send;
-
   /// Get the [BeatState] holding the given enum type.
   /// Return null if that state is not found on the entire machine
   /// or the station is not yet started.
@@ -107,10 +103,10 @@ abstract class BeatStation<State extends Enum, Context> {
   /// 1. Sent by `send(event, after: duration)` syntax
   /// 2. Eventless events with a delay
   final _delayed = Queue<Timer>();
-  final _delayedIds = <String, Timer>{};
+  final _delayedIds = <int, Timer>{};
 
   /// Add delayed events
-  addDelayed(Function callback, Duration after, String eventId) {
+  addDelayed(Function callback, Duration after, [int? eventId]) {
     if (after.inMicroseconds == 0) {
       return callback();
     }
@@ -125,13 +121,13 @@ abstract class BeatStation<State extends Enum, Context> {
     _delayed.add(timer);
 
     /// Add timer id to allow programmatically cancel the timer
-    if (eventId.isNotEmpty) {
+    if (eventId != null) {
       _delayedIds.addAll({eventId: timer});
     }
   }
 
   /// Cancel and remove a delayed timer
-  cancelDelayed(String eventId) {
+  cancelDelayed(int eventId) {
     final delayed = _delayedIds[eventId];
     if (delayed != null) {
       delayed.cancel();
@@ -205,7 +201,7 @@ abstract class BeatStation<State extends Enum, Context> {
   /// According to the statecharts.dev, the deepest child should handle the event.
   EventResult handleEvent<Data>(
     String event,
-    String eventId, [
+    int eventId, [
     Data? data,
     Duration after = const Duration(milliseconds: 0),
   ]) {
@@ -233,8 +229,8 @@ abstract class BeatStation<State extends Enum, Context> {
 
     final eventData = EventData(event: event, data: data);
 
-    /// 0-1. if this is a delayed event, queue it and return
     if (after.inMicroseconds > 0) {
+      /// 0-1. if this is a delayed event, queue it and return
       addDelayed(
         () {
           /// Only run the first matching beat with the same event
@@ -252,17 +248,17 @@ abstract class BeatStation<State extends Enum, Context> {
         after,
         eventId,
       );
-      return EventResult.handled();
-    }
-
-    /// 0-2. else: immediately run the first matching beat with the same event
-    for (final beat in beats) {
-      if (_passGuards(beat, eventData)) {
-        handleBeat(beat.to, eventData, beat.actions);
-        break;
+    } else {
+      /// 0-2. else: immediately run the first matching beat with the same event
+      for (final beat in beats) {
+        if (_passGuards(beat, eventData)) {
+          handleBeat(beat.to, eventData, beat.actions);
+          break;
+        }
       }
     }
 
+    _eventHistory.add(eventData);
     return EventResult.handled();
   }
 
@@ -370,7 +366,6 @@ abstract class BeatStation<State extends Enum, Context> {
           }
         },
         delay,
-        '',
       );
     }
   }

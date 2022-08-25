@@ -29,18 +29,23 @@ class BeatMachine {
   T? stateOf<T extends BeatState>(Type type) =>
       stationOf(type)?.currentState as T?;
 
+  List<EventData> get eventHistory => _eventHistory;
+  final _eventHistory = <EventData>[];
+
+  int _eventId = 0;
+
   /// Forward event to currently active root station
-  String _forward<Data>(
+  int _forward<Data>(
     String event, {
     Data? data,
     Duration after = const Duration(),
   }) {
     final root = _activeStations.where((station) => station.parent == null);
-    final now = DateTime.now().microsecondsSinceEpoch;
-    final eventId = '$now-$event.${event.hashCode}';
+    final eventId = _eventId++;
     for (final station in root) {
       station.handleEvent(event, eventId, data, after);
     }
+    _eventHistory.add(EventData(event: event, data: data));
 
     /// Check guarded eventless
     checkGuardedEventless();
@@ -55,7 +60,7 @@ class BeatMachine {
   }
 
   /// Cancel and remove a delayed timer
-  cancelDelayed(String eventId) {
+  cancelDelayed(int eventId) {
     for (final station in _activeStations) {
       station.cancelDelayed(eventId);
     }
