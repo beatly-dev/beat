@@ -12,9 +12,10 @@ import 'utils/action.dart';
 /// TODO: Implement parallel stations
 /// Common logic of beat station
 abstract class BeatStation<State extends Enum, Context> {
-  BeatStation({required this.machine});
+  BeatStation({required this.machine, this.parent});
 
   final BeatMachine machine;
+  final BeatStation? parent;
 
   @protected
   BeatStation? get child;
@@ -57,16 +58,21 @@ abstract class BeatStation<State extends Enum, Context> {
   /// 3. Transition to initial state
   /// 4. Start a child station
   @mustCallSuper
-  start({State? state, EventData? eventData, Context? context}) {
+  start({final State? state, EventData? eventData, final Context? context}) {
     if (_started) {
       return;
     }
     _started = true;
+    final startingState = initialState.copyWith(state: state, context: context);
+    eventData ??= EventData(event: 'beat.${State}Station($id).exit');
+
     _executeActions(
       entry,
-      initialState.copyWith(state: state, context: context),
-      eventData ?? EventData(event: 'beat.${State}Station($id).exit'),
+      startingState,
+      eventData,
     );
+
+    handleBeat(startingState.state, eventData);
     child?.start();
   }
 

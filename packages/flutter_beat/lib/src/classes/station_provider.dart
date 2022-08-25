@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 /// - conditions
 /// - invokes
 /// - delays
-abstract class BeatStationScope<Context> extends StatefulWidget {
+abstract class BeatStationScope<State extends Enum, Context>
+    extends StatefulWidget {
   const BeatStationScope({
     Key? key,
     required this.child,
@@ -16,12 +17,12 @@ abstract class BeatStationScope<Context> extends StatefulWidget {
 
   final Widget child;
   @protected
-  void beforeStart(BeatStationBase<Context> station) {}
+  void beforeStart(BeatStation<State, Context> station) {}
   @protected
-  void beforeDispose(BeatStationBase<Context> station) {}
+  void beforeDispose(BeatStation<State, Context> station) {}
 
   bool get autoStart;
-  BeatStationBase<Context> get station;
+  BeatStation<State, Context> get station;
 }
 
 abstract class BeatStationScopeState<Scope extends BeatStationScope>
