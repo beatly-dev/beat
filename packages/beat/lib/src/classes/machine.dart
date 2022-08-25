@@ -30,24 +30,34 @@ class BeatMachine {
       stationOf(type)?.currentState as T?;
 
   /// Forward event to currently active root station
-  _forward<Data>(
+  String _forward<Data>(
     String event, {
     Data? data,
     Duration after = const Duration(),
   }) {
     final root = _activeStations.where((station) => station.parent == null);
+    final now = DateTime.now().microsecondsSinceEpoch;
+    final eventId = '$now-$event.${event.hashCode}';
     for (final station in root) {
-      station.handleEvent(event, data, after);
+      station.handleEvent(event, eventId, data, after);
     }
 
     /// Check guarded eventless
     checkGuardedEventless();
+    return eventId;
   }
 
   /// Check active stations' queued eventless events
   checkGuardedEventless() {
     for (final station in _activeStations) {
       station.checkGuardedEventless();
+    }
+  }
+
+  /// Cancel and remove a delayed timer
+  cancelDelayed(String eventId) {
+    for (final station in _activeStations) {
+      station.cancelDelayed(eventId);
     }
   }
 

@@ -5,11 +5,11 @@ import 'package:meta/meta.dart';
 
 import '../../beat.dart';
 import '../utils/function.dart';
+import 'models/result.dart';
 import 'sender.dart';
 import 'utils/action.dart';
 
 /// TODO: hanlde services
-/// TODO: Implement parallel stations
 /// Common logic of beat station
 abstract class BeatStation<State extends Enum, Context> {
   BeatStation({required this.machine, this.parent});
@@ -107,22 +107,37 @@ abstract class BeatStation<State extends Enum, Context> {
   /// 1. Sent by `send(event, after: duration)` syntax
   /// 2. Eventless events with a delay
   final _delayed = Queue<Timer>();
+  final _delayedIds = <String, Timer>{};
 
   /// Add delayed events
-  addDelayed(Function delayed, Duration after) {
+  addDelayed(Function callback, Duration after, String eventId) {
     if (after.inMicroseconds == 0) {
-      return delayed();
+      return callback();
     }
     final state = currentState.state;
-    _delayed.add(
-      Timer(after, () {
-        /// Execute delayed event only if the state is still the same
-        if (state != currentState.state) {
-          return;
-        }
-        delayed();
-      }),
-    );
+    final timer = Timer(after, () {
+      /// Execute delayed event only if the state is still the same
+      if (state != currentState.state) {
+        return;
+      }
+      callback();
+    });
+    _delayed.add(timer);
+
+    /// Add timer id to allow programmatically cancel the timer
+    if (eventId.isNotEmpty) {
+      _delayedIds.addAll({eventId: timer});
+    }
+  }
+
+  /// Cancel and remove a delayed timer
+  cancelDelayed(String eventId) {
+    final delayed = _delayedIds[eventId];
+    if (delayed != null) {
+      delayed.cancel();
+      _delayedIds.remove(eventId);
+      _delayed.remove(delayed);
+    }
   }
 
   /// Clear delayed events
@@ -187,21 +202,25 @@ abstract class BeatStation<State extends Enum, Context> {
   OnEntry get currentStateEntry => _stateEntry[currentState.state] ?? OnEntry();
   OnExit get currentStateExit => _stateExit[currentState.state] ?? OnExit();
 
-  /// The deepest state consumes this event.
-  bool handleEvent<Data>(
-    String event, [
+  /// According to the statecharts.dev, the deepest child should handle the event.
+  EventResult handleEvent<Data>(
+    String event,
+    String eventId, [
     Data? data,
     Duration after = const Duration(milliseconds: 0),
   ]) {
     /// Not started yet or done. Do nothing.
     if (!_started || done) {
-      return false;
+      return EventResult.notHandled();
     }
 
-    final handled = child?.handleEvent(event, data, after) ?? false;
+    /// The deepest child should handle the event.
+    final result = child?.handleEvent(event, eventId, data, after) ??
+        EventResult.notHandled();
 
-    if (handled) {
-      return true;
+    if (result.handled) {
+      /// If one of the children handled this event, then return
+      return result;
     }
 
     /// 0. Setup.
@@ -209,7 +228,7 @@ abstract class BeatStation<State extends Enum, Context> {
 
     /// If this station can't handle this event, return
     if (beats.isEmpty) {
-      return false;
+      return EventResult.notHandled();
     }
 
     final eventData = EventData(event: event, data: data);
@@ -231,8 +250,9 @@ abstract class BeatStation<State extends Enum, Context> {
           }
         },
         after,
+        eventId,
       );
-      return true;
+      return EventResult.handled();
     }
 
     /// 0-2. else: immediately run the first matching beat with the same event
@@ -243,7 +263,7 @@ abstract class BeatStation<State extends Enum, Context> {
       }
     }
 
-    return true;
+    return EventResult.handled();
   }
 
   /// Handle transitions
@@ -350,6 +370,7 @@ abstract class BeatStation<State extends Enum, Context> {
           }
         },
         delay,
+        '',
       );
     }
   }

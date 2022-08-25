@@ -1,4 +1,5 @@
 import '../../beat.dart';
+import 'models/result.dart';
 import 'sender.dart';
 
 enum ParallelStationState {
@@ -58,8 +59,9 @@ abstract class ParallelStation
 
   /// Should propagate the event to all parallel stations.
   @override
-  bool handleEvent<Data>(
-    String event, [
+  EventResult handleEvent<Data>(
+    String event,
+    String eventId, [
     Data? data,
     Duration after = const Duration(milliseconds: 0),
   ]) {
@@ -68,9 +70,13 @@ abstract class ParallelStation
       /// all parallel station must receive the event
       /// So [BeatStation.handleEvent] should be called earlier than
       /// [handled] is evaluated.
-      handled = station.handleEvent(event, data, after) || handled;
+      handled =
+          station.handleEvent(event, eventId, data, after).handled || handled;
     }
-    return handled;
+    if (handled) {
+      return EventResult.handled();
+    }
+    return EventResult.notHandled();
   }
 
   /// Should propagate the checking request to all parallel stations.
