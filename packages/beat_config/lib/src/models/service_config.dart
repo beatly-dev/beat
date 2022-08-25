@@ -1,20 +1,20 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'invoke_config.g.dart';
+part 'service_config.g.dart';
 
 @JsonSerializable()
-class InvokeConfig {
+class ServiceConfig {
   final String stateBase;
   final String stateField;
   final String source;
 
-  const InvokeConfig({
+  const ServiceConfig({
     required this.stateBase,
     required this.stateField,
     required this.source,
   });
 
-  factory InvokeConfig.fromJson(Map<String, dynamic> json) =>
-      _$InvokeConfigFromJson(json);
-  Map<String, dynamic> toJson() => _$InvokeConfigToJson(this);
+  factory ServiceConfig.fromJson(Map<String, dynamic> json) =>
+      _$ServiceConfigFromJson(json);
+  Map<String, dynamic> toJson() => _$ServiceConfigToJson(this);
 }
