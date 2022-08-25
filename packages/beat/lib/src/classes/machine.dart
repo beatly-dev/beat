@@ -29,13 +29,14 @@ class BeatMachine {
   T? stateOf<T extends BeatState>(Type type) =>
       stationOf(type)?.currentState as T?;
 
-  /// Forward event to currently active stations
+  /// Forward event to currently active root station
   _forward<Data>(
     String event, {
     Data? data,
     Duration after = const Duration(),
   }) {
-    for (final station in _activeStations) {
+    final root = _activeStations.where((station) => station.parent == null);
+    for (final station in root) {
       station.handleEvent(event, data, after);
     }
 
