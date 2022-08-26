@@ -3,28 +3,21 @@ library beat_generator;
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
-import 'src/beat_node_generator.dart';
-import 'src/station_generator.dart';
+import 'src/machine_generator.dart';
+import 'src/station_data_generator.dart';
 
-Builder beatTreeMaker(BuilderOptions options) {
+Builder beatStationDataGenerator(BuilderOptions options) {
   return LibraryBuilder(
-    BeatNodeGenerator(),
+    StationDataGenerator(),
     generatedExtension: '.beat_tree.json',
   );
 }
 
-Builder beatMaker(BuilderOptions options) {
-  final stationGenerator = StationGenerator();
-  // final beatBuidler = BeatBuilder();
-  // return BeatBuilder();
-  // return LibraryBuilder(
-  //   stationGenerator,
-  //   generatedExtension: '.beat.dart',
-  // );
+Builder beatMachineGenerator(BuilderOptions options) {
+  final machineGenerator = BeatMachineGenerator();
   return PartBuilder(
     [
-      // compoundGenerator,
-      stationGenerator,
+      machineGenerator,
     ],
     '.beat.dart',
   );

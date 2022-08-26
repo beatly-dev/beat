@@ -9,44 +9,42 @@ import '../utils/constant_reader.dart';
 import 'annotation_aggregator.dart';
 import 'annotation_field.dart';
 
-Future<List<BeatConfig>> aggregateBeatConfigs(
+List<BeatConfig> aggregateBeatConfigs(
   Element element,
   String? fromBase,
   BuildStep buildStep,
-) async {
-  final annotations =
-      await aggregateAnnotations(element, _beatChecker, buildStep);
+) {
+  final annotations = aggregateAnnotations(element, _beatChecker, buildStep);
   fromBase ??= element.name;
   return annotations.map((e) => e.toBeatConfig(fromBase!)).toList();
 }
 
-Future<List<BeatConfig>> getBeatConfigs(
+List<BeatConfig> getBeatConfigs(
   Element element,
   String? fromBase,
   BuildStep buildStep,
-) async {
-  final annotations = await getAnnotations(element, _beatChecker, buildStep);
+) {
+  final annotations = getAnnotations(element, _beatChecker, buildStep);
   fromBase ??= element.name;
   return annotations.map((e) => e.toBeatConfig(fromBase!)).toList();
 }
 
-Future<Map<String, List<BeatConfig>>> mapBeatAnnotations<C>(
+Map<String, List<BeatConfig>> mapBeatAnnotations<C>(
   String stateName,
   List<Element> fields,
   BuildStep buildStep,
-) async {
+) {
   final beats = <String, List<BeatConfig>>{};
   for (final field in fields) {
     if (field is! ClassElement &&
         !(field is FieldElement && field.isEnumConstant)) {
       continue;
     }
-    final beatConfigs = await getBeatConfigs(field, stateName, buildStep);
+    final beatConfigs = getBeatConfigs(field, stateName, buildStep);
     final from = field.name!;
     beats[from] = beatConfigs;
     if (field is ClassElement) {
-      final fieldBeats =
-          await mapBeatAnnotations(stateName, field.fields, buildStep);
+      final fieldBeats = mapBeatAnnotations(stateName, field.fields, buildStep);
       beats.addAll(fieldBeats);
     }
   }
@@ -102,14 +100,10 @@ extension on AggregatedAnnotation {
     final type = e.annotationObj.type!;
     var eventless = false;
     var after = 'const Duration(milliseconds: 0)';
+
     if (_eventlessBeatChecker.isAssignableFromType(type)) {
       eventless = true;
-      final duration = annotation
-          .read('after')
-          .objectValue
-          .getField('_duration')
-          ?.toIntValue();
-      after = 'const Duration(microseconds: $duration)';
+      after = getDurationSource(e.source, 'after') ?? after;
     }
 
     final config = BeatConfig(

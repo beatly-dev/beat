@@ -10,6 +10,33 @@ String? getListField(String source, String fieldName) {
   return firstMatchingList(list);
 }
 
+String? getDurationSource(String source, String fieldName) {
+  final start = source.split(fieldName);
+  if (start.length < 2) return null;
+  final right = start[1];
+  final durationStart = right.indexOf('Duration');
+  if (durationStart != -1) {
+    var parCount = 0;
+    for (var i = durationStart; i < right.length; ++i) {
+      final char = right[i];
+      if (char == '(') {
+        parCount++;
+      } else if (char == ')') {
+        parCount--;
+        if (parCount == 0) {
+          return right.substring(durationStart, i + 1);
+        }
+      }
+    }
+  }
+
+  final comma = right.split(',');
+  if (comma.isNotEmpty) return comma[0];
+  final par = right.split(')');
+  if (par.isNotEmpty) return par[0];
+  return null;
+}
+
 String? getTypeField(ConstantReader reader, String fieldName) {
   return reader
       .read(fieldName)

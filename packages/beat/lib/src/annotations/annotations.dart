@@ -1,4 +1,5 @@
 export 'beat.dart';
+export 'final.dart';
 export 'on_entry.dart';
 export 'on_entry.dart';
 export 'on_exit.dart';

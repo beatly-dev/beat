@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:analyzer/dart/element/element.dart';
 
 import '../models/state.dart';
-import '../resources/beat_tree_resource.dart';
+import '../resources/station_data_resource.dart';
 import '../utils/context.dart';
 import '../utils/string.dart';
 
 class BeatProviderGenerator {
   final ClassElement baseEnum;
-  final BeatTreeSharedResource beatTree;
+  final BeatStationSharedResource beatTree;
 
   BeatProviderGenerator(this.baseEnum, this.beatTree);
   late final node = beatTree.getNode(baseEnum.name);

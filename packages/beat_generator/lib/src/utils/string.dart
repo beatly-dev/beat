@@ -82,11 +82,6 @@ String toBeatAnnotationVariableDeclaration(
       ${config.eventless ? 'after: ${config.after},' : ''}
     );''';
 
-String toInvokeVariableName(InvokeConfig config) =>
-    '_invokeOn${toBeginningOfSentenceCase(config.stateBase)}${toBeginningOfSentenceCase(config.stateField)}';
-String toInvokeVariableDeclaration(InvokeConfig config) =>
-    'const ${toInvokeVariableName(config)} = ${config.source};';
-
 String toBeatSenderClassName(String base) =>
     '${toBeginningOfSentenceCase(base)}BeatSender';
 

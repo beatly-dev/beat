@@ -19,26 +19,26 @@ class AggregatedAnnotation {
   });
 }
 
-Future<List<AggregatedAnnotation>> aggregateAnnotations(
+List<AggregatedAnnotation> aggregateAnnotations(
   Element element,
   TypeChecker typeChecker,
   BuildStep buildStep,
-) async {
+) {
   final fields = (element is ClassElement) ? element.fields : [];
-  final annotations = await getAnnotations(element, typeChecker, buildStep);
+  final annotations = getAnnotations(element, typeChecker, buildStep);
   for (final field in fields) {
     annotations.addAll(
-      await getAnnotations(field, typeChecker, buildStep),
+      getAnnotations(field, typeChecker, buildStep),
     );
   }
   return annotations;
 }
 
-Future<List<AggregatedAnnotation>> getAnnotations<C>(
+List<AggregatedAnnotation> getAnnotations<C>(
   Element element,
   TypeChecker typeChecker,
   BuildStep buildStep,
-) async {
+) {
   final annotations = <AggregatedAnnotation>[];
   for (final annotationElm in element.metadata) {
     final annotationObj = annotationElm.computeConstantValue();

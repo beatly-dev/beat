@@ -1,24 +1,24 @@
 targets:
   $default:
     builders:
-      beat_node_generator:
+      beat_station_data_generator:
         enabled: true
-      beat_code_builder:
+      beat_machine_generator:
         enabled: true
 
 builders:
-  beat_node_generator:
+  beat_station_data_generator:
     import: "package:beat_generator/beat_generator.dart"
-    builder_factories: ["beatTreeMaker"]
-    build_extensions: { ".dart": [".beat_tree.json"] }
+    builder_factories: ["beatStationDataGenerator"]
+    build_extensions: { ".dart": [".beat_data.json"] }
     auto_apply: dependents
     runs_before: [":beat_code_builder"]
     build_to: cache
     # applies_builders: [":beat_tree_constructor"]
 
-  beat_code_builder:
+  beat_machine_generator:
     import: "package:beat_generator/beat_generator.dart"
-    builder_factories: ["beatMaker"]
+    builder_factories: ["beatMachineGenerator"]
     build_extensions: { ".dart": [".beat.dart"] }
     auto_apply: dependents
     build_to: source

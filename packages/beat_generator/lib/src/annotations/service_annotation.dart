@@ -7,19 +7,19 @@ import 'package:source_gen/source_gen.dart';
 
 import 'annotation_aggregator.dart';
 
-Future<List<InvokeConfig>> aggregateInvokeConfigs(
+List<ServiceConfig> aggregateInvokeConfigs(
   Element element,
   String? fromBase,
   BuildStep buildStep,
-) async {
+) {
   final annotations =
-      await aggregateAnnotations(element, _invokeChecker, buildStep);
+      aggregateAnnotations(element, _servicesChecker, buildStep);
   fromBase ??= element.name;
   return annotations.map((e) {
     final fromField = e.element.name!;
     final source = e.source;
 
-    final config = InvokeConfig(
+    final config = ServiceConfig(
       stateBase: fromBase!,
       stateField: fromField,
       source: source,
@@ -28,18 +28,18 @@ Future<List<InvokeConfig>> aggregateInvokeConfigs(
   }).toList();
 }
 
-Future<List<InvokeConfig>> getInvokeAnnotations(
+List<ServiceConfig> getInvokeAnnotations(
   Element element,
   String? fromBase,
   BuildStep buildStep,
-) async {
-  final annotations = await getAnnotations(element, _invokeChecker, buildStep);
+) {
+  final annotations = getAnnotations(element, _servicesChecker, buildStep);
   fromBase ??= element.name;
   return annotations.map((e) {
     final fromField = e.element.name!;
     final source = e.source;
 
-    final config = InvokeConfig(
+    final config = ServiceConfig(
       stateBase: fromBase!,
       stateField: fromField,
       source: source,
@@ -48,29 +48,28 @@ Future<List<InvokeConfig>> getInvokeAnnotations(
   }).toList();
 }
 
-Future<Map<String, List<InvokeConfig>>> mapInvokeAnnotations(
+Map<String, List<ServiceConfig>> mapInvokeAnnotations(
   String stateName,
   List<Element> fields,
   BuildStep buildStep,
-) async {
-  final invokes = <String, List<InvokeConfig>>{};
+) {
+  final invokes = <String, List<ServiceConfig>>{};
   for (final field in fields) {
     if (field is! ClassElement &&
         !(field is FieldElement && field.isEnumConstant)) {
       continue;
     }
-    final invokeConfigs =
-        await getInvokeAnnotations(field, stateName, buildStep);
+    final invokeConfigs = getInvokeAnnotations(field, stateName, buildStep);
     final from = field.name!;
     invokes[from] = invokeConfigs;
   }
   return invokes;
 }
 
-const _invokeChecker = TypeChecker.fromRuntime(Invokes);
+const _servicesChecker = TypeChecker.fromRuntime(Services);
 
-List<DartObject> _invokeAnnotations(Element element) =>
-    _invokeChecker.annotationsOf(element, throwOnUnresolved: false).toList();
+List<DartObject> _servicesAnnotations(Element element) =>
+    _servicesChecker.annotationsOf(element, throwOnUnresolved: false).toList();
 
-List<ConstantReader> invokeAnnotations(Element element) =>
-    _invokeAnnotations(element).map((e) => ConstantReader(e)).toList();
+List<ConstantReader> servicesAnnotations(Element element) =>
+    _servicesAnnotations(element).map((e) => ConstantReader(e)).toList();
