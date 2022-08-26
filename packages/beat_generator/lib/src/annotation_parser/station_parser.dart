@@ -119,6 +119,13 @@ You should define substation enum.
       return map;
     });
 
+    final annotationSource = element.metadata
+        .firstWhere((meta) {
+          return isAssignableFrom(stationChecker, meta);
+        })
+        .toSource()
+        .substring(1);
+
     return BeatStationNode(
       id: stationId,
       name: element.name,
@@ -135,6 +142,7 @@ You should define substation enum.
       stateEntry: stateEntry,
       stateExit: stateExit,
       withFlutter: withFlutter,
+      source: annotationSource,
     );
   }
 }
@@ -144,7 +152,7 @@ bool isAssignableFrom(TypeChecker checker, ElementAnnotation annotation) {
 
   if (annotationObj == null) return false;
   final type = annotationObj.type!;
-  return !checker.isAssignableFromType(type);
+  return checker.isAssignableFromType(type);
 }
 
 extension on ConstantReader {
@@ -166,8 +174,11 @@ extension on ConstantReader {
   }
 
   String? get initialContext {
-    final context = peek('initialContext')?.objectValue.toString();
-    return context;
+    final context = peek('initialContext');
+    if (context == null) return null;
+    final value = context.literalValue;
+    if (value != null) return '$value';
+    return context.objectValue.toString();
   }
 
   String? get initialState {

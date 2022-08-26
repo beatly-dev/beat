@@ -52,6 +52,9 @@ class BeatStationNode {
   /// need flutter widgets
   bool withFlutter;
 
+  /// Original code of annotation
+  final String? source;
+
   BeatStationNode({
     required this.id,
     required this.name,
@@ -68,6 +71,7 @@ class BeatStationNode {
     required this.stateEntry,
     required this.stateExit,
     required this.withFlutter,
+    required this.source,
   });
 
   Map<String, dynamic> toJson() => _$BeatStationNodeToJson(this);

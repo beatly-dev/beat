@@ -38,6 +38,7 @@ BeatStationNode _$BeatStationNodeFromJson(Map<String, dynamic> json) =>
       stateEntry: Map<String, String>.from(json['stateEntry'] as Map),
       stateExit: Map<String, String>.from(json['stateExit'] as Map),
       withFlutter: json['withFlutter'] as bool,
+      source: json['source'] as String?,
     );
 
 Map<String, dynamic> _$BeatStationNodeToJson(BeatStationNode instance) =>
@@ -57,4 +58,5 @@ Map<String, dynamic> _$BeatStationNodeToJson(BeatStationNode instance) =>
       'stateEntry': instance.stateEntry,
       'stateExit': instance.stateExit,
       'withFlutter': instance.withFlutter,
+      'source': instance.source,
     };

@@ -22,11 +22,20 @@ enum Dog {
   running,
 }
 
-@Station()
+@Station(contextType: String)
+@OnEntry([asdf])
+@OnExit([])
 enum Tail {
+  @OnExit([])
+  @OnEntry([asdf])
   stopped,
+  @OnExit([])
+  @OnEntry([asdf])
+  @Final()
   wagging,
 }
+
+asdf() {}
 
 @ParallelStation()
 class DogWithTail {
