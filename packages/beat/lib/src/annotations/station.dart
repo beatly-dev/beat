@@ -3,7 +3,7 @@
 class Station<State extends Enum, Context> {
   const Station({
     this.initialState,
-    this.initalContext,
+    this.initialContext,
     this.id,
     this.contextType = dynamic,
     this.withFlutter = false,
@@ -16,7 +16,7 @@ class Station<State extends Enum, Context> {
   final State? initialState;
 
   /// Initial Context data
-  final Context? initalContext;
+  final Context? initialContext;
 
   /// A type of the context.
   final Type contextType;
