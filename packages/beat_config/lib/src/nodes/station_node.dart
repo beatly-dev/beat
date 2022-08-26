@@ -25,11 +25,8 @@ class BeatStationNode {
   /// enum fields
   final List<String> states;
 
-  /// final state
-  final String? finalState;
-
   /// nested station related to enum field
-  final Map<String, String> children;
+  final Map<String, String> substations;
 
   /// beats included in this station
   final Map<String, List<BeatConfig>> beats;
@@ -37,29 +34,40 @@ class BeatStationNode {
   /// invokes included in this station
   final Map<String, List<ServiceConfig>> services;
 
+  /// final state
+  final List<String> finalState;
+
   /// OnEntry
-  final String entrySource;
+  final String stationEntry;
 
   /// OnExit
-  final String exitSource;
+  final String stationExit;
+
+  /// OnEntry for each states
+  final Map<String, String> stateEntry;
+
+  /// OnExit for each states
+  final Map<String, String> stateExit;
 
   /// need flutter widgets
   bool withFlutter;
 
   BeatStationNode({
-    this.id,
+    required this.id,
     required this.name,
-    required this.contextType,
     required this.states,
-    required this.initialContext,
     required this.initialState,
-    this.finalState,
-    this.withFlutter = false,
-    required this.children,
+    required this.initialContext,
+    required this.contextType,
+    required this.substations,
     required this.beats,
     required this.services,
-    required this.entrySource,
-    required this.exitSource,
+    required this.finalState,
+    required this.stationEntry,
+    required this.stationExit,
+    required this.stateEntry,
+    required this.stateExit,
+    required this.withFlutter,
   });
 
   Map<String, dynamic> toJson() => _$BeatStationNodeToJson(this);

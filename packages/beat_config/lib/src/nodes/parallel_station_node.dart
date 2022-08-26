@@ -14,17 +14,17 @@ class ParallelStationNode {
   final List<String> stations;
 
   /// Parallel stations initial state
-  final Map<String, String> initialStates;
+  final List<String> initialStates;
 
   /// need flutter widgets
   bool withFlutter;
 
   ParallelStationNode({
-    this.id,
+    required this.id,
     required this.name,
-    this.withFlutter = false,
-    this.stations = const [],
-    this.initialStates = const {},
+    required this.stations,
+    required this.initialStates,
+    required this.withFlutter,
   });
 
   Map<String, dynamic> toJson() => _$ParallelStationNodeToJson(this);

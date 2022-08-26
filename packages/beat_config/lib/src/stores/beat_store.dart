@@ -10,10 +10,17 @@ const beatJsonLocation = '$beatEntryPointDir/beat_data.json';
 
 @JsonSerializable()
 class StationDataStore {
-  final Map<String, ParallelStationNode> parallels;
-  final Map<String, BeatStationNode> stations;
+  @JsonKey(includeIfNull: false, disallowNullValue: false)
+  late final Map<String, BeatStationNode> stations;
 
-  StationDataStore(this.stations, this.parallels);
+  @JsonKey(includeIfNull: false, disallowNullValue: false)
+  late final Map<String, ParallelStationNode> parallels;
+
+  StationDataStore({
+    Map<String, BeatStationNode>? stations,
+    Map<String, ParallelStationNode>? parallels,
+  })  : stations = stations ?? {},
+        parallels = parallels ?? {};
 
   addStation({BeatStationNode? station, ParallelStationNode? parallel}) {
     assert(station != null || parallel != null);

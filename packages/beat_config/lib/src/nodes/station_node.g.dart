@@ -10,14 +10,12 @@ BeatStationNode _$BeatStationNodeFromJson(Map<String, dynamic> json) =>
     BeatStationNode(
       id: json['id'] as String?,
       name: json['name'] as String,
-      contextType: json['contextType'] as String,
       states:
           (json['states'] as List<dynamic>).map((e) => e as String).toList(),
-      initialContext: json['initialContext'] as String,
       initialState: json['initialState'] as String,
-      finalState: json['finalState'] as String?,
-      withFlutter: json['withFlutter'] as bool? ?? false,
-      children: Map<String, String>.from(json['children'] as Map),
+      initialContext: json['initialContext'] as String,
+      contextType: json['contextType'] as String,
+      substations: Map<String, String>.from(json['substations'] as Map),
       beats: (json['beats'] as Map<String, dynamic>).map(
         (k, e) => MapEntry(
             k,
@@ -32,8 +30,14 @@ BeatStationNode _$BeatStationNodeFromJson(Map<String, dynamic> json) =>
                 .map((e) => ServiceConfig.fromJson(e as Map<String, dynamic>))
                 .toList()),
       ),
-      entrySource: json['entrySource'] as String,
-      exitSource: json['exitSource'] as String,
+      finalState: (json['finalState'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      stationEntry: json['stationEntry'] as String,
+      stationExit: json['stationExit'] as String,
+      stateEntry: Map<String, String>.from(json['stateEntry'] as Map),
+      stateExit: Map<String, String>.from(json['stateExit'] as Map),
+      withFlutter: json['withFlutter'] as bool,
     );
 
 Map<String, dynamic> _$BeatStationNodeToJson(BeatStationNode instance) =>
@@ -44,11 +48,13 @@ Map<String, dynamic> _$BeatStationNodeToJson(BeatStationNode instance) =>
       'initialState': instance.initialState,
       'initialContext': instance.initialContext,
       'states': instance.states,
-      'finalState': instance.finalState,
-      'children': instance.children,
+      'substations': instance.substations,
       'beats': instance.beats,
       'services': instance.services,
-      'entrySource': instance.entrySource,
-      'exitSource': instance.exitSource,
+      'finalState': instance.finalState,
+      'stationEntry': instance.stationEntry,
+      'stationExit': instance.stationExit,
+      'stateEntry': instance.stateEntry,
+      'stateExit': instance.stateExit,
       'withFlutter': instance.withFlutter,
     };
