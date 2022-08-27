@@ -1,7 +1,7 @@
 import 'package:beat/beat.dart';
 
 @Station()
-@Beat(event: 'sleep', to: Dog.running)
+@Beat(event: 'sleep', to: Dog.sleeping)
 enum Dog {
   @Beat(event: 'walk', to: Dog.walking)
   @Beat(event: 'run', to: Dog.running)
@@ -20,6 +20,9 @@ enum Dog {
   @Beat(event: 'goHome', to: Dog.home)
   @Substation(Tail)
   running,
+
+  @Final()
+  sleeping,
 }
 
 @Station(contextType: String)
@@ -31,6 +34,7 @@ enum Tail {
   stopped,
   @OnExit([])
   @OnEntry([asdf])
+  @Services()
   @Final()
   wagging,
 }
