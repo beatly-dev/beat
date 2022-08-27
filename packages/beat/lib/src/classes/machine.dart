@@ -4,6 +4,8 @@ import '../../beat.dart';
 /// This will handle the state transitions and the event dispatching.
 /// Invoked services and delayed events are also handled here.
 abstract class BeatMachine {
+  BeatMachine();
+
   /// station id to station
   BeatStation get root;
 
@@ -11,7 +13,7 @@ abstract class BeatMachine {
   MachineSender get send;
 
   /// Get currently active class
-  late final _activeStations = _ActiveStations(root);
+  _ActiveStations get _activeStations => _ActiveStations(root);
 
   /// Get currently active state
   /// - Including all active stations
