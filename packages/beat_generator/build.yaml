@@ -12,9 +12,8 @@ builders:
     builder_factories: ["beatStationDataGenerator"]
     build_extensions: { ".dart": [".beat_data.json"] }
     auto_apply: dependents
-    runs_before: [":beat_code_builder"]
+    runs_before: [":beat_machine_generator"]
     build_to: cache
-    # applies_builders: [":beat_tree_constructor"]
 
   beat_machine_generator:
     import: "package:beat_generator/beat_generator.dart"
@@ -22,8 +21,3 @@ builders:
     build_extensions: { ".dart": [".beat.dart"] }
     auto_apply: dependents
     build_to: source
-# post_process_builders:
-#   beat_tree_constructor:
-#     import: "package:beat_generator/beat_generator.dart"
-#     builder_factory: "beatTreeConstructor"
-#     input_extensions: [".beat_tree.json"]
