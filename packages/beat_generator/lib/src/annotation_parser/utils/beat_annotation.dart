@@ -5,7 +5,7 @@ import 'package:beat_config/beat_config.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
-import '../utils/constant_reader.dart';
+import '../../utils/constant_reader.dart';
 import 'annotation_aggregator.dart';
 import 'annotation_field.dart';
 

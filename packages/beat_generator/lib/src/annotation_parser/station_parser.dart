@@ -4,11 +4,11 @@ import 'package:beat_config/beat_config.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
-import '../annotations/beat_annotation.dart';
-import '../annotations/service_annotation.dart';
 import '../utils/constant_reader.dart';
 import '../utils/context.dart';
 import '../utils/type_checker.dart';
+import 'utils/beat_annotation.dart';
+import 'utils/service_annotation.dart';
 
 class StationParser {
   /// Returns set of root beat tree nodes.
