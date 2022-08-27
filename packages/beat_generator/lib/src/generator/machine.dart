@@ -61,7 +61,7 @@ class $machineName extends $_baseClass {
   late final root = $stationName(machine: this)..start();
 
   @override 
-  late final send = $senderName(this);
+  late final $senderName send = $senderName(this);
 }
 
 class $senderName extends MachineSender {
