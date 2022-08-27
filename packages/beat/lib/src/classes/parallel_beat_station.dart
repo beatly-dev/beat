@@ -99,4 +99,22 @@ abstract class ParallelBeatStation
       'ParallelStation.handlTransition should not be called',
     );
   }
+
+  @override
+  Map<ParallelStationState, OnEntry> get stateEntry =>
+      throw UnimplementedError();
+
+  @override
+  Map<ParallelStationState, OnExit> get stateExit => throw UnimplementedError();
+
+  @override
+  Map<ParallelStationState, List<Services>> get stateServices =>
+      throw UnimplementedError();
+
+  @override
+  Map<ParallelStationState, List<Beat>> get stateToBeat =>
+      throw UnimplementedError();
+
+  @override
+  List<Beat> get stationBeats => throw UnimplementedError();
 }

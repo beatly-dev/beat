@@ -2,7 +2,7 @@ import 'beat_station.dart';
 
 /// Default state class
 class BeatState<State extends Enum, Context> {
-  const BeatState(this.state, this.context, this._station);
+  const BeatState(this.state, this.context, this.station);
 
   /// An enum that represents the state
   final State state;
@@ -11,7 +11,7 @@ class BeatState<State extends Enum, Context> {
   final Context? context;
 
   /// Station holding the state
-  final BeatStation _station;
+  final BeatStation station;
 
   BeatState<State, Context> copyWith({
     State? state,
@@ -20,7 +20,7 @@ class BeatState<State extends Enum, Context> {
       BeatState(
         state ?? this.state,
         context ?? this.context,
-        _station,
+        station,
       );
 
   BeatState<State, Context> copyWithContext({
@@ -30,10 +30,10 @@ class BeatState<State extends Enum, Context> {
       BeatState(
         state ?? this.state,
         context,
-        _station,
+        station,
       );
 
-  T? of<T extends BeatState>(Type enumType) => _station.stateOf(enumType);
+  T? of<T extends BeatState>(Type enumType) => station.stateOf(enumType);
 
   @override
   String toString() => '{state: $state, context: $context';

@@ -3,7 +3,10 @@ import 'package:beat/beat.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
-import 'resources/station_data_resource.dart';
+import 'generator/parallel_station.dart';
+import 'generator/state.dart';
+import 'generator/station.dart';
+import 'resources/station_data.dart';
 
 class BeatMachineGenerator extends GeneratorForAnnotation<Station> {
   @override
@@ -15,8 +18,39 @@ class BeatMachineGenerator extends GeneratorForAnnotation<Station> {
     if (element is! ClassElement || element is! EnumElement) {
       throw 'BeatStation can only be used on enums';
     }
-    final data = await buildStep.fetchResource(inMemoryStationData);
+    final store = await buildStep.fetchResource(inMemoryStationData);
 
-    return [];
+    final station = InheritedBeatStation(
+      element: element as EnumElement,
+      store: store,
+    );
+
+    final state =
+        InheritedBeatState(element: element as EnumElement, store: store);
+
+    return [
+      station.toString(),
+      state.toString(),
+    ];
+  }
+}
+
+class ParallelMachineGenerator extends GeneratorForAnnotation<ParallelStation> {
+  @override
+  generateForAnnotatedElement(
+    Element element,
+    ConstantReader annotation,
+    BuildStep buildStep,
+  ) async {
+    if (element is! ClassElement || element is EnumElement) {
+      throw 'BeatStation can only be used on class';
+    }
+
+    final store = await buildStep.fetchResource(inMemoryStationData);
+    final parallels = InheritedParallelStation(element: element, store: store);
+
+    return [
+      parallels.toString(),
+    ];
   }
 }

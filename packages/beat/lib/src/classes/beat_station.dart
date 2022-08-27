@@ -9,6 +9,7 @@ import 'models/result.dart';
 import 'utils/action.dart';
 
 /// TODO: hanlde services
+/// TODO: Split Logic
 /// Common logic of beat station
 abstract class BeatStation<State extends Enum, Context> {
   BeatStation({required this.machine, this.parent});
@@ -144,7 +145,11 @@ abstract class BeatStation<State extends Enum, Context> {
     _delayed.clear();
   }
 
-  Map<State, List<EventlessBeat>> get _stateToEventless;
+  Map<State, List<EventlessBeat>> get _stateToEventless => stateToBeat.map(
+        (state, list) =>
+            MapEntry(state, list.whereType<EventlessBeat>().toList()),
+      );
+
   List<EventlessBeat> get eventlessBeats =>
       _stateToEventless[currentState.state] ?? [];
 
@@ -186,17 +191,29 @@ abstract class BeatStation<State extends Enum, Context> {
     return false;
   }
 
+  List<Beat> get stationBeats;
+
   /// Current state to beat event
-  Map<State, List<Beat>> get _stateToBeat;
+  Map<State, List<Beat>> get stateToBeat;
 
   /// Beat events in the current state
-  List<Beat> get normalBeats => _stateToBeat[currentState.state] ?? [];
+  List<Beat> get normalBeats => stateToBeat[currentState.state] ?? [];
 
-  Map<State, OnEntry> get _stateEntry;
-  Map<State, OnExit> get _stateExit;
+  Map<State, OnEntry> get stateEntry;
+  Map<State, OnExit> get stateExit;
 
-  OnEntry get currentStateEntry => _stateEntry[currentState.state] ?? OnEntry();
-  OnExit get currentStateExit => _stateExit[currentState.state] ?? OnExit();
+  /// Entry actions for current state
+  OnEntry get currentStateEntry => stateEntry[currentState.state] ?? OnEntry();
+
+  /// Exit actions for current state
+  OnExit get currentStateExit => stateExit[currentState.state] ?? OnExit();
+
+  /// Services for each states
+  Map<State, List<Services>> get stateServices;
+
+  /// Services to execute for current state
+  List<Services> get currentStateServices =>
+      stateServices[currentState.state] ?? [];
 
   /// According to the statecharts.dev, the deepest child should handle the event.
   EventResult handleEvent<Data>(
@@ -219,8 +236,14 @@ abstract class BeatStation<State extends Enum, Context> {
       return result;
     }
 
-    /// 0. Setup.
-    final beats = normalBeats.where((beat) => beat.event == event);
+    /// Find the beat related to specific state.
+    var beats = normalBeats.where((beat) => beat.event == event);
+
+    if (beats.isEmpty) {
+      /// If specified beat is not available,
+      /// then find station's root beat.
+      beats = stationBeats.where((beat) => beat.event == event);
+    }
 
     /// If this station can't handle this event, return
     if (beats.isEmpty) {
@@ -369,6 +392,9 @@ abstract class BeatStation<State extends Enum, Context> {
       );
     }
   }
+
+  /// Execute services for the current state
+  executeServices() {}
 
   /// Helper method to handle actions
   _executeActions(

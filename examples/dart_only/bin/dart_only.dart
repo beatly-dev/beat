@@ -1,5 +1,7 @@
 import 'package:beat/beat.dart';
 
+part 'dart_only.beat.dart';
+
 @Station()
 @Beat(event: 'sleep', to: Dog.sleeping)
 enum Dog {
@@ -22,6 +24,9 @@ enum Dog {
   running,
 
   @Final()
+  @Services()
+  @Services()
+  @Services()
   sleeping,
 }
 
@@ -34,6 +39,8 @@ enum Tail {
   stopped,
   @OnExit([])
   @OnEntry([asdf])
+  @Services()
+  @Services()
   @Services()
   @Final()
   wagging,

@@ -15,9 +15,11 @@ Builder beatStationDataGenerator(BuilderOptions options) {
 
 Builder beatMachineGenerator(BuilderOptions options) {
   final machineGenerator = BeatMachineGenerator();
+  final parallelGenerator = ParallelMachineGenerator();
   return PartBuilder(
     [
       machineGenerator,
+      parallelGenerator,
     ],
     '.beat.dart',
   );

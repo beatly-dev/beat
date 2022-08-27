@@ -67,7 +67,7 @@ You should define substation enum.
     });
 
     final services =
-        mapInvokeAnnotations(element.name, element.fields, buildStep);
+        mapServicesAnnotations(element.name, element.fields, buildStep);
 
     final List<String> finalStates = fields.fold([], (list, field) {
       final checker = TypeChecker.fromRuntime(Final);

@@ -28,7 +28,7 @@ List<ServiceConfig> aggregateInvokeConfigs(
   }).toList();
 }
 
-List<ServiceConfig> getInvokeAnnotations(
+List<ServiceConfig> getServicesAnnotations(
   Element element,
   String? fromBase,
   BuildStep buildStep,
@@ -48,7 +48,7 @@ List<ServiceConfig> getInvokeAnnotations(
   }).toList();
 }
 
-Map<String, List<ServiceConfig>> mapInvokeAnnotations(
+Map<String, List<ServiceConfig>> mapServicesAnnotations(
   String stateName,
   List<Element> fields,
   BuildStep buildStep,
@@ -59,7 +59,7 @@ Map<String, List<ServiceConfig>> mapInvokeAnnotations(
         !(field is FieldElement && field.isEnumConstant)) {
       continue;
     }
-    final invokeConfigs = getInvokeAnnotations(field, stateName, buildStep);
+    final invokeConfigs = getServicesAnnotations(field, stateName, buildStep);
     final from = field.name!;
     invokes[from] = invokeConfigs;
   }

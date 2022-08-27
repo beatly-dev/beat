@@ -9,7 +9,7 @@ import 'package:source_gen/source_gen.dart';
 
 import 'annotation_parser/parallel_station_parser.dart';
 import 'annotation_parser/station_parser.dart';
-import 'resources/station_data_resource.dart';
+import 'resources/station_data.dart';
 import 'utils/class_checker.dart';
 import 'utils/type_checker.dart';
 
