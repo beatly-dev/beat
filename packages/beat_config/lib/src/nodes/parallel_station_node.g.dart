@@ -10,11 +10,8 @@ ParallelStationNode _$ParallelStationNodeFromJson(Map<String, dynamic> json) =>
     ParallelStationNode(
       id: json['id'] as String?,
       name: json['name'] as String,
-      stations:
-          (json['stations'] as List<dynamic>).map((e) => e as String).toList(),
-      initialStates: (json['initialStates'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
+      vars: (json['vars'] as List<dynamic>).map((e) => e as String).toList(),
+      stationName: Map<String, String>.from(json['stationName'] as Map),
       withFlutter: json['withFlutter'] as bool,
     );
 
@@ -23,7 +20,7 @@ Map<String, dynamic> _$ParallelStationNodeToJson(
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'stations': instance.stations,
-      'initialStates': instance.initialStates,
+      'vars': instance.vars,
+      'stationName': instance.stationName,
       'withFlutter': instance.withFlutter,
     };

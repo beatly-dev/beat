@@ -11,10 +11,8 @@ class ParallelStationNode {
   final String name;
 
   /// parallel stations enum name
-  final List<String> stations;
-
-  /// Parallel stations initial state
-  final List<String> initialStates;
+  final List<String> vars;
+  final Map<String, String> stationName;
 
   /// need flutter widgets
   bool withFlutter;
@@ -22,8 +20,8 @@ class ParallelStationNode {
   ParallelStationNode({
     required this.id,
     required this.name,
-    required this.stations,
-    required this.initialStates,
+    required this.vars,
+    required this.stationName,
     required this.withFlutter,
   });
 

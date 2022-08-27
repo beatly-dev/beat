@@ -95,7 +95,7 @@ const ${beat.source}
       .where((state) => state != name && state != 'values')
       .map(
         (state) => '''
-$name.$state: ${node.stateEntry[state] ?? 'const OnEntry()'},
+$name.$state: ${node.stateEntry[state] ?? 'OnEntry()'},
 ''',
       )
       .join();
@@ -104,7 +104,7 @@ $name.$state: ${node.stateEntry[state] ?? 'const OnEntry()'},
       .where((state) => state != name && state != 'values')
       .map(
         (state) => '''
-$name.$state: ${node.stateExit[state] ?? 'const OnExit()'},
+$name.$state: ${node.stateExit[state] ?? 'OnExit()'},
 ''',
       )
       .join();
@@ -116,7 +116,7 @@ $name.$state: ${node.stateExit[state] ?? 'const OnExit()'},
           final services = node.services[state] ?? [];
           final items = services.map((service) {
             return '''
-${service.source}
+const ${service.source}
 ''';
           }).join(', ');
 

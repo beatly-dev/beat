@@ -86,13 +86,13 @@ You should define substation enum.
       final annotation = element.metadata.firstWhere((meta) {
         return isAssignableFrom(entryChecker, meta);
       });
-      stationEntry = annotation.toSource().substring(1);
+      stationEntry = 'const ${annotation.toSource().substring(1)}';
     }
 
     if (exitChecker.hasAnnotationOf(element)) {
       final annotation = element.metadata
           .firstWhere((element) => isAssignableFrom(exitChecker, element));
-      stationExit = annotation.toSource().substring(1);
+      stationExit = 'const ${annotation.toSource().substring(1)}';
     }
 
     final Map<String, String> stateEntry = fields.fold({}, (map, field) {
@@ -100,7 +100,7 @@ You should define substation enum.
         final annotation = field.metadata.firstWhere((meta) {
           return isAssignableFrom(entryChecker, meta);
         });
-        map[field.name] = annotation.toSource().substring(1);
+        map[field.name] = 'const ${annotation.toSource().substring(1)}';
       } else {
         map[field.name] = 'const OnEntry()';
       }
@@ -112,7 +112,7 @@ You should define substation enum.
         final annotation = field.metadata.firstWhere((meta) {
           return isAssignableFrom(exitChecker, meta);
         });
-        map[field.name] = annotation.toSource().substring(1);
+        map[field.name] = 'const ${annotation.toSource().substring(1)}';
       } else {
         map[field.name] = 'const OnExit()';
       }

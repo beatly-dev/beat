@@ -22,28 +22,22 @@ class ParallelStationParser {
     final stationId = annotation.stationId;
     final withFlutter = annotation.withFlutter;
 
-    final stations = fields.map((field) {
-      final type = field.type;
-      return type.toString();
+    final vars = fields.map((field) {
+      return field.name;
     }).toList();
 
-    final initialStates = fields.map((field) {
-      if (!field.isConstantEvaluated) {
-        throw '''
-You must define initial state of the parallel station's children.
-You didn't define it for ${element.name}.${field.name}.
-''';
-      }
-      final value = field.computeConstantValue()!;
-      final initial = value.getField('_name')!.toStringValue()!;
-      return initial;
-    }).toList();
+    final Map<String, String> stationName = fields.fold({}, (map, field) {
+      final varName = field.name;
+      final type = field.type.getDisplayString(withNullability: false);
+      map[varName] = type;
+      return map;
+    });
 
     return ParallelStationNode(
       id: stationId,
       name: element.name,
-      stations: stations,
-      initialStates: initialStates,
+      vars: vars,
+      stationName: stationName,
       withFlutter: withFlutter,
     );
   }
@@ -59,3 +53,15 @@ extension on ConstantReader {
     return id;
   }
 }
+
+//     final initialStates = fields.map((field) {
+//       if (!field.isConstantEvaluated) {
+//         throw '''
+// You must define initial state of the parallel station's children with static const.
+// You didn't define it for ${element.name}.${field.name}.
+// ''';
+//       }
+//       final value = field.computeConstantValue()!;
+//       final initial = value.getField('_name')!.toStringValue()!;
+//       return initial;
+//     }).toList();

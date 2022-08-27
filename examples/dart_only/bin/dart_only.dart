@@ -50,8 +50,9 @@ asdf() {}
 
 @ParallelStation()
 class DogWithTail {
-  static const dog = Dog.home;
-  static const taile = Tail.stopped;
+  Dog? dog;
+  Tail? tail;
+  Tail? tail2;
 }
 
 void main(List<String> arguments) {

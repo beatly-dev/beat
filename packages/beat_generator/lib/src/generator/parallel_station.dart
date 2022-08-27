@@ -19,11 +19,12 @@ class InheritedParallelStation {
   String get stationName => toParallelStationName(name);
   ParallelStationNode get node => store.parallels[name]!;
 
-  String get children => node.stations.map(
+  String get children => node.vars.map(
         (child) {
-          final childStation = toStationName(child);
+          final station = node.stationName[child]!;
+          final childStation = toStationName(station);
           return '''
-late final $childStation ${toDartFieldCase(childStation)} = $childStation(
+late final $childStation ${toDartFieldCase(child)} = $childStation(
   machine: machine,
   parent: this,
 );
@@ -41,7 +42,7 @@ class $stationName extends $_baseClass {
 
   @override
   late final List<BeatStation> parallels = [
-    ${node.stations.map((child) => toDartFieldCase(toStationName(child))).join(',')}
+    ${node.vars.map((child) => toDartFieldCase(child)).join(',')}
   ];
 }
 ''';
