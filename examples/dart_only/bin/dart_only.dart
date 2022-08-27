@@ -36,12 +36,15 @@ enum Dog {
 enum Tail {
   @OnExit([])
   @OnEntry([asdf])
+  @Beat(event: 'wag', to: Tail.wagging)
   stopped,
   @OnExit([])
   @OnEntry([asdf])
   @Services()
   @Services()
   @Services()
+  @Beat(event: 'stop', to: Tail.stopped)
+  @Substation(DogWithTail)
   @Final()
   wagging,
 }

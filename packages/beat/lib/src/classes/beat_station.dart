@@ -17,7 +17,6 @@ abstract class BeatStation<State extends Enum, Context> {
   final BeatMachine machine;
   final BeatStation? parent;
 
-  @protected
   BeatStation? get child;
 
   BeatState<State, Context> get initialState;

@@ -3,6 +3,8 @@ import 'package:beat/beat.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
+import 'generator/events.dart';
+import 'generator/machine.dart';
 import 'generator/parallel_station.dart';
 import 'generator/state.dart';
 import 'generator/station.dart';
@@ -25,12 +27,26 @@ class BeatMachineGenerator extends GeneratorForAnnotation<Station> {
       store: store,
     );
 
-    final state =
-        InheritedBeatState(element: element as EnumElement, store: store);
+    final state = InheritedBeatState(
+      element: element as EnumElement,
+      store: store,
+    );
+
+    final machine = InheritedBeatMachine(
+      element: element as EnumElement,
+      store: store,
+    );
+
+    final events = BeatEvents(
+      element: element as EnumElement,
+      store: store,
+    );
 
     return [
       station.toString(),
       state.toString(),
+      machine.toString(),
+      events.toString(),
     ];
   }
 }
