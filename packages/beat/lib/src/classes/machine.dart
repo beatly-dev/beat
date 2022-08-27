@@ -36,6 +36,8 @@ abstract class BeatMachine {
 
   int _eventId = 0;
 
+  int _previousEventHistoryLength = 0;
+
   /// Forward event to currently active root station
   int _forward<Data>(
     String event, {
@@ -46,6 +48,7 @@ abstract class BeatMachine {
     final eventId = _eventId++;
 
     var handled = false;
+
     if (target != null) {
       final station = _activeStations.stationOf(target);
       handled =
@@ -56,6 +59,7 @@ abstract class BeatMachine {
       handled = root.handleEvent(event, eventId, data, after).handled;
     }
 
+    _previousEventHistoryLength = _eventHistory.length;
     if (handled) {
       _eventHistory.add(EventData(event: event, data: data));
 
@@ -65,6 +69,8 @@ abstract class BeatMachine {
 
     return eventId;
   }
+
+  bool get changed => _previousEventHistoryLength != _eventHistory.length;
 
   /// Check active stations' queued eventless events
   checkGuardedEventless() {
