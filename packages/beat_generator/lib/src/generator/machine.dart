@@ -58,7 +58,7 @@ int \$$event<Data>({
     return '''
 class $machineName extends $_baseClass {
   @override
-  late final root = $stationName(machine: this);
+  late final root = $stationName(machine: this)..start();
 
   @override 
   late final send = $senderName(this);

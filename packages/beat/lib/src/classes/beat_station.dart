@@ -63,7 +63,7 @@ abstract class BeatStation<State extends Enum, Context> {
     }
     _started = true;
     final startingState = initialState.copyWith(state: state, context: context);
-    eventData ??= EventData(event: 'beat.${State}Station($id).exit');
+    eventData ??= EventData(event: 'beat.${State}Station($id).start');
 
     _executeActions(
       entry,
@@ -86,7 +86,7 @@ abstract class BeatStation<State extends Enum, Context> {
     _executeActions(
       exit,
       currentState,
-      EventData(event: 'beat.${State}Station($id).exit'),
+      EventData(event: 'beat.${State}Station($id).stop'),
     );
     _started = false;
   }
