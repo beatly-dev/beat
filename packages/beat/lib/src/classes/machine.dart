@@ -100,8 +100,15 @@ class _ActiveStations {
     final active = <BeatStation>[];
     if (station.started) {
       active.add(station);
-      if (station.child != null) {
-        active.addAll(_findAllActive(station.child!));
+      final child = station.child;
+      if (child != null) {
+        if (child is ParallelBeatStation) {
+          for (final par in child.parallels) {
+            active.addAll(_findAllActive(par));
+          }
+        } else {
+          active.addAll(_findAllActive(child));
+        }
       }
     }
     return active;

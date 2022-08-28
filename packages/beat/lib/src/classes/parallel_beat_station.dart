@@ -38,7 +38,10 @@ abstract class ParallelBeatStation
   /// Start all parallel stations
   @override
   start({Enum? state, EventData? eventData, context}) {
-    super.start();
+    if (started) {
+      return;
+    }
+    started = true;
     for (final station in parallels) {
       station.start();
     }
@@ -46,11 +49,14 @@ abstract class ParallelBeatStation
 
   /// Stop all parallel stations
   @override
-  stop() {
-    for (final station in parallels) {
-      station.stop();
+  stop([bool executeStateExit = true]) {
+    if (!started) {
+      return;
     }
-    return super.stop();
+    for (final station in parallels) {
+      station.stop(executeStateExit);
+    }
+    started = false;
   }
 
   /// Should propagate the event to all parallel stations.

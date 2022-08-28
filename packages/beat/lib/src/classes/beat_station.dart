@@ -40,8 +40,7 @@ abstract class BeatStation<State extends Enum, Context> {
     stateHistory.add(nextState);
   }
 
-  bool get started => _started;
-  bool _started = false;
+  bool started = false;
 
   String get id => '$hashCode';
 
@@ -56,12 +55,11 @@ abstract class BeatStation<State extends Enum, Context> {
   /// 2. Execute machine's entry actions
   /// 3. Transition to initial state
   /// 4. Start a child station
-  @mustCallSuper
   start({final State? state, EventData? eventData, final Context? context}) {
-    if (_started) {
+    if (started) {
       return;
     }
-    _started = true;
+    started = true;
     final startingState = initialState.copyWith(state: state, context: context);
     eventData ??= EventData(event: 'beat.${State}Station($id).start');
 
@@ -72,23 +70,25 @@ abstract class BeatStation<State extends Enum, Context> {
     );
 
     handleBeat(startingState.state, eventData);
-    child?.start();
   }
 
   /// Stop the state machine
   /// Reverse the order of steps in start()
-  @mustCallSuper
-  stop() {
-    if (!_started) {
+  stop([bool executeStateExit = true]) {
+    if (!started) {
       return;
     }
-    child?.stop();
+    child?.stop(true);
+    final eventData = EventData(event: 'beat.${State}Station($id).stop');
+    if (executeStateExit) {
+      _executeActions(currentStateExit.actions, currentState, eventData);
+    }
     _executeActions(
       exit,
       currentState,
-      EventData(event: 'beat.${State}Station($id).stop'),
+      eventData,
     );
-    _started = false;
+    started = false;
   }
 
   /// Check the machine reaches `final` state
@@ -222,37 +222,17 @@ abstract class BeatStation<State extends Enum, Context> {
     Duration after = const Duration(milliseconds: 0),
   ]) {
     /// Not started yet or done. Do nothing.
-    if (!_started || done) {
-      return EventResult.notHandled();
-    }
-
-    /// The deepest child should handle the event.
-    final result = child?.handleEvent(event, eventId, data, after) ??
-        EventResult.notHandled();
-
-    if (result.handled) {
-      /// If one of the children handled this event, then return
-      return result;
-    }
-
-    /// Find the beat related to specific state.
-    var beats = normalBeats.where((beat) => beat.event == event);
-
-    if (beats.isEmpty) {
-      /// If specified beat is not available,
-      /// then find station's root beat.
-      beats = stationBeats.where((beat) => beat.event == event);
-    }
-
-    /// If this station can't handle this event, return
-    if (beats.isEmpty) {
+    if (!started || done) {
       return EventResult.notHandled();
     }
 
     final eventData = EventData(event: event, data: data);
 
+    /// Find the beat related to specific state.
+    var beats = normalBeats.where((beat) => beat.event == event);
+
+    /// 0-1. if this is a delayed event, queue it and return
     if (after.inMicroseconds > 0) {
-      /// 0-1. if this is a delayed event, queue it and return
       addDelayed(
         () {
           /// Only run the first matching beat with the same event
@@ -270,18 +250,39 @@ abstract class BeatStation<State extends Enum, Context> {
         after,
         eventId,
       );
-    } else {
-      /// 0-2. else: immediately run the first matching beat with the same event
-      for (final beat in beats) {
-        if (_passGuards(beat, eventData)) {
-          handleBeat(beat.to, eventData, beat.actions);
-          break;
-        }
+      return EventResult.handled();
+    }
+
+    /// The deepest child should handle the event.
+    final result = child?.handleEvent(event, eventId, data, after) ??
+        EventResult.notHandled();
+
+    if (result.handled) {
+      /// If one of the children handled this event, then return
+      return result;
+    }
+
+    if (beats.isEmpty) {
+      /// If specified beat is not available,
+      /// then find station's root beat.
+      beats = stationBeats.where((beat) => beat.event == event);
+    }
+
+    /// If this station can't handle this event, return
+    if (beats.isEmpty) {
+      return EventResult.notHandled();
+    }
+
+    /// 0-2. else: immediately run the first matching beat with the same event
+    for (final beat in beats) {
+      if (_passGuards(beat, eventData)) {
+        handleBeat(beat.to, eventData, beat.actions);
+        _eventHistory.add(eventData);
+        return EventResult.handled();
       }
     }
 
-    _eventHistory.add(eventData);
-    return EventResult.handled();
+    return EventResult.notHandled();
   }
 
   /// Handle transitions
@@ -298,6 +299,9 @@ abstract class BeatStation<State extends Enum, Context> {
     clearDelayed();
     guardedEventlesses.clear();
 
+    /// Stop previous substations
+    child?.stop(true);
+
     /// 1. Execute this state's exit actions
     _executeActions(currentStateExit.actions, currentState, eventData);
 
@@ -310,15 +314,18 @@ abstract class BeatStation<State extends Enum, Context> {
     } else {
       /// Propagate to machine and return
       final station = machine.stationOf(nextState.runtimeType);
+
       if (station == null) {
+        /// TODO: How to handle this.
+        /// what will be the situation of this
         return;
       }
 
       /// 1. Stop this stationn
-      stop();
+      stop(false);
 
       /// 2. Start remote station if it's not
-      if (!station._started) {
+      if (!station.started) {
         station.start(state: nextState, eventData: eventData);
       } else {
         /// 3. else. Set remote station's state
@@ -333,6 +340,9 @@ abstract class BeatStation<State extends Enum, Context> {
 
     /// 4. Execute this state's entry actions
     _executeActions(currentStateEntry.actions, currentState, eventData);
+
+    /// Start current's substation
+    child?.start();
 
     /// 4-1. Check queued eventless events in [BeatMachine]
     machine.checkGuardedEventless();
