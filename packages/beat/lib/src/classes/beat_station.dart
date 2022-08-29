@@ -195,7 +195,7 @@ abstract class BeatStation<State extends Enum, Context> {
   /// Current state to beat event
   Map<State, List<Beat>> get stateToBeat;
 
-  /// Beat events in the current state
+  /// Beat events having an expliciti event name in the current state
   List<Beat> get normalBeats => stateToBeat[currentState.state] ?? [];
 
   Map<State, OnEntry> get stateEntry;

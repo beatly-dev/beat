@@ -58,12 +58,12 @@ A roadmap is as follows, but the order does not matter.
   - [x] Get current context
   - [x] assign new context
 - [x] Support transition with an argument
-- [ ] Support nested(compound, hierarchical) state
+- [x] Support nested(compound, hierarchical) state
   - [x] Define compound state
   - [x] Using `send`
   - [x] Using verbose styled transition via `{compoundStateName}Compound` field
   - [x] Multi-level (deeply nested) compound state
-  - [ ] Custom initialization on parent state creation
+  - [x] Custom initialization on parent state creation
   - [x] Get a current state of nested state using `currentState`
     - `currentState.of(EnumType)` returns the current state of the nested state
   - [x] Reset on parent state enter/exit
@@ -74,7 +74,7 @@ A roadmap is as follows, but the order does not matter.
 - [x] Support `state.matches` as a `is{State}`
 - [x] Support `send()` styled transition
   - `station.send` is supported
-- [ ] Support initial context defined in the station annotation
+- [x] Support initial context defined in the station annotation
 - [ ] Support actions (fire-and-forget)
   - [x] callback action
   - [x] assign action
@@ -103,9 +103,9 @@ A roadmap is as follows, but the order does not matter.
 - [x] Support delayed transition
   - [x] Delay on eventless transition
   - [x] Delay on `send` or `$event()`
-- [ ] Support `entry` and `exit` actions
+- [x] Support `entry` and `exit` actions
 - [ ] Support conditional (guarded) transition
-  - [ ] Support custom functions
+  - [x] Support custom functions
   - [ ] Support `in` state condition
 - [ ] Support internal transition
 - [ ] Support external transition
@@ -114,14 +114,14 @@ A roadmap is as follows, but the order does not matter.
 - [ ] Support multiple events
 - [ ] Support actors
 - [x] Support `state.nextEvents`
-- [ ] Support `state.changed`
+- [x] Support `state.changed`
 - [x] Support `state.done`
 - [ ] Support `state.meta`, `state.tags`
 - [ ] Support `state.can`
 - [ ] Support history JSON to persist
   - `toString()` is currently supported
 - [ ] Support parallel state
-  - [ ] Define parallel state
+  - [x] Define parallel state
   - [ ] Support multiple targets event
 - [ ] Separate `interpreter` and `station`
   - [ ] Support pure `transition()`

@@ -67,16 +67,16 @@ class DogWithTail {
 void main(List<String> arguments) {
   final machine = DogMachine();
   machine.send.$wag();
-  print('changed: ${machine.changed} - ${machine.currentState}');
+  print(machine.nextEvents);
   machine.send.$walk();
-  print('changed: ${machine.changed} - ${machine.currentState}');
+  print(machine.nextEvents);
   machine.send.$run();
-  print('changed: ${machine.changed} - ${machine.currentState}');
+  print(machine.nextEvents);
   machine.send.$wag();
-  print('changed: ${machine.changed} - ${machine.currentState}');
+  print(machine.nextEvents);
 
   final pMachine = DogWithTailMachine();
-  print(pMachine.currentState);
+  print(pMachine.nextEvents);
   pMachine.send.$run();
-  print(pMachine.currentState);
+  print(pMachine.nextEvents);
 }

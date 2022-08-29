@@ -19,6 +19,9 @@ abstract class BeatMachine {
   /// - Including all active stations
   CurrentState? get currentState => _activeStations.currentState;
 
+  /// List of events that can be invoked on the current state.
+  Set<String> get nextEvents => _activeStations.nextEvents;
+
   /// Returns the station with the given id.
   T? stationById<T extends BeatStation>(String id) =>
       _activeStations.stationById<T>(id);
@@ -111,6 +114,8 @@ class _ActiveStations {
     return null;
   }
 
+  Set<String> get nextEvents => all?.nextEvents ?? {};
+
   /// Get currently active state
   /// - Including all active stations
   CurrentState? get currentState => all?.currentState;
@@ -165,6 +170,26 @@ class _ActiveStationTree {
       children: childStates,
     );
     return currentState;
+  }
+
+  Set<String> get nextEvents {
+    final nextEvents = <String>{};
+    if (station is! ParallelBeatStation) {
+      nextEvents.addAll(
+        station.normalBeats
+            .map((beat) => beat.event)
+            .where((event) => event.isNotEmpty),
+      );
+      nextEvents.addAll(
+        station.stationBeats
+            .map((beat) => beat.event)
+            .where((event) => event.isNotEmpty),
+      );
+    }
+    for (final child in children) {
+      nextEvents.addAll(child.nextEvents);
+    }
+    return nextEvents;
   }
 
   T? findStation<T extends BeatStation>() {
