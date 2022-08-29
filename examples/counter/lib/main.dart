@@ -13,8 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CounterProvider(
-      firstState: Counter.loading,
-      initialContext: CounterContext(),
+      initialContext: 0,
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
@@ -48,54 +47,75 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               'You have pushed the button this many times:',
             ),
-            CounterConsumer(
-              builder: (context, ref) {
-                final counter = ref.select(
-                  (station) => (station.currentState.context?.count),
-                );
-                return Text(
-                  '$counter',
-                  style: Theme.of(context).textTheme.headline4,
-                );
-              },
+            RepaintBoundary(
+              child: CounterConsumer(
+                builder: (context, ref) {
+                  final counter = ref.select(
+                    (machine) {
+                      final counterState = machine.stateOf<CounterState>();
+                      return counterState?.context ?? 0;
+                    },
+                  );
+                  return Text(
+                    '$counter',
+                    style: Theme.of(context).textTheme.headline4,
+                  );
+                },
+              ),
             ),
-            CounterConsumer(
-              builder: (context, ref) {
-                final count = ref.select(
-                  (station) {
-                    final count = station.currentState.context?.count ?? 0;
-                    return (count ~/ 2) * 2;
-                  },
-                );
-                return Text(
-                  'Even number counter: $count',
-                );
-              },
+            RepaintBoundary(
+              child: CounterConsumer(
+                builder: (context, ref) {
+                  final count =
+                      ref.machine.stateOf<CounterState>()?.context ?? 0;
+                  return Text(
+                    'machine level only counter: $count',
+                  );
+                },
+              ),
+            ),
+            RepaintBoundary(
+              child: CounterConsumer(
+                builder: (context, ref) {
+                  final count = ref.select(
+                    (machine) {
+                      final count =
+                          machine.stateOf<CounterState>()?.context ?? 0;
+                      return (count ~/ 2) * 2;
+                    },
+                  );
+                  return Text(
+                    'Even number counter: $count',
+                  );
+                },
+              ),
             ),
           ],
         ),
       ),
       floatingActionButton: CounterConsumer(
         builder: (context, ref) {
-          return Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              FloatingActionButton(
-                onPressed: () {
-                  ref.readStation.send.$takeOne();
-                },
-                tooltip: 'Decrement',
-                child: const Icon(Icons.remove),
-              ),
-              const SizedBox(width: 16),
-              FloatingActionButton(
-                onPressed: () {
-                  ref.readStation.send.$addOne();
-                },
-                tooltip: 'Increment',
-                child: const Icon(Icons.add),
-              ),
-            ],
+          return RepaintBoundary(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FloatingActionButton(
+                  onPressed: () {
+                    ref.read((machine) => machine.send).$takeOne();
+                  },
+                  tooltip: 'Decrement',
+                  child: const Icon(Icons.remove),
+                ),
+                const SizedBox(width: 16),
+                FloatingActionButton(
+                  onPressed: () {
+                    ref.read((machine) => machine.send).$addOne();
+                  },
+                  tooltip: 'Increment',
+                  child: const Icon(Icons.add),
+                ),
+              ],
+            ),
           );
         },
       ), // This trailing comma makes auto-formatting nicer for build methods.

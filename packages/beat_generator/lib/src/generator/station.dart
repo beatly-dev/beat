@@ -71,7 +71,7 @@ currentState.state == $name.$state
         final beats = node.beats[state] ?? [];
         final beatsList = beats.map((beat) {
           return '''
-const ${beat.source}
+${beat.source}
 ''';
         }).join(', ');
         return '''
@@ -86,7 +86,7 @@ $name.$state: [
         final beats = node.beats[state] ?? [];
         return beats.map((beat) {
           return '''
-const ${beat.source}
+${beat.source}
 ''';
         }).join(', ');
       }).join();
@@ -116,7 +116,7 @@ $name.$state: ${node.stateExit[state] ?? 'OnExit()'},
           final services = node.services[state] ?? [];
           final items = services.map((service) {
             return '''
-const ${service.source}
+${service.source}
 ''';
           }).join(', ');
 
@@ -130,7 +130,7 @@ const ${service.source}
   String toString() {
     return '''
 const $annotationName = $source;
-class $stationName extends $_baseClass<$name, ${contextType.replaceAll('?', '')}> {
+class $stationName extends $_baseClass<$stateName> {
   $stationName({required super.machine, super.parent});
 
   $children
@@ -155,7 +155,7 @@ class $stationName extends $_baseClass<$name, ${contextType.replaceAll('?', '')}
   late final List<dynamic> exit = ${node.stationExit}.actions;
 
   @override
-  late final bool done = $isFinalState;
+  late final bool done = ${isFinalState.isEmpty ? 'false' : isFinalState};
 
   @override
   late final List<Beat> stationBeats = [

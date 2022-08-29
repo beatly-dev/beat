@@ -7,7 +7,7 @@ import '../beat_state.dart';
 import '../beat_station.dart';
 import '../event_data.dart';
 
-class ActionHandler {
+class ActionHandler<B extends BeatState> {
   const ActionHandler({
     required this.action,
     required this.state,
@@ -15,7 +15,7 @@ class ActionHandler {
     required this.station,
   });
   final dynamic action;
-  final BeatState state;
+  final B state;
   final EventData event;
   final BeatStation station;
 

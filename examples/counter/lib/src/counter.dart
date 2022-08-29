@@ -2,7 +2,7 @@ import 'package:flutter_beat/flutter_beat.dart';
 
 part 'counter.beat.dart';
 
-@BeatStation(contextType: CounterContext, withFlutter: true)
+@Station(contextType: int, withFlutter: true)
 @addOneBeat
 @takeOneBeat
 enum Counter {
@@ -13,45 +13,29 @@ enum Counter {
   taken,
 }
 
-class CounterContext {
-  final int count;
-  final int someOther;
-  final Dummy dummy = const Dummy();
-
-  CounterContext([this.count = 0, this.someOther = 0]);
-}
-
 class Dummy {
   const Dummy();
 }
 
-const initializer = Invokes([
-  InvokeFuture(
-    initializeStation,
-    onDone: AfterInvoke(
-      to: Counter.idle,
-      actions: [AssignAction(assignValue)],
-    ),
-  )
-]);
+const initializer = Services([]);
 
-Future<CounterContext> initializeStation(_, __) async {
-  return CounterContext();
+Future<int> initializeStation(_, __) async {
+  return 0;
 }
 
-CounterContext assignValue(_, EventData event) {
+int assignValue(_, EventData event) {
   return event.data;
 }
 
 const addOneBeat =
-    Beat(event: 'addOne', to: Counter.added, actions: [AssignAction(addOne)]);
+    Beat(event: 'addOne', to: Counter.added, actions: [Assign(addOne)]);
 const takeOneBeat =
-    Beat(event: 'takeOne', to: Counter.taken, actions: [AssignAction(takeOne)]);
+    Beat(event: 'takeOne', to: Counter.taken, actions: [Assign(takeOne)]);
 
-CounterContext addOne(BeatState state, _) {
-  return CounterContext(state.context.count + 1);
+int addOne(BeatState state, _) {
+  return (state.context ?? 0) + 1;
 }
 
-CounterContext takeOne(BeatState state, _) {
-  return CounterContext(state.context.count - 1);
+int takeOne(BeatState state, _) {
+  return (state.context ?? 0) - 1;
 }

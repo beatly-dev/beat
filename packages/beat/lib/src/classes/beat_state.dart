@@ -33,7 +33,7 @@ class BeatState<State extends Enum, Context> {
         station,
       );
 
-  T? of<T extends BeatState>(Type enumType) => station.stateOf(enumType);
+  T? of<T extends BeatState>() => station.stateOf<T>();
 
   @override
   String toString() => '{state: $state, context: $context}';

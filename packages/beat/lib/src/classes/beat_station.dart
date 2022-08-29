@@ -11,7 +11,7 @@ import 'utils/action.dart';
 /// TODO: hanlde services
 /// TODO: Split Logic
 /// Common logic of beat station
-abstract class BeatStation<State extends Enum, Context> {
+abstract class BeatStation<B extends BeatState> {
   BeatStation({required this.machine, this.parent});
 
   final BeatMachine machine;
@@ -19,24 +19,23 @@ abstract class BeatStation<State extends Enum, Context> {
 
   BeatStation? get child;
 
-  BeatState<State, Context> get initialState;
-  BeatState<State, Context> get currentState =>
-      stateHistory.isEmpty ? initialState : stateHistory.last;
-  List<BeatState<State, Context>> get stateHistory => _stateHistory;
-  final _stateHistory = <BeatState<State, Context>>[];
+  B get initialState;
+  B get currentState => stateHistory.isEmpty ? initialState : stateHistory.last;
+  List<B> get stateHistory => _stateHistory;
+  final _stateHistory = <B>[];
   final _eventHistory = <EventData>[];
 
-  setEnumState(State state) {
-    final nextState = currentState.copyWith(state: state);
+  setEnumState<State extends Enum>(State state) {
+    final nextState = currentState.copyWith(state: state) as B;
     setState(nextState);
   }
 
-  setContext(Context? context) {
-    final nextState = currentState.copyWithContext(context: context);
+  setContext<T>(T? context) {
+    final nextState = currentState.copyWithContext(context: context) as B;
     setState(nextState);
   }
 
-  setState(BeatState<State, Context> nextState) {
+  setState(B nextState) {
     stateHistory.add(nextState);
   }
 
@@ -55,12 +54,17 @@ abstract class BeatStation<State extends Enum, Context> {
   /// 2. Execute machine's entry actions
   /// 3. Transition to initial state
   /// 4. Start a child station
-  start({final State? state, EventData? eventData, final Context? context}) {
+  start<State extends Enum, Context>({
+    final State? state,
+    EventData? eventData,
+    final Context? context,
+  }) {
     if (started) {
       return;
     }
     started = true;
-    final startingState = initialState.copyWith(state: state, context: context);
+    final startingState =
+        initialState.copyWith(state: state, context: context) as B;
     eventData ??= EventData(event: 'beat.${State}Station($id).start');
 
     _executeActions(
@@ -79,7 +83,7 @@ abstract class BeatStation<State extends Enum, Context> {
       return;
     }
     child?.stop(true);
-    final eventData = EventData(event: 'beat.${State}Station($id).stop');
+    final eventData = EventData(event: 'beat.$runtimeType($id).stop');
     if (executeStateExit) {
       _executeActions(currentStateExit.actions, currentState, eventData);
     }
@@ -97,7 +101,7 @@ abstract class BeatStation<State extends Enum, Context> {
   /// Get the [BeatState] holding the given enum type.
   /// Return null if that state is not found on the entire machine
   /// or the station is not yet started.
-  T? stateOf<T extends BeatState>(Type enumType) => machine.stateOf(enumType);
+  T? stateOf<T extends BeatState>() => machine.stateOf<T>();
 
   /// Queue for delayed events. This includes two types of events:
   /// 1. Sent by `send(event, after: duration)` syntax
@@ -144,7 +148,7 @@ abstract class BeatStation<State extends Enum, Context> {
     _delayed.clear();
   }
 
-  Map<State, List<EventlessBeat>> get _stateToEventless => stateToBeat.map(
+  Map<Enum, List<EventlessBeat>> get _stateToEventless => stateToBeat.map(
         (state, list) =>
             MapEntry(state, list.whereType<EventlessBeat>().toList()),
       );
@@ -160,7 +164,7 @@ abstract class BeatStation<State extends Enum, Context> {
     EventData? event,
   ]) {
     event ??= EventData(
-      event: 'beat.${State}Station($id).${currentState.state}.eventless',
+      event: 'beat.$runtimeType($id).${currentState.state}.eventless',
     );
 
     final duration =
@@ -175,8 +179,7 @@ abstract class BeatStation<State extends Enum, Context> {
     /// From all queued eventless events,
     for (final eventless in guardedEventlesses) {
       final eventData = EventData(
-        event:
-            'beat.${State}Station($id).${currentState.state}.guardedEventless',
+        event: 'beat.$runtimeType($id).${currentState.state}.guardedEventless',
       );
 
       final test = _passGuards(eventless, eventData);
@@ -193,13 +196,13 @@ abstract class BeatStation<State extends Enum, Context> {
   List<Beat> get stationBeats;
 
   /// Current state to beat event
-  Map<State, List<Beat>> get stateToBeat;
+  Map<Enum, List<Beat>> get stateToBeat;
 
   /// Beat events having an expliciti event name in the current state
   List<Beat> get normalBeats => stateToBeat[currentState.state] ?? [];
 
-  Map<State, OnEntry> get stateEntry;
-  Map<State, OnExit> get stateExit;
+  Map<Enum, OnEntry> get stateEntry;
+  Map<Enum, OnExit> get stateExit;
 
   /// Entry actions for current state
   OnEntry get currentStateEntry => stateEntry[currentState.state] ?? OnEntry();
@@ -208,7 +211,7 @@ abstract class BeatStation<State extends Enum, Context> {
   OnExit get currentStateExit => stateExit[currentState.state] ?? OnExit();
 
   /// Services for each states
-  Map<State, List<Services>> get stateServices;
+  Map<Enum, List<Services>> get stateServices;
 
   /// Services to execute for current state
   List<Services> get currentStateServices =>
@@ -309,7 +312,7 @@ abstract class BeatStation<State extends Enum, Context> {
     _executeActions(actions, currentState, eventData);
 
     /// 2-2. Set state
-    if (nextState is State) {
+    if (nextState.runtimeType == currentState.state.runtimeType) {
       handleTransition(nextState, eventData);
     } else {
       /// Propagate to machine and return
@@ -334,7 +337,7 @@ abstract class BeatStation<State extends Enum, Context> {
     }
   }
 
-  handleTransition(State nextState, EventData eventData) {
+  handleTransition(Enum nextState, EventData eventData) {
     /// 3. Set next state and do afterwork
     setEnumState(nextState);
 
@@ -344,19 +347,18 @@ abstract class BeatStation<State extends Enum, Context> {
     /// Start current's substation
     child?.start();
 
-    /// 4-1. Check queued eventless events in [BeatMachine]
-    machine.checkGuardedEventless();
-
-    /// 4-2. check guarded eventless first
+    /// 4-1. queue guarded eventless first
     final guarded = eventlessBeats.where(
       (beat) => !_isDelayedBeat(beat) && beat.conditions.isNotEmpty,
     );
 
     guardedEventlesses.addAll(guarded);
 
-    final handled = checkGuardedEventless();
+    /// 4-2. Check queued eventless events in [BeatMachine]
+    machine.checkGuardedEventless();
 
-    if (handled) {
+    /// If the eventless guarded transition happens then return
+    if (nextState != currentState.state) {
       return;
     }
 
@@ -408,7 +410,7 @@ abstract class BeatStation<State extends Enum, Context> {
   /// Helper method to handle actions
   _executeActions(
     List<dynamic> actions,
-    BeatState<State, Context> state,
+    B state,
     EventData eventData,
   ) {
     for (final action in actions) {

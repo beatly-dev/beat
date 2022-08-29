@@ -24,6 +24,27 @@ class InheritedBeatState {
     return '''
 class $stateName extends $_baseClass<$name, ${contextType.replaceAll('?', '')}> {
   const $stateName(super.state, super.context, super.station);
+  @override
+  $stateName copyWith({
+    $name? state,
+    ${contextType.replaceAll('?', '')}? context,
+  }) =>
+      $stateName(
+        state ?? this.state,
+        context ?? this.context,
+        station,
+      );
+
+  @override
+  $stateName copyWithContext({
+    $name? state,
+    ${contextType.replaceAll('?', '')}? context,
+  }) =>
+      $stateName(
+        state ?? this.state,
+        context,
+        station,
+      );
 }
 ''';
   }

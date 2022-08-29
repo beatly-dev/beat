@@ -1,233 +1,122 @@
-import 'dart:async';
-
 import 'package:analyzer/dart/element/element.dart';
+import 'package:beat_config/beat_config.dart';
 
-import '../models/state.dart';
-import '../utils/context.dart';
-import '../utils/string.dart';
+import '../generator/utils/string.dart';
 
 class BeatConsumerGenerator {
   final ClassElement baseEnum;
-  final BeatStationSharedResource beatTree;
+  final StationDataStore store;
 
-  BeatConsumerGenerator(this.baseEnum, this.beatTree);
-  late final node = beatTree.getNode(baseEnum.name);
-  String get firstField =>
-      baseEnum.fields.where((element) => element.isEnumConstant).first.name;
-  String get enumName => baseEnum.name;
-  String get className => '${enumName}Provider';
-  String get stationName => toBeatStationClassName(enumName);
-  String get beatName => toBeatStateClassName(enumName);
-  String get senderName => toBeatSenderClassName(enumName);
-  String get contextType => toContextType(node.info.contextType);
-  ClassElement? get contextClass =>
-      baseEnum.library.getClass(node.info.contextType);
+  BeatConsumerGenerator(this.baseEnum, this.store);
+  String get name => baseEnum.name;
+  String get ref => '${name}Ref';
+  String get consumer => '${name}Consumer';
+  String get consumerWidget => '${name}ConsumerWidget';
+  String get statefulConsumerWidget => '${name}StatefulConsumerWidget';
+  String get consumerState => '${name}DefaultConsumerState';
+  String get statefulConsumerState => '${name}StatefulConsumerState';
+  String get statefulConsumerElement => '${name}StatefulElement';
+  String get provider => '${name}Provider';
+  String get machine => toMachineName(name);
+  BeatStationNode? get station => store.stations[name];
+  ParallelStationNode? get parallel => store.parallels[name];
+  String get contextType => station?.contextType ?? 'dynamic';
+  bool get withFlutter =>
+      station?.withFlutter ?? parallel?.withFlutter ?? false;
 
-  String contextTypeFields() {
-    final context = contextClass;
-    if (context == null) {
-      return '';
-    }
-    final fields = context.fields;
-
-    return fields
-        .map(
-          (field) =>
-              '''${field.type.getDisplayString(withNullability: true).replaceAll(RegExp(r'[*?]'), '')}? get \$\$${field.name};''',
-        )
-        .join();
-  }
-
-  String contextFieldGetter() {
-    final context = contextClass;
-    if (context == null) {
-      return '';
-    }
-    final fields = context.fields;
-
-    return fields
-        .map(
-          (field) => '''
-@override
-${field.type.getDisplayString(withNullability: true).replaceAll(RegExp(r'[*?]'), '')}? get \$\$${field.name} =>
-              ${enumName}ProviderScope.of(this, dependency: 'context.${field.name}')
-          .station
-          .currentState
-          .context?.${field.name};
-                ''',
-        )
-        .join();
-  }
-
-  Future<String> stateMatcherFields() async {
-    final nodes = await beatTree.getRelatedStations(enumName);
-    final states = nodes.map((node) {
-      final baseEnumName = node.info.baseEnumName;
-      return node.info.states.map((state) => StateWrapper(baseEnumName, state));
-    }).expand((states) => states);
-
-    final matchers = states.map((state) {
-      return toStateMatcher(
-        state.baseName,
-        state.fieldName,
-        state.baseName == enumName,
-      );
-    });
-
-    /// TODO:
-    /// If a user asks for a parallel state => not yet supported
-    return matchers.map((matcher) {
-      return '''
-bool get $matcher;
-      ''';
-    }).join();
-  }
-
-  Future<String> stateMatcherGetter() async {
-    final nodes = await beatTree.getRelatedStations(enumName);
-    final states = nodes.map((node) {
-      final baseEnumName = node.info.baseEnumName;
-      return node.info.states.map((state) => StateWrapper(baseEnumName, state));
-    }).expand((states) => states);
-
-    final matchers = states.map((state) {
-      return toStateMatcher(
-        state.baseName,
-        state.fieldName,
-        state.baseName == enumName,
-      );
-    });
-
-    /// TODO:
-    /// If a user asks for a parallel state => not yet supported
-    return matchers.map((matcher) {
-      return '''
   @override
-  bool get $matcher => ${enumName}ProviderScope.of(this, dependency: r'$matcher')
-      .station
-      .currentState
-      .$matcher;
-      ''';
-    }).join();
-  }
-
-  Future<String> toConsumer([bool force = false]) async {
-    if (!force && !node.info.withFlutter) {
+  String toString() {
+    if (!withFlutter) {
       return '';
     }
-    final children = (await beatTree.getRelatedStations(enumName))
-        .where(
-          (element) =>
-              element.info.baseEnumName != enumName &&
-              !element.info.withFlutter,
-        )
-        .map((node) => node.info.baseEnumName)
-        .toList();
-
-    if (children.isNotEmpty) {
-      throw '***** You should annotate your substate enums with @withFlutter *****'
-          '\nMissing children: $children';
-    }
-
     return '''
-abstract class ${enumName}Ref{
-
-  $stationName get station;
-  $stationName get readStation;
+abstract class $ref{
+  $machine get machine;
   
-  T read<T>(T Function(${enumName}BeatStation station) reader);
-  T select<T>(T Function(${enumName}BeatStation station) selector);
+  T read<T>(T Function($machine station) reader);
+  T select<T>(T Function($machine station) selector);
 }
 
-class ${enumName}Consumer extends ${enumName}ConsumerWidget {
-  const ${enumName}Consumer({
+class $consumer extends $consumerWidget {
+  const $consumer({
     required this.builder,
     super.placeHolder,
     super.key,
   });
 
-  final Widget Function(BuildContext, ${enumName}Ref) builder;
+  final Widget Function(BuildContext context, $ref) builder;
 
   @override
-  Widget build(BuildContext context, ${enumName}Ref ref) {
+  Widget build(BuildContext context, $ref ref) {
     return builder(context, ref);
   }
 }
 
-abstract class ${enumName}ConsumerWidget extends Stateful${enumName}ConsumerWidget {
-  const ${enumName}ConsumerWidget({
+abstract class $consumerWidget extends $statefulConsumerWidget {
+  const $consumerWidget({
     Key? key,
     this.placeHolder = const SizedBox.shrink(),
   }) : super(key: key);
 
-  Widget build(BuildContext context, ${enumName}Ref ref);
+  Widget build(BuildContext context, $ref ref);
   final Widget placeHolder;
 
   @override
   // ignore: library_private_types_in_public_api
-  _${enumName}ConsumerState createState() => _${enumName}ConsumerState();
+  $consumerState createState() => $consumerState();
 }
 
-class _${enumName}ConsumerState
-    extends ${enumName}ConsumerWidgetState<${enumName}ConsumerWidget> {
+class $consumerState
+    extends $statefulConsumerState<$consumerWidget> {
   @override
   Widget build(BuildContext context) {
-    final started = ref.select((station) => station.started);
-    if (!started) {
-      return widget.placeHolder;
-    }
     return widget.build(context, ref);
   }
 }
 
-abstract class Stateful${enumName}ConsumerWidget extends StatefulWidget {
-  const Stateful${enumName}ConsumerWidget({Key? key}) : super(key: key);
+abstract class $statefulConsumerWidget extends StatefulWidget {
+  const $statefulConsumerWidget({Key? key}) : super(key: key);
 
   @override
-  ${enumName}ConsumerWidgetState createState();
+  $statefulConsumerState createState();
 
   @override
-  StatefulElement createElement() => Stateful${enumName}ConsumerElement(this);
+  StatefulElement createElement() => $statefulConsumerElement(this);
 }
 
-abstract class ${enumName}ConsumerWidgetState<
-    T extends Stateful${enumName}ConsumerWidget> extends State<T> {
-  ${enumName}Ref get ref => context as ${enumName}Ref;
+abstract class $statefulConsumerState<
+    T extends $statefulConsumerWidget> extends State<T> {
+  $ref get ref => context as $ref;
 }
 
-class Stateful${enumName}ConsumerElement extends StatefulElement
-    implements ${enumName}Ref {
-  Stateful${enumName}ConsumerElement(super.widget);
+class $statefulConsumerElement extends StatefulElement
+    implements $ref {
+  $statefulConsumerElement(super.widget);
 
   int _count = 0;
 
-  /// Get the station and listen to all type of changes,
-  /// including enum state changes, context changes, and the station itself.
+  /// Get the machine and listen to all type of changes,
+  /// including enum state changes, context changes, and the machine itself.
   @override
-  $stationName get station =>
-      ${enumName}ProviderScope.of(this, dependency: 'station').station;
+  $machine get machine =>
+      ${name}ProviderScope.of(this, dependency: 'machine').machine;
 
-  /// Read the station and not listening to any changes.
+  /// Read the machine or its values but not listening to it. 
   @override
-  $stationName get readStation =>
-      ${enumName}ProviderScope.of(this, dependency: '_readonly_').station;
-
-  /// Read the station or its values but not listening to it. 
-  @override
-  T read<T>(T Function(${enumName}BeatStation station) selector) {
-    final station = ${enumName}ProviderScope.of(this, dependency: '_readonly_').station;
-    final result = selector(station);
+  T read<T>(T Function($machine machine) selector) {
+    final $machine machine = ${name}ProviderScope.of(this, dependency: '_readonly_').machine;
+    final result = selector(machine);
     return result;
   }
 
-  /// Precisely listen to the station or its values.
-  /// `ref.station` will watch everything, 
-  /// `ref.select((station) => station.currentState.context)` will watch only the context's changes.
-  /// `ref.select((station) => station.currentState.context.myField)` will watch only the context's myField changes.
+  /// Precisely listen to the machine or its values.
+  /// `ref.machine` will watch everything, 
+  /// `ref.select((machine) => station.currentState.context)` will watch only the context's changes.
+  /// `ref.select((machine) => station.currentState.context.myField)` will watch only the context's myField changes.
   @override
-  T select<T>(T Function(${enumName}BeatStation station) selector) {
+  T select<T>(T Function($machine machine) selector) {
     final id = '\$hashCode.\${_count++}';
-    return ${enumName}ProviderScope.of(this, dependency: id).watch(id, selector);
+    return ${name}ProviderScope.of(this, dependency: id).watch(id, selector);
   }
 }
 ''';

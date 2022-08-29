@@ -65,18 +65,12 @@ class DogWithTail {
 }
 
 void main(List<String> arguments) {
-  final machine = DogMachine();
+  final machine = DogMachine()..start();
   machine.send.$wag();
-  print(machine.nextEvents);
   machine.send.$walk();
-  print(machine.nextEvents);
   machine.send.$run();
-  print(machine.nextEvents);
   machine.send.$wag();
-  print(machine.nextEvents);
 
-  final pMachine = DogWithTailMachine();
-  print(pMachine.nextEvents);
+  final pMachine = DogWithTailMachine()..start();
   pMachine.send.$run();
-  print(pMachine.nextEvents);
 }

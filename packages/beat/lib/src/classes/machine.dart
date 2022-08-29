@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../../beat.dart';
 
 /// The root container of the beat stations.
@@ -31,11 +33,17 @@ abstract class BeatMachine {
       _activeStations.stationOf<T>(type);
 
   /// Returns the beat state holding the given enum.
-  T? stateOf<T extends BeatState>(Type type) =>
-      _activeStations.stateOf<T>(type);
+  T? stateOf<T extends BeatState>() => _activeStations.stateOf<T>();
 
+  /// Events that has been handled
   List<EventData> get eventHistory => _eventHistory;
   final _eventHistory = <EventData>[];
+
+  final StreamController<BeatMachine> streamController =
+      StreamController.broadcast();
+
+  /// A stream of state changes.
+  Stream<BeatMachine> get stream => streamController.stream;
 
   int _eventId = 0;
 
@@ -63,6 +71,7 @@ abstract class BeatMachine {
     _previousEventHistoryLength = _eventHistory.length;
     if (handled) {
       _eventHistory.add(EventData(event: event, data: data));
+      streamController.add(this);
 
       /// Check guarded eventless
       checkGuardedEventless();
@@ -75,12 +84,25 @@ abstract class BeatMachine {
 
   /// Check active stations' queued eventless events
   checkGuardedEventless() {
-    _activeStations.all?.recurse((station) => station.checkGuardedEventless());
+    _activeStations.all?.recurse((station) {
+      final changed = station.checkGuardedEventless();
+      if (changed) {
+        streamController.add(this);
+      }
+    });
   }
 
   /// Cancel and remove a delayed event
   cancelDelayed(int eventId) {
     _activeStations.all?.recurse((station) => station.cancelDelayed(eventId));
+  }
+
+  stop() {
+    root.stop();
+  }
+
+  start<Context>({final Context? context}) {
+    root.start(context: context);
   }
 }
 
@@ -128,8 +150,9 @@ class _ActiveStations {
       all?.findStationByType(type);
 
   /// Returns the beat state holding the given enum.
-  T? stateOf<T extends BeatState>(Type type) =>
-      all?.findStationByType(type)?.currentState as T;
+  T? stateOf<T extends BeatState>() {
+    return all?.findState<T>();
+  }
 }
 
 abstract class MachineSender {
@@ -200,6 +223,19 @@ class _ActiveStationTree {
       final station = child.findStation<T>();
       if (station != null) {
         return station;
+      }
+    }
+    return null;
+  }
+
+  T? findState<T extends BeatState>() {
+    if (station.currentState is T) {
+      return station.currentState as T;
+    }
+    for (final child in children) {
+      final state = child.findState<T>();
+      if (state != null) {
+        return state;
       }
     }
     return null;

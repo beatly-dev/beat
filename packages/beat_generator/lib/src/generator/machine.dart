@@ -61,10 +61,9 @@ int \$$event<Data>({
     return '''
 class $machineName extends $_baseClass {
   @override
-  $stationName get root => _root..start();
+  $stationName get root => _root;
 
   late final $stationName _root = $stationName(machine: this);
-
 
   @override 
   late final $senderName send = $senderName(this);

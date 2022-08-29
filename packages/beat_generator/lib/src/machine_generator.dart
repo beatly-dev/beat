@@ -3,6 +3,8 @@ import 'package:beat/beat.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
+import 'flutter/consumer.dart';
+import 'flutter/provider.dart';
 import 'generator/events.dart';
 import 'generator/machine.dart';
 import 'generator/parallel_station.dart';
@@ -42,11 +44,16 @@ class BeatMachineGenerator extends GeneratorForAnnotation<Station> {
       store: store,
     );
 
+    final provider = BeatProviderGenerator(element, store);
+    final consumer = BeatConsumerGenerator(element, store);
+
     return [
       station.toString(),
       state.toString(),
       machine.toString(),
       events.toString(),
+      provider.toString(),
+      consumer.toString(),
     ];
   }
 }
@@ -68,10 +75,14 @@ class ParallelMachineGenerator extends GeneratorForAnnotation<ParallelStation> {
       element: element,
       store: store,
     );
+    final provider = BeatProviderGenerator(element, store);
+    final consumer = BeatConsumerGenerator(element, store);
 
     return [
       parallels.toString(),
       machine.toString(),
+      provider.toString(),
+      consumer.toString(),
     ];
   }
 }

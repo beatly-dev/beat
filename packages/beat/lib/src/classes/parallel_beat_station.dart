@@ -6,11 +6,11 @@ enum ParallelStationState {
 }
 
 abstract class ParallelBeatStation
-    extends BeatStation<ParallelStationState, dynamic> {
+    extends BeatStation<BeatState<ParallelStationState, dynamic>> {
   ParallelBeatStation({required super.machine, super.parent});
 
   @override
-  BeatStation<Enum, dynamic>? get child => null;
+  BeatStation? get child => null;
 
   /// Check if all the parallel stations are done.
   @override
@@ -37,7 +37,11 @@ abstract class ParallelBeatStation
 
   /// Start all parallel stations
   @override
-  start({Enum? state, EventData? eventData, context}) {
+  start<State extends Enum, Context>({
+    Enum? state,
+    EventData? eventData,
+    context,
+  }) {
     if (started) {
       return;
     }
@@ -108,7 +112,7 @@ abstract class ParallelBeatStation
 
   /// This shouldn't be called in any time
   @override
-  handleTransition(ParallelStationState nextState, EventData eventData) {
+  handleTransition(_, __) {
     throw UnimplementedError(
       'ParallelStation.handlTransition should not be called',
     );
