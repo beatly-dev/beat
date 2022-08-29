@@ -92,6 +92,14 @@ abstract class ParallelBeatStation
     return handled;
   }
 
+  @override
+  cancelDelayed(int eventId) {
+    for (final station in parallels) {
+      /// all parallel station must receive the event
+      station.cancelDelayed(eventId);
+    }
+  }
+
   /// This shouldn't be called in any time
   @override
   handleBeat(Enum nextState, EventData eventData, [List actions = const []]) {

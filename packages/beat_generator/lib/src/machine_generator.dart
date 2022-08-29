@@ -33,7 +33,7 @@ class BeatMachineGenerator extends GeneratorForAnnotation<Station> {
     );
 
     final machine = InheritedBeatMachine(
-      element: element as EnumElement,
+      element: element,
       store: store,
     );
 
@@ -64,9 +64,14 @@ class ParallelMachineGenerator extends GeneratorForAnnotation<ParallelStation> {
 
     final store = await buildStep.fetchResource(inMemoryStationData);
     final parallels = InheritedParallelStation(element: element, store: store);
+    final machine = InheritedBeatMachine(
+      element: element,
+      store: store,
+    );
 
     return [
       parallels.toString(),
+      machine.toString(),
     ];
   }
 }

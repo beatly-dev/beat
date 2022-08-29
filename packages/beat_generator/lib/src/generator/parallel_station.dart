@@ -21,10 +21,9 @@ class InheritedParallelStation {
 
   String get children => node.vars.map(
         (child) {
-          final station = node.stationName[child]!;
-          final childStation = toStationName(station);
+          final childClassName = toChildClassName(name, child);
           return '''
-late final $childStation ${toDartFieldCase(child)} = $childStation(
+late final $childClassName ${toDartFieldCase(child)} = $childClassName(
   machine: machine,
   parent: this,
 );
@@ -32,11 +31,41 @@ late final $childStation ${toDartFieldCase(child)} = $childStation(
         },
       ).join();
 
+  String get childrenClasses => node.vars.map((child) {
+        final enumName = node.stationName[child]!;
+        final childStation = toStationName(enumName);
+        final childClassName = toChildClassName(name, child);
+        final initialState = node.initialStates[child];
+        return '''
+class $childClassName extends $childStation {
+  $childClassName({
+    required super.machine,
+    super.parent,
+  });
+
+  @override
+  String get id => '$child';
+
+  ${initialState != null ? '''
+@override
+${enumName}State get initialState => ${enumName}State(
+  $enumName.$initialState,
+  ${toAnnotationName(enumName)}.initialContext,
+  this,
+);
+''' : ''}
+}
+''';
+      }).join();
+
   @override
   String toString() {
     return '''
 class $stationName extends $_baseClass {
   $stationName({required super.machine, super.parent});
+
+  @override
+  String get id => '${node.id ?? '\$$name.\$hashCode'}';
 
   $children
 
@@ -45,6 +74,12 @@ class $stationName extends $_baseClass {
     ${node.vars.map((child) => toDartFieldCase(child)).join(',')}
   ];
 }
+
+$childrenClasses
 ''';
   }
+}
+
+String toChildClassName(String parallel, String child) {
+  return '${toBeginningOfSentenceCase(parallel)}\$$child';
 }

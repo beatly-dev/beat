@@ -2,7 +2,7 @@ import 'package:beat/beat.dart';
 
 part 'dart_only.beat.dart';
 
-@Station()
+@Station(id: 'Dog')
 @Beat(event: 'sleep', to: Dog.sleeping)
 enum Dog {
   @Beat(event: 'walk', to: Dog.walking)
@@ -15,11 +15,13 @@ enum Dog {
 
   @Beat(event: 'speedUp', to: Dog.running)
   @Beat(event: 'goHome', to: Dog.home)
+  @Beat(event: 'run', to: Dog.running)
   @Substation(Tail)
   walking,
 
   @Beat(event: 'slowDown', to: Dog.walking)
   @Beat(event: 'goHome', to: Dog.home)
+  @Beat(event: 'walk', to: Dog.walking)
   @Substation(Tail)
   running,
 
@@ -44,18 +46,22 @@ enum Tail {
   @Services()
   @Services()
   @Beat(event: 'stop', to: Tail.stopped)
-  @Substation(DogWithTail)
   @Final()
   wagging,
 }
 
 asdf() {}
 
-@ParallelStation()
+@ParallelStation(id: 'jiji')
 class DogWithTail {
-  Dog? dog;
-  Tail? tail;
-  Tail? tail2;
+  /// Field type defines what station to use
+  static const Dog dog = Dog.home;
+
+  /// field name is an ID for the station
+  static const Tail tail = Tail.stopped;
+
+  /// Field value is a beginning state
+  static const Tail tail2 = Tail.wagging;
 }
 
 void main(List<String> arguments) {
@@ -64,6 +70,13 @@ void main(List<String> arguments) {
   print('changed: ${machine.changed} - ${machine.currentState}');
   machine.send.$walk();
   print('changed: ${machine.changed} - ${machine.currentState}');
-  machine.send.$walk();
+  machine.send.$run();
   print('changed: ${machine.changed} - ${machine.currentState}');
+  machine.send.$wag();
+  print('changed: ${machine.changed} - ${machine.currentState}');
+
+  final pMachine = DogWithTailMachine();
+  print(pMachine.currentState);
+  pMachine.send.$run();
+  print(pMachine.currentState);
 }

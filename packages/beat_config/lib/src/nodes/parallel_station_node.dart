@@ -13,6 +13,7 @@ class ParallelStationNode {
   /// parallel stations enum name
   final List<String> vars;
   final Map<String, String> stationName;
+  final Map<String, String> initialStates;
 
   /// need flutter widgets
   bool withFlutter;
@@ -23,6 +24,7 @@ class ParallelStationNode {
     required this.vars,
     required this.stationName,
     required this.withFlutter,
+    required this.initialStates,
   });
 
   Map<String, dynamic> toJson() => _$ParallelStationNodeToJson(this);

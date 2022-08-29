@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:analyzer/dart/element/element.dart';
 
 import '../models/state.dart';
-import '../resources/station_data_resource.dart';
 import '../utils/context.dart';
 import '../utils/string.dart';
 

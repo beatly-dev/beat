@@ -17,7 +17,7 @@ abstract class BeatMachine {
 
   /// Get currently active state
   /// - Including all active stations
-  List<BeatState> get currentState => _activeStations.currentState;
+  CurrentState? get currentState => _activeStations.currentState;
 
   /// Returns the station with the given id.
   T? stationById<T extends BeatStation>(String id) =>
@@ -53,9 +53,7 @@ abstract class BeatMachine {
       final station = _activeStations.stationOf(target);
       handled =
           station?.handleEvent(event, eventId, data, after).handled ?? false;
-    }
-
-    if (!handled) {
+    } else {
       handled = root.handleEvent(event, eventId, data, after).handled;
     }
 
@@ -74,16 +72,12 @@ abstract class BeatMachine {
 
   /// Check active stations' queued eventless events
   checkGuardedEventless() {
-    for (final station in _activeStations.all()) {
-      station.checkGuardedEventless();
-    }
+    _activeStations.all?.recurse((station) => station.checkGuardedEventless());
   }
 
   /// Cancel and remove a delayed event
   cancelDelayed(int eventId) {
-    for (final station in _activeStations.all()) {
-      station.cancelDelayed(eventId);
-    }
+    _activeStations.all?.recurse((station) => station.cancelDelayed(eventId));
   }
 }
 
@@ -91,74 +85,46 @@ class _ActiveStations {
   const _ActiveStations(this.root);
   final BeatStation root;
 
-  /// Get currently active class
-  List<BeatStation> all() {
-    return _findAllActive(root);
-  }
+  /// Get currently active station
+  _ActiveStationTree? get all => _findAllActive(root);
 
-  List<BeatStation> _findAllActive(BeatStation station) {
-    final active = <BeatStation>[];
+  _ActiveStationTree? _findAllActive(BeatStation station) {
     if (station.started) {
-      active.add(station);
+      final children = <_ActiveStationTree>[];
       final child = station.child;
       if (child != null) {
-        if (child is ParallelBeatStation) {
-          for (final par in child.parallels) {
-            active.addAll(_findAllActive(par));
-          }
-        } else {
-          active.addAll(_findAllActive(child));
+        final childNode = _findAllActive(child);
+        if (childNode != null) {
+          children.add(childNode);
         }
       }
+      if (station is ParallelBeatStation) {
+        for (final child in station.parallels) {
+          final childNode = _findAllActive(child);
+          if (childNode != null) {
+            children.add(childNode);
+          }
+        }
+      }
+      return _ActiveStationTree(station: station, children: children);
     }
-    return active;
+    return null;
   }
 
   /// Get currently active state
   /// - Including all active stations
-  List<BeatState> get currentState =>
-      all().map((station) => station.currentState).toList();
+  CurrentState? get currentState => all?.currentState;
 
   /// Returns the station with the given id.
-  T? stationById<T extends BeatStation>(String id) =>
-      _findStationById(id, root);
-
-  T? _findStationById<T extends BeatStation>(String id, BeatStation station) {
-    if (station.id == id) {
-      return station as T;
-    }
-    if (station.child != null) {
-      return _findStationById(id, station.child!);
-    }
-    return null;
-  }
+  T? stationById<T extends BeatStation>(String id) => all?.findStationById(id);
 
   /// Returns the station holding the given enum.
   T? stationOf<T extends BeatStation>(Type type) =>
-      _findStationByEnum(type, root);
-
-  T? _findStationByEnum<T extends BeatStation>(Type type, BeatStation station) {
-    if (station.currentState.state.runtimeType == type) {
-      return station as T;
-    }
-    if (station.child != null) {
-      return _findStationByEnum(type, station.child!);
-    }
-    return null;
-  }
+      all?.findStationByType(type);
 
   /// Returns the beat state holding the given enum.
-  T? stateOf<T extends BeatState>(Type type) => _findStateByEnum(type, root);
-
-  T? _findStateByEnum<T extends BeatState>(Type type, BeatStation station) {
-    if (station.currentState.state.runtimeType == type) {
-      return station.currentState as T;
-    }
-    if (station.child != null) {
-      return _findStateByEnum(type, station.child!);
-    }
-    return null;
-  }
+  T? stateOf<T extends BeatState>(Type type) =>
+      all?.findStationByType(type)?.currentState as T;
 }
 
 abstract class MachineSender {
@@ -171,4 +137,88 @@ abstract class MachineSender {
     Type? target,
   }) =>
       machine._forward(event, data: data, after: after, target: target);
+}
+
+class _ActiveStationTree {
+  final BeatStation station;
+  final List<_ActiveStationTree> children;
+  _ActiveStationTree({
+    required this.station,
+    this.children = const [],
+  });
+
+  recurse(Function(BeatStation) callback) {
+    callback(station);
+    for (final child in children) {
+      child.recurse(callback);
+    }
+  }
+
+  CurrentState get currentState {
+    final childStates = <CurrentState>[];
+    for (final child in children) {
+      childStates.add(child.currentState);
+    }
+    final currentState = CurrentState(
+      id: station.id,
+      state: station.currentState,
+      children: childStates,
+    );
+    return currentState;
+  }
+
+  T? findStation<T extends BeatStation>() {
+    if (station is T) {
+      return station as T;
+    }
+    for (final child in children) {
+      final station = child.findStation<T>();
+      if (station != null) {
+        return station;
+      }
+    }
+    return null;
+  }
+
+  T? findStationById<T extends BeatStation>(String id) {
+    if (station.id == id) {
+      return station as T;
+    }
+    for (final child in children) {
+      final station = child.findStationById<T>(id);
+      if (station != null) {
+        return station;
+      }
+    }
+    return null;
+  }
+
+  T? findStationByType<T extends BeatStation>(Type type) {
+    if (station.currentState.state.runtimeType == type) {
+      return station as T;
+    }
+    for (final child in children) {
+      final station = child.findStationByType<T>(type);
+      if (station != null) {
+        return station;
+      }
+    }
+    return null;
+  }
+}
+
+class CurrentState {
+  final String id;
+  final BeatState state;
+  final List<CurrentState> children;
+
+  CurrentState({
+    required this.id,
+    required this.state,
+    this.children = const [],
+  });
+
+  @override
+  String toString() =>
+      ' { station: $id, state: $state, nested: [ ${children.map((child) => child.toString()).join(',')} ] } ';
 }

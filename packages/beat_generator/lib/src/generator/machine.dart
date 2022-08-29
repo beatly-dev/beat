@@ -11,7 +11,7 @@ class InheritedBeatMachine {
     required this.store,
   });
 
-  final EnumElement element;
+  final ClassElement element;
   final StationDataStore store;
 
   String get name => element.name;
@@ -20,26 +20,29 @@ class InheritedBeatMachine {
   String get senderName => toSenderName(name);
   BeatStationNode get node => store.stations[name]!;
 
-  List<BeatConfig> allBeats(BeatStationNode node) {
+  List<BeatConfig> allBeats(String stationName) {
+    final normal = store.stations[stationName];
+    final parallel = store.parallels[stationName];
     final beats = <BeatConfig>[];
-    beats.addAll(
-      node.beats.values
-          .expand((beats) => beats)
-          .where((beat) => beat.event.isNotEmpty),
-    );
-    for (final child in node.substations.values) {
-      final station = store.stations[child];
-      if (station == null) {
-        /// skip the parallel station
-        /// it does not have any transitions
-        continue;
+    if (normal != null) {
+      beats.addAll(normal.beats.values.expand((beats) => beats));
+      for (final sub in normal.substations.values) {
+        beats.addAll(allBeats(sub));
       }
-      beats.addAll(allBeats(station));
+    }
+    if (parallel != null) {
+      for (final sub in parallel.vars) {
+        final enumName = parallel.stationName[sub]!;
+        beats.addAll(allBeats(enumName));
+      }
     }
     return beats;
   }
 
-  Set<String> get events => allBeats(node).map((beat) => beat.event).toSet();
+  Set<String> get events => allBeats(name)
+      .map((beat) => beat.event)
+      .where((event) => event.isNotEmpty)
+      .toSet();
 
   String get senderMethods {
     return events.map((event) {

@@ -146,7 +146,7 @@ class $stationName extends $_baseClass<$name, ${contextType.replaceAll('?', '')}
   );
 
   @override
-  late final String id = $annotationName.id ?? '\$hashCode';
+  late final String id = $annotationName.id ?? '\$$name.\$hashCode';
 
   @override
   late final List<dynamic> entry = ${node.stationEntry}.actions;
